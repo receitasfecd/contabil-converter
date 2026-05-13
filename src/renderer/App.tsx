@@ -23,6 +23,7 @@ const AccountDetailPage = lazy(() => import('./pages/AccountDetailPage'));
 const BalancetePage = lazy(() => import('./pages/BalancetePage'));
 const OrganizationPage = lazy(() => import('./pages/OrganizationPage'));
 const AcceptInvitePage = lazy(() => import('./pages/AcceptInvitePage'));
+const JoinOrgPage = lazy(() => import('./pages/JoinOrgPage'));
 
 const drawerWidth = 240;
 
@@ -223,6 +224,7 @@ function App() {
                   <Route path="/balancete" element={<BalancetePage />} />
                   <Route path="/organizacao" element={<OrganizationPage />} />
                   <Route path="/aceitar-convite" element={<AcceptInvitePage />} />
+                  <Route path="/entrar/:code" element={<JoinOrgPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>

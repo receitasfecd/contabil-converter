@@ -50,6 +50,7 @@ interface Invite {
 interface Organization {
   id: string;
   name: string;
+  code: string;
 }
 
 export default function OrganizationPage() {
@@ -76,7 +77,7 @@ export default function OrganizationPage() {
       // Carregar organização e role do usuário
       const { data: memberData, error: memberError } = await supabase
         .from('organization_members')
-        .select('organization_id, role, organizations(id, name)')
+        .select('organization_id, role, organizations(id, name, code)')
         .limit(1);
 
       if (memberError) throw memberError;
@@ -210,6 +211,12 @@ export default function OrganizationPage() {
     setSuccess('Link copiado para a área de transferência!');
   };
 
+  const copyPublicInviteLink = () => {
+    const link = `${window.location.origin}/entrar/${organization?.code}`;
+    navigator.clipboard.writeText(link);
+    setSuccess('Link público copiado para a área de transferência!');
+  };
+
   const handleEditOrgName = () => {
     setNewOrgName(organization?.name || '');
     setEditOrgDialogOpen(true);
@@ -293,6 +300,36 @@ export default function OrganizationPage() {
           </Stack>
         </CardContent>
       </Card>
+
+      {/* Link Público de Convite (apenas para admins) */}
+      {canManageMembers && (
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Link Público de Convite
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Compartilhe este link com qualquer pessoa que você deseja adicionar à organização.
+              Eles poderão criar uma conta ou fazer login e entrarão automaticamente.
+            </Typography>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <TextField
+                fullWidth
+                value={`${window.location.origin}/entrar/${organization?.code}`}
+                InputProps={{ readOnly: true }}
+                size="small"
+              />
+              <Button
+                variant="contained"
+                startIcon={<ContentCopy />}
+                onClick={copyPublicInviteLink}
+              >
+                Copiar Link
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Membros */}
       <Card sx={{ mb: 3 }}>
