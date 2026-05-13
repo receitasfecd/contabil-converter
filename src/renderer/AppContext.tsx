@@ -2,9 +2,11 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProcessedEntry } from './types/Entry';
 import { ContaBancariaMapping } from './types/Mapping';
 import { Transfer, TransferStore, TransferPair } from './types/Transfer';
-import { loadTransferStore, saveTransferStore } from './services/transferStore';
+import { loadTransferStore as loadTransferStoreLocal, saveTransferStore as saveTransferStoreLocal } from './services/transferStore';
+import { loadTransferStore as loadTransferStoreSupabase, saveTransfers, savePairs, deleteTransferFromDB, deletePairFromDB, deleteTransfersByAccountFromDB } from './services/supabaseTransferService';
 import { matchTransfers } from './services/transferMatcher';
 import { updateLancamentoHistorico } from './services/importedAccountsService';
+import { supabase } from './services/supabaseClient';
 
 interface AppContextType {
   processedEntries: ProcessedEntry[];
@@ -29,12 +31,51 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [processedEntries, setProcessedEntries] = useState<ProcessedEntry[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<ContaBancariaMapping | null>(null);
-  const [transferStore, setTransferStore] = useState<TransferStore>(() => loadTransferStore());
+  const [transferStore, setTransferStore] = useState<TransferStore>({ pending: [], paired: [], exported: [] });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Salvar transferStore no localStorage sempre que mudar
+  // Verificar autenticação e carregar dados
   useEffect(() => {
-    saveTransferStore(transferStore);
-  }, [transferStore]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+      if (session) {
+        loadData();
+      } else {
+        // Se não autenticado, usar localStorage
+        setTransferStore(loadTransferStoreLocal());
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+      if (session) {
+        loadData();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const store = await loadTransferStoreSupabase();
+      setTransferStore(store);
+    } catch (error) {
+      console.error('Erro ao carregar dados do Supabase:', error);
+    }
+  };
+
+  // Salvar transferStore (Supabase ou localStorage)
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Salvar no Supabase
+      saveTransfers(transferStore.pending).catch(console.error);
+      savePairs(transferStore.paired).catch(console.error);
+    } else {
+      // Salvar no localStorage
+      saveTransferStoreLocal(transferStore);
+    }
+  }, [transferStore, isAuthenticated]);
 
   const addTransfers = (transfers: Transfer[]) => {
     console.log(`📥 AppContext.addTransfers: Adicionando ${transfers.length} transferências`);
@@ -143,8 +184,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const deleteTransfer = (transferId: string) => {
+  const deleteTransfer = async (transferId: string) => {
     console.log(`🗑️ Excluindo transferência: ${transferId}`);
+
+    if (isAuthenticated) {
+      try {
+        await deleteTransferFromDB(transferId);
+      } catch (error) {
+        console.error('Erro ao excluir transferência do Supabase:', error);
+      }
+    }
+
     setTransferStore(prev => {
       const newStore = {
         ...prev,
@@ -155,8 +205,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const deletePair = (pairId: string) => {
+  const deletePair = async (pairId: string) => {
     console.log(`🗑️ Excluindo par: ${pairId}`);
+
+    if (isAuthenticated) {
+      try {
+        await deletePairFromDB(pairId);
+      } catch (error) {
+        console.error('Erro ao excluir par do Supabase:', error);
+      }
+    }
+
     setTransferStore(prev => {
       const pair = prev.paired.find(p => p.id === pairId);
       if (!pair) return prev;
@@ -182,8 +241,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const deleteTransfersByAccount = (accountNumber: string) => {
+  const deleteTransfersByAccount = async (accountNumber: string) => {
     console.log(`🗑️ Excluindo todas as transferências da conta: ${accountNumber}`);
+
+    if (isAuthenticated) {
+      try {
+        await deleteTransfersByAccountFromDB(accountNumber);
+      } catch (error) {
+        console.error('Erro ao excluir transferências do Supabase:', error);
+      }
+    }
+
     setTransferStore(prev => {
       const pendingBefore = prev.pending.length;
       const pairedBefore = prev.paired.length;

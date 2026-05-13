@@ -1,11 +1,13 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Box, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, CircularProgress } from '@mui/material';
-import { Upload, Settings, Preview, SwapHoriz, AccountBalance, UploadFile, AttachMoney } from '@mui/icons-material';
+import { Box, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, CircularProgress, Button } from '@mui/material';
+import { Upload, Settings, Preview, SwapHoriz, AccountBalance, UploadFile, AttachMoney, Logout } from '@mui/icons-material';
 import { theme } from './theme';
 import { AppProvider } from './AppContext';
+import { supabase } from './services/supabaseClient';
+import LoginPage from './pages/LoginPage';
 
 // Lazy load das páginas para reduzir bundle inicial
 const ImportPage = lazy(() => import('./pages/ImportPage'));
@@ -23,6 +25,48 @@ const BalancetePage = lazy(() => import('./pages/BalancetePage'));
 const drawerWidth = 240;
 
 function App() {
+  const [session, setSession] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  if (loading) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
+  if (!session) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <LoginPage onLoginSuccess={() => {}} />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -34,9 +78,19 @@ function App() {
               sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
             >
               <Toolbar>
-                <Typography variant="h6" noWrap component="div">
+                <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                   Conversor Contábil Nasajon
                 </Typography>
+                <Typography variant="body2" sx={{ mr: 2 }}>
+                  {session?.user?.email}
+                </Typography>
+                <Button
+                  color="inherit"
+                  startIcon={<Logout />}
+                  onClick={handleLogout}
+                >
+                  Sair
+                </Button>
               </Toolbar>
             </AppBar>
 

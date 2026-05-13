@@ -30,7 +30,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import { Add, Edit, Delete, Upload, Download, ExpandMore, ChevronRight, CloudUpload } from '@mui/icons-material';
-import { mappingService } from '../services/mappingService';
+import { hybridMappingService } from '../services/hybridMappingService';
 import { ClassificacaoMapping, ContaBancariaMapping, PlanoContasItem } from '../types/Mapping';
 import BankIcon from '../components/BankIcon';
 import { formatAccountNumber } from '../utils/formatters';
@@ -39,15 +39,33 @@ import { useNavigate } from 'react-router-dom';
 export default function MappingPage() {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
-  const [classificacoes, setClassificacoes] = useState<ClassificacaoMapping[]>(
-    mappingService.getClassificacoes()
-  );
-  const [contas, setContas] = useState<ContaBancariaMapping[]>(
-    mappingService.getContasBancarias()
-  );
-  const [planoContas, setPlanoContas] = useState<PlanoContasItem[]>(
-    mappingService.getPlanoContas()
-  );
+  const [classificacoes, setClassificacoes] = useState<ClassificacaoMapping[]>([]);
+  const [contas, setContas] = useState<ContaBancariaMapping[]>([]);
+  const [planoContas, setPlanoContas] = useState<PlanoContasItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Carregar dados ao montar o componente
+  React.useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [loadedClassificacoes, loadedContas, loadedPlano] = await Promise.all([
+        hybridMappingService.getClassificacoes(),
+        hybridMappingService.getContasBancarias(),
+        Promise.resolve(hybridMappingService.getPlanoContas())
+      ]);
+      setClassificacoes(loadedClassificacoes);
+      setContas(loadedContas);
+      setPlanoContas(loadedPlano);
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const [openDialog, setOpenDialog] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [dialogType, setDialogType] = useState<'classificacao' | 'conta' | 'plano'>('classificacao');
@@ -79,71 +97,85 @@ export default function MappingPage() {
     setOpenDialog(true);
   };
 
-  const handleDelete = (id: string, type: 'classificacao' | 'conta' | 'plano') => {
+  const handleDelete = async (id: string, type: 'classificacao' | 'conta' | 'plano') => {
     if (window.confirm('Tem certeza que deseja excluir este item?')) {
-      if (type === 'classificacao') {
-        mappingService.deleteClassificacao(id);
-        setClassificacoes(mappingService.getClassificacoes());
-      } else if (type === 'conta') {
-        mappingService.deleteContaBancaria(id);
-        setContas(mappingService.getContasBancarias());
-      } else {
-        mappingService.deletePlanoContasItem(id);
-        setPlanoContas(mappingService.getPlanoContas());
+      try {
+        if (type === 'classificacao') {
+          await hybridMappingService.deleteClassificacao(id);
+          setClassificacoes(await hybridMappingService.getClassificacoes());
+        } else if (type === 'conta') {
+          await hybridMappingService.deleteContaBancaria(id);
+          setContas(await hybridMappingService.getContasBancarias());
+        } else {
+          hybridMappingService.deletePlanoContasItem(id);
+          setPlanoContas(hybridMappingService.getPlanoContas());
+        }
+      } catch (error) {
+        console.error('Erro ao excluir:', error);
+        alert('Erro ao excluir item');
       }
     }
   };
 
-  const handleSave = (formData: any) => {
-    if (dialogType === 'classificacao') {
-      if (editingItem) {
-        mappingService.updateClassificacao(editingItem.id, formData);
+  const handleSave = async (formData: any) => {
+    try {
+      if (dialogType === 'classificacao') {
+        if (editingItem) {
+          await hybridMappingService.updateClassificacao(editingItem.id, formData);
+        } else {
+          await hybridMappingService.addClassificacao(formData);
+        }
+        setClassificacoes(await hybridMappingService.getClassificacoes());
+      } else if (dialogType === 'conta') {
+        if (editingItem) {
+          await hybridMappingService.updateContaBancaria(editingItem.id, formData);
+        } else {
+          await hybridMappingService.addContaBancaria(formData);
+        }
+        setContas(await hybridMappingService.getContasBancarias());
       } else {
-        mappingService.addClassificacao(formData);
+        if (editingItem) {
+          hybridMappingService.updatePlanoContasItem(editingItem.id, formData);
+        } else {
+          hybridMappingService.addPlanoContasItem(formData);
+        }
+        setPlanoContas(hybridMappingService.getPlanoContas());
       }
-      setClassificacoes(mappingService.getClassificacoes());
-    } else if (dialogType === 'conta') {
-      if (editingItem) {
-        mappingService.updateContaBancaria(editingItem.id, formData);
-      } else {
-        mappingService.addContaBancaria(formData);
-      }
-      setContas(mappingService.getContasBancarias());
-    } else {
-      if (editingItem) {
-        mappingService.updatePlanoContasItem(editingItem.id, formData);
-      } else {
-        mappingService.addPlanoContasItem(formData);
-      }
-      setPlanoContas(mappingService.getPlanoContas());
+      setOpenDialog(false);
+    } catch (error) {
+      console.error('Erro ao salvar:', error);
+      alert('Erro ao salvar item');
     }
-    setOpenDialog(false);
   };
 
-  const handleExport = () => {
-    const data = mappingService.exportMappings();
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'mapeamentos-completo.json';
-    link.click();
-    URL.revokeObjectURL(url);
+  const handleExport = async () => {
+    try {
+      const data = await hybridMappingService.exportMappings();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'mapeamentos-completo.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Erro ao exportar:', error);
+      alert('Erro ao exportar dados');
+    }
   };
 
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
           const data = e.target?.result as string;
-          mappingService.importMappings(data);
-          setClassificacoes(mappingService.getClassificacoes());
-          setContas(mappingService.getContasBancarias());
-          setPlanoContas(mappingService.getPlanoContas());
+          await hybridMappingService.importMappings(data);
+          await loadData();
           alert('Dados importados com sucesso!');
         } catch (error) {
+          console.error('Erro ao importar:', error);
           alert('Erro ao importar arquivo');
         }
       };
