@@ -26,7 +26,7 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { Delete, PersonAdd, ContentCopy } from '@mui/icons-material';
+import { Delete, PersonAdd, ContentCopy, Edit } from '@mui/icons-material';
 import { supabase } from '../services/supabaseClient';
 
 interface Member {
