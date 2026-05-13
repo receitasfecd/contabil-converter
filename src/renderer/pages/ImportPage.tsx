@@ -22,6 +22,13 @@ import { hybridMappingService } from '../services/hybridMappingService';
 import { addOrUpdateImportedAccount } from '../services/importedAccountsService';
 import { useAppContext } from '../AppContext';
 
+const formatAccountNumber = (numeroConta: string) => {
+  if (!numeroConta || numeroConta.length < 2) return numeroConta;
+  const digits = numeroConta.replace(/\D/g, '');
+  if (digits.length < 2) return numeroConta;
+  return `${digits.slice(0, -1)}-${digits.slice(-1)}`;
+};
+
 export default function ImportPage() {
   const navigate = useNavigate();
   const { addTransfersAndPair } = useAppContext();
@@ -263,7 +270,7 @@ export default function ImportPage() {
                 )}
                 {contasFiltradas.map((conta) => (
                   <MenuItem key={conta.id} value={conta.id}>
-                    {conta.numeroConta} - {conta.codigoContabil}
+                    {formatAccountNumber(conta.numeroConta)} - {conta.codigoContabil}
                     {conta.tipoAplicacao && ` (${conta.tipoAplicacao})`}
                     {conta.descricao && ` - ${conta.descricao}`}
                   </MenuItem>

@@ -48,6 +48,13 @@ interface FileToImport {
   transferenciasCount?: number;
 }
 
+const formatAccountNumber = (numeroConta: string) => {
+  if (!numeroConta || numeroConta.length < 2) return numeroConta;
+  const digits = numeroConta.replace(/\D/g, '');
+  if (digits.length < 2) return numeroConta;
+  return `${digits.slice(0, -1)}-${digits.slice(-1)}`;
+};
+
 export default function BatchImportPage() {
   const navigate = useNavigate();
   const { addTransfersAndPair } = useAppContext();
@@ -332,7 +339,7 @@ export default function BatchImportPage() {
                     <TableCell>
                       {fileItem.suggestedAccount ? (
                         <Chip
-                          label={`${fileItem.suggestedAccount.numeroConta} ${fileItem.suggestedAccount.tipoAplicacao || ''}`}
+                          label={`${formatAccountNumber(fileItem.suggestedAccount.numeroConta)} ${fileItem.suggestedAccount.tipoAplicacao || ''}`}
                           color="info"
                           size="small"
                         />
@@ -354,7 +361,7 @@ export default function BatchImportPage() {
                             const nomeRubrica = getContaName(conta.codigoContabil);
                             return (
                               <MenuItem key={conta.id} value={conta.id}>
-                                {conta.numeroConta} - {conta.codigoContabil}
+                                {formatAccountNumber(conta.numeroConta)} - {conta.codigoContabil}
                                 {nomeRubrica && ` - ${nomeRubrica}`}
                                 {conta.tipoAplicacao && ` (${conta.tipoAplicacao})`}
                               </MenuItem>
