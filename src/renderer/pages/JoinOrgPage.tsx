@@ -146,31 +146,51 @@ export default function JoinOrgPage() {
 
       if (signUpError) throw signUpError;
 
-      console.log('✅ Conta criada:', signUpData.user?.id);
-
-      // Adicionar à organização
-      const { data: memberData, error: joinError } = await supabase
-        .from('organization_members')
-        .insert({
-          organization_id: organization!.id,
-          user_id: signUpData.user!.id,
-          role: 'member',
-        })
-        .select();
-
-      console.log('Tentando adicionar à org:', {
-        organization_id: organization!.id,
-        user_id: signUpData.user!.id,
-        result: memberData,
-        error: joinError
-      });
-
-      if (joinError) {
-        console.error('❌ Erro ao adicionar à organização:', joinError);
-        throw joinError;
+      if (!signUpData.user) {
+        throw new Error('Erro ao criar usuário');
       }
 
-      console.log('✅ Adicionado à organização:', memberData);
+      console.log('✅ Conta criada:', signUpData.user.id);
+
+      // Aguardar um pouco para garantir que a sessão foi estabelecida
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Tentar adicionar à organização com retry
+      let attempts = 0;
+      let success = false;
+      let lastError = null;
+
+      while (attempts < 3 && !success) {
+        attempts++;
+        console.log(`Tentativa ${attempts} de adicionar à organização...`);
+
+        const { data: memberData, error: joinError } = await supabase
+          .from('organization_members')
+          .insert({
+            organization_id: organization!.id,
+            user_id: signUpData.user.id,
+            role: 'member',
+          })
+          .select();
+
+        if (!joinError) {
+          console.log('✅ Adicionado à organização:', memberData);
+          success = true;
+        } else {
+          console.error(`❌ Tentativa ${attempts} falhou:`, joinError);
+          lastError = joinError;
+
+          // Aguardar antes de tentar novamente
+          if (attempts < 3) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+      }
+
+      if (!success) {
+        console.error('❌ Falhou após 3 tentativas:', lastError);
+        throw new Error('Conta criada, mas não foi possível adicionar à organização. Entre em contato com o administrador.');
+      }
 
       setSuccess('Conta criada! Bem-vindo à organização!');
       setTimeout(() => navigate('/'), 2000);
