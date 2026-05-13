@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, CircularProgress, Button } from '@mui/material';
-import { Upload, Settings, Preview, SwapHoriz, AccountBalance, UploadFile, AttachMoney, Logout, Business } from '@mui/icons-material';
+import { Upload, Settings, Preview, SwapHoriz, AccountBalance, UploadFile, AttachMoney, Logout, Business, AccountBalanceWallet } from '@mui/icons-material';
 import { theme } from './theme';
 import { AppProvider } from './AppContext';
 import { supabase } from './services/supabaseClient';
@@ -24,6 +24,8 @@ const BalancetePage = lazy(() => import('./pages/BalancetePage'));
 const OrganizationPage = lazy(() => import('./pages/OrganizationPage'));
 const AcceptInvitePage = lazy(() => import('./pages/AcceptInvitePage'));
 const JoinOrgPage = lazy(() => import('./pages/JoinOrgPage'));
+const FinanceiroPage = lazy(() => import('./pages/FinanceiroPage'));
+const FinanceiroDetailPage = lazy(() => import('./pages/FinanceiroDetailPage'));
 
 const drawerWidth = 240;
 
@@ -139,6 +141,15 @@ function App() {
                   </ListItem>
 
                   <ListItem disablePadding>
+                    <ListItemButton component="a" href="/financeiro">
+                      <ListItemIcon>
+                        <AccountBalanceWallet />
+                      </ListItemIcon>
+                      <ListItemText primary="Financeiro" />
+                    </ListItemButton>
+                  </ListItem>
+
+                  <ListItem disablePadding>
                     <ListItemButton component="a" href="/mapeamento">
                       <ListItemIcon>
                         <Settings />
@@ -216,6 +227,8 @@ function App() {
                   <Route path="/importar-nasajon" element={<ImportContasNasajonPage />} />
                   <Route path="/contas" element={<ImportedAccountsPage />} />
                   <Route path="/contas/:accountId" element={<AccountDetailPage />} />
+                  <Route path="/financeiro" element={<FinanceiroPage />} />
+                  <Route path="/financeiro/:accountId" element={<FinanceiroDetailPage />} />
                   <Route path="/mapeamento" element={<MappingPage />} />
                   <Route path="/transferencias" element={<TransfersPage />} />
                   <Route path="/taxas-administracao" element={<TaxasAdministracaoPage />} />
