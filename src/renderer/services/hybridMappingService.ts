@@ -122,8 +122,16 @@ class HybridMappingService {
   async importMappings(data: string): Promise<void> {
     const parsed = JSON.parse(data);
     if (await this.isAuthenticated()) {
-      if (parsed.contas) await saveContasBancarias(parsed.contas);
-      if (parsed.classificacoes) await saveClassificacoes(parsed.classificacoes);
+      if (parsed.contas || parsed.contasBancarias) {
+        await saveContasBancarias(parsed.contas || parsed.contasBancarias);
+      }
+      if (parsed.classificacoes) {
+        await saveClassificacoes(parsed.classificacoes);
+      }
+      if (parsed.planoContas) {
+        // Plano de contas ainda usa localStorage
+        localMappingService.importMappings(JSON.stringify({ planoContas: parsed.planoContas }));
+      }
     } else {
       localMappingService.importMappings(data);
     }
