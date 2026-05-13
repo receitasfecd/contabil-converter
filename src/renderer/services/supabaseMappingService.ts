@@ -111,3 +111,51 @@ export async function saveClassificacoes(classificacoes: ClassificacaoMapping[])
     throw error;
   }
 }
+
+// Plano de Contas
+export async function loadPlanoContas(): Promise<any[]> {
+  const { data, error } = await supabase
+    .from('plano_contas')
+    .select('*')
+    .order('codigo', { ascending: true });
+
+  if (error) {
+    console.error('Erro ao carregar plano de contas:', error);
+    return [];
+  }
+
+  return data.map(row => ({
+    id: row.id,
+    codigo: row.codigo,
+    descricao: row.descricao,
+    tipo: row.tipo,
+  }));
+}
+
+export async function savePlanoContas(planoContas: any[]): Promise<void> {
+  const orgId = await getOrganizationId();
+  if (!orgId) throw new Error('Organização não encontrada');
+
+  // Deletar todos os itens existentes da organização
+  await supabase
+    .from('plano_contas')
+    .delete()
+    .eq('organization_id', orgId);
+
+  // Inserir novos itens
+  const rows = planoContas.map(item => ({
+    organization_id: orgId,
+    codigo: item.codigo,
+    descricao: item.descricao,
+    tipo: item.tipo,
+  }));
+
+  const { error } = await supabase
+    .from('plano_contas')
+    .insert(rows);
+
+  if (error) {
+    console.error('Erro ao salvar plano de contas:', error);
+    throw error;
+  }
+}

@@ -1,5 +1,5 @@
 import { mappingService as localMappingService } from './mappingService';
-import { loadContasBancarias, saveContasBancarias, loadClassificacoes, saveClassificacoes } from './supabaseMappingService';
+import { loadContasBancarias, saveContasBancarias, loadClassificacoes, saveClassificacoes, loadPlanoContas, savePlanoContas } from './supabaseMappingService';
 import { supabase } from './supabaseClient';
 import { ContaBancariaMapping, ClassificacaoMapping } from '../types/Mapping';
 
@@ -91,21 +91,45 @@ class HybridMappingService {
     }
   }
 
-  // Plano de Contas (mantém localStorage por enquanto)
-  getPlanoContas() {
+  // Plano de Contas
+  async getPlanoContas() {
+    if (await this.isAuthenticated()) {
+      return await loadPlanoContas();
+    }
     return localMappingService.getPlanoContas();
   }
 
-  addPlanoContasItem(item: any) {
-    return localMappingService.addPlanoContasItem(item);
+  async addPlanoContasItem(item: any) {
+    if (await this.isAuthenticated()) {
+      const planoContas = await loadPlanoContas();
+      planoContas.push(item);
+      await savePlanoContas(planoContas);
+    } else {
+      localMappingService.addPlanoContasItem(item);
+    }
   }
 
-  updatePlanoContasItem(id: string, item: any) {
-    return localMappingService.updatePlanoContasItem(id, item);
+  async updatePlanoContasItem(id: string, item: any) {
+    if (await this.isAuthenticated()) {
+      const planoContas = await loadPlanoContas();
+      const index = planoContas.findIndex((p: any) => p.id === id);
+      if (index !== -1) {
+        planoContas[index] = { ...planoContas[index], ...item };
+        await savePlanoContas(planoContas);
+      }
+    } else {
+      localMappingService.updatePlanoContasItem(id, item);
+    }
   }
 
-  deletePlanoContasItem(id: string) {
-    return localMappingService.deletePlanoContasItem(id);
+  async deletePlanoContasItem(id: string) {
+    if (await this.isAuthenticated()) {
+      const planoContas = await loadPlanoContas();
+      const filtered = planoContas.filter((p: any) => p.id !== id);
+      await savePlanoContas(filtered);
+    } else {
+      localMappingService.deletePlanoContasItem(id);
+    }
   }
 
   // Export/Import
@@ -113,7 +137,7 @@ class HybridMappingService {
     if (await this.isAuthenticated()) {
       const contas = await loadContasBancarias();
       const classificacoes = await loadClassificacoes();
-      const planoContas = localMappingService.getPlanoContas();
+      const planoContas = await loadPlanoContas();
       return JSON.stringify({ contas, classificacoes, planoContas }, null, 2);
     }
     return localMappingService.exportMappings();
@@ -122,15 +146,35 @@ class HybridMappingService {
   async importMappings(data: string): Promise<void> {
     const parsed = JSON.parse(data);
     if (await this.isAuthenticated()) {
+      // Contas bancárias
       if (parsed.contas || parsed.contasBancarias) {
-        await saveContasBancarias(parsed.contas || parsed.contasBancarias);
+        const contas = (parsed.contas || parsed.contasBancarias).map((c: any) => ({
+          numeroConta: c.numeroConta,
+          codigoContabil: c.codigoContabil,
+          tipoAplicacao: c.tipoAplicacao,
+          descricao: c.descricao,
+        }));
+        await saveContasBancarias(contas);
       }
+
+      // Classificações
       if (parsed.classificacoes) {
-        await saveClassificacoes(parsed.classificacoes);
+        const classificacoes = parsed.classificacoes.map((c: any) => ({
+          classificacaoFinanceira: c.classificacaoFinanceira,
+          classificacaoContabil: c.classificacaoContabil,
+          descricao: c.descricao,
+        }));
+        await saveClassificacoes(classificacoes);
       }
+
+      // Plano de contas
       if (parsed.planoContas) {
-        // Plano de contas ainda usa localStorage
-        localMappingService.importMappings(JSON.stringify({ planoContas: parsed.planoContas }));
+        const planoContas = parsed.planoContas.map((p: any) => ({
+          codigo: p.codigo,
+          descricao: p.descricao,
+          tipo: p.tipo,
+        }));
+        await savePlanoContas(planoContas);
       }
     } else {
       localMappingService.importMappings(data);
