@@ -26,6 +26,9 @@ import {
   FormControl,
   InputLabel,
   Stack,
+  Checkbox,
+  Grid,
+  Divider,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -33,6 +36,10 @@ import {
   Add as AddIcon,
   Download as DownloadIcon,
   ArrowBack as ArrowBackIcon,
+  Search as SearchIcon,
+  FindReplace as FindReplaceIcon,
+  DeleteSweep as DeleteSweepIcon,
+  FilterList as FilterListIcon,
 } from '@mui/icons-material';
 import { loadImportedAccounts, saveImportedAccounts } from '../services/importedAccountsService';
 import { loadTransferStore, saveTransferStore } from '../services/transferStore';
@@ -61,13 +68,94 @@ export default function FinanceiroPage() {
   const [accounts, setAccounts] = useState<ImportedAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<ImportedAccount | null>(null);
   const [combinedEntries, setCombinedEntries] = useState<CombinedEntry[]>([]);
+  const [filteredEntries, setFilteredEntries] = useState<CombinedEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<CombinedEntry | null>(null);
 
+  // Seleção múltipla
+  const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
+
+  // Filtros
+  const [filterDateStart, setFilterDateStart] = useState('');
+  const [filterDateEnd, setFilterDateEnd] = useState('');
+  const [filterTipo, setFilterTipo] = useState<string>('TODOS');
+  const [filterGrupo, setFilterGrupo] = useState<string>('TODOS');
+  const [filterSearch, setFilterSearch] = useState('');
+
+  // Ordenação
+  const [sortBy, setSortBy] = useState<'data' | 'valor' | 'tipo'>('data');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  // Dialogs
+  const [bulkEditDialogOpen, setBulkEditDialogOpen] = useState(false);
+  const [findReplaceDialogOpen, setFindReplaceDialogOpen] = useState(false);
+  const [findText, setFindText] = useState('');
+  const [replaceText, setReplaceText] = useState('');
+
   useEffect(() => {
     loadData();
   }, []);
+
+  // Aplicar filtros e ordenação
+  useEffect(() => {
+    if (!selectedAccount) return;
+
+    let filtered = [...combinedEntries];
+
+    // Filtro por data
+    if (filterDateStart) {
+      filtered = filtered.filter(e => {
+        const entryDate = parseDate(e.data);
+        const startDate = new Date(filterDateStart);
+        return entryDate >= startDate;
+      });
+    }
+    if (filterDateEnd) {
+      filtered = filtered.filter(e => {
+        const entryDate = parseDate(e.data);
+        const endDate = new Date(filterDateEnd);
+        return entryDate <= endDate;
+      });
+    }
+
+    // Filtro por tipo
+    if (filterTipo !== 'TODOS') {
+      filtered = filtered.filter(e => e.tipo === filterTipo);
+    }
+
+    // Filtro por grupo
+    if (filterGrupo !== 'TODOS') {
+      filtered = filtered.filter(e => e.grupo === filterGrupo);
+    }
+
+    // Filtro por busca (histórico, débito, crédito)
+    if (filterSearch) {
+      const search = filterSearch.toLowerCase();
+      filtered = filtered.filter(e =>
+        e.historico.toLowerCase().includes(search) ||
+        e.debito.toLowerCase().includes(search) ||
+        e.credito.toLowerCase().includes(search)
+      );
+    }
+
+    // Ordenação
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      if (sortBy === 'data') {
+        comparison = parseDate(a.data).getTime() - parseDate(b.data).getTime();
+      } else if (sortBy === 'valor') {
+        const valorA = parseFloat(a.valor.replace(',', '.'));
+        const valorB = parseFloat(b.valor.replace(',', '.'));
+        comparison = valorA - valorB;
+      } else if (sortBy === 'tipo') {
+        comparison = a.tipo.localeCompare(b.tipo);
+      }
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    setFilteredEntries(filtered);
+  }, [combinedEntries, filterDateStart, filterDateEnd, filterTipo, filterGrupo, filterSearch, sortBy, sortOrder, selectedAccount]);
 
   const loadData = () => {
     try {
@@ -303,6 +391,108 @@ export default function FinanceiroPage() {
     downloadCSV(csv, filename);
   };
 
+  // Seleção múltipla
+  const handleSelectAll = () => {
+    if (selectedEntries.length === filteredEntries.length) {
+      setSelectedEntries([]);
+    } else {
+      setSelectedEntries(filteredEntries.map(e => e.id));
+    }
+  };
+
+  const handleSelectEntry = (id: string) => {
+    if (selectedEntries.includes(id)) {
+      setSelectedEntries(selectedEntries.filter(eid => eid !== id));
+    } else {
+      setSelectedEntries([...selectedEntries, id]);
+    }
+  };
+
+  // Exclusão em massa
+  const handleBulkDelete = () => {
+    if (selectedEntries.length === 0) {
+      alert('Selecione pelo menos um lançamento');
+      return;
+    }
+    if (!confirm(`Deseja realmente excluir ${selectedEntries.length} lançamento(s)?`)) return;
+    if (!selectedAccount) return;
+
+    const store = loadImportedAccounts();
+    const transferStore = loadTransferStore();
+    const accountIndex = store.accounts.findIndex(a => a.id === selectedAccount.id);
+
+    selectedEntries.forEach(entryId => {
+      const entry = combinedEntries.find(e => e.id === entryId);
+      if (!entry) return;
+
+      if (entry.tipo === 'FINANCEIRO' && accountIndex >= 0) {
+        store.accounts[accountIndex].lancamentos = store.accounts[accountIndex].lancamentos.filter(
+          l => l.id !== entryId
+        );
+      } else if (entry.tipo === 'TRANSFERENCIA') {
+        transferStore.pending = transferStore.pending.filter(t => t.id !== entryId);
+        transferStore.paired = transferStore.paired.filter(p =>
+          p.outTransfer.id !== entryId && p.inTransfer.id !== entryId
+        );
+      }
+    });
+
+    saveImportedAccounts(store);
+    saveTransferStore(transferStore);
+    setSelectedEntries([]);
+    loadAccountDetails(selectedAccount);
+  };
+
+  // Find & Replace
+  const handleFindReplace = () => {
+    if (!findText) {
+      alert('Digite o texto a ser encontrado');
+      return;
+    }
+    if (!selectedAccount) return;
+
+    let replacedCount = 0;
+    const store = loadImportedAccounts();
+    const transferStore = loadTransferStore();
+    const accountIndex = store.accounts.findIndex(a => a.id === selectedAccount.id);
+
+    if (accountIndex >= 0) {
+      store.accounts[accountIndex].lancamentos.forEach(lanc => {
+        if (lanc.historico.includes(findText)) {
+          lanc.historico = lanc.historico.replace(new RegExp(findText, 'g'), replaceText);
+          replacedCount++;
+        }
+      });
+    }
+
+    // Atualizar transferências
+    transferStore.pending.forEach(t => {
+      if (t.accountNumber === selectedAccount.contaBancaria.numeroConta && t.historico.includes(findText)) {
+        t.historico = t.historico.replace(new RegExp(findText, 'g'), replaceText);
+        replacedCount++;
+      }
+    });
+
+    transferStore.paired.forEach(p => {
+      if (p.outTransfer.accountNumber === selectedAccount.contaBancaria.numeroConta && p.outTransfer.historico.includes(findText)) {
+        p.outTransfer.historico = p.outTransfer.historico.replace(new RegExp(findText, 'g'), replaceText);
+        replacedCount++;
+      }
+      if (p.inTransfer.accountNumber === selectedAccount.contaBancaria.numeroConta && p.inTransfer.historico.includes(findText)) {
+        p.inTransfer.historico = p.inTransfer.historico.replace(new RegExp(findText, 'g'), replaceText);
+        replacedCount++;
+      }
+    });
+
+    saveImportedAccounts(store);
+    saveTransferStore(transferStore);
+    setFindReplaceDialogOpen(false);
+    setFindText('');
+    setReplaceText('');
+    alert(`${replacedCount} ocorrência(s) substituída(s)`);
+    loadAccountDetails(selectedAccount);
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
@@ -395,13 +585,157 @@ export default function FinanceiroPage() {
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Todos os Lançamentos ({combinedEntries.length})
+            Todos os Lançamentos ({filteredEntries.length} de {combinedEntries.length})
           </Typography>
+
+          {/* Filtros */}
+          <Card variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
+            <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FilterListIcon fontSize="small" />
+              Filtros e Ordenação
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Data Início"
+                  type="date"
+                  value={filterDateStart}
+                  onChange={(e) => setFilterDateStart(e.target.value)}
+                  fullWidth
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Data Fim"
+                  type="date"
+                  value={filterDateEnd}
+                  onChange={(e) => setFilterDateEnd(e.target.value)}
+                  fullWidth
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Tipo</InputLabel>
+                  <Select
+                    value={filterTipo}
+                    onChange={(e) => setFilterTipo(e.target.value)}
+                    label="Tipo"
+                  >
+                    <MenuItem value="TODOS">Todos</MenuItem>
+                    <MenuItem value="FINANCEIRO">Financeiro</MenuItem>
+                    <MenuItem value="TRANSFERENCIA">Transferência</MenuItem>
+                    <MenuItem value="TAXA">Taxa</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Grupo</InputLabel>
+                  <Select
+                    value={filterGrupo}
+                    onChange={(e) => setFilterGrupo(e.target.value)}
+                    label="Grupo"
+                  >
+                    <MenuItem value="TODOS">Todos</MenuItem>
+                    <MenuItem value="Projeto">Projeto</MenuItem>
+                    <MenuItem value="Grants">Grants</MenuItem>
+                    <MenuItem value="Importação">Importação</MenuItem>
+                    <MenuItem value="TEP">TEP</MenuItem>
+                    <MenuItem value="ADM">ADM</MenuItem>
+                    <MenuItem value="Transferência">Transferência</MenuItem>
+                    <MenuItem value="Taxa Administração">Taxa Administração</MenuItem>
+                    <MenuItem value="Outros">Outros</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Buscar (histórico, débito, crédito)"
+                  value={filterSearch}
+                  onChange={(e) => setFilterSearch(e.target.value)}
+                  fullWidth
+                  size="small"
+                  InputProps={{
+                    startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Ordenar por</InputLabel>
+                  <Select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    label="Ordenar por"
+                  >
+                    <MenuItem value="data">Data</MenuItem>
+                    <MenuItem value="valor">Valor</MenuItem>
+                    <MenuItem value="tipo">Tipo</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Ordem</InputLabel>
+                  <Select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as any)}
+                    label="Ordem"
+                  >
+                    <MenuItem value="asc">Crescente</MenuItem>
+                    <MenuItem value="desc">Decrescente</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Card>
+
+          {/* Ações em Massa */}
+          {selectedEntries.length > 0 && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="body2">
+                  {selectedEntries.length} lançamento(s) selecionado(s)
+                </Typography>
+                <Button
+                  size="small"
+                  color="error"
+                  startIcon={<DeleteSweepIcon />}
+                  onClick={handleBulkDelete}
+                >
+                  Excluir Selecionados
+                </Button>
+              </Stack>
+            </Alert>
+          )}
+
+          {/* Botões de Ação */}
+          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+            <Button
+              size="small"
+              startIcon={<FindReplaceIcon />}
+              onClick={() => setFindReplaceDialogOpen(true)}
+              variant="outlined"
+            >
+              Localizar e Substituir
+            </Button>
+          </Stack>
 
           <TableContainer component={Paper} variant="outlined" sx={{ mt: 2 }}>
             <Table size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedEntries.length === filteredEntries.length && filteredEntries.length > 0}
+                      indeterminate={selectedEntries.length > 0 && selectedEntries.length < filteredEntries.length}
+                      onChange={handleSelectAll}
+                    />
+                  </TableCell>
                   <TableCell>Data</TableCell>
                   <TableCell>Débito</TableCell>
                   <TableCell>Crédito</TableCell>
@@ -415,8 +749,14 @@ export default function FinanceiroPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {combinedEntries.map((entry, index) => (
+                {filteredEntries.map((entry, index) => (
                   <TableRow key={index}>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedEntries.includes(entry.id)}
+                        onChange={() => handleSelectEntry(entry.id)}
+                      />
+                    </TableCell>
                     <TableCell>{entry.data}</TableCell>
                     <TableCell>{entry.debito || '-'}</TableCell>
                     <TableCell>{entry.credito || '-'}</TableCell>
@@ -527,6 +867,38 @@ export default function FinanceiroPage() {
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
           <Button onClick={handleSaveEdit} variant="contained">Salvar</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog de Localizar e Substituir */}
+      <Dialog open={findReplaceDialogOpen} onClose={() => setFindReplaceDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Localizar e Substituir no Histórico</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 2 }}>
+            <TextField
+              label="Localizar"
+              value={findText}
+              onChange={(e) => setFindText(e.target.value)}
+              fullWidth
+              placeholder="Digite o texto a ser encontrado"
+            />
+            <TextField
+              label="Substituir por"
+              value={replaceText}
+              onChange={(e) => setReplaceText(e.target.value)}
+              fullWidth
+              placeholder="Digite o texto de substituição"
+            />
+            <Alert severity="info">
+              Esta operação irá substituir todas as ocorrências do texto no histórico dos lançamentos desta conta.
+            </Alert>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFindReplaceDialogOpen(false)}>Cancelar</Button>
+          <Button onClick={handleFindReplace} variant="contained" color="primary">
+            Substituir Tudo
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
