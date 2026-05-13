@@ -146,20 +146,36 @@ export default function JoinOrgPage() {
 
       if (signUpError) throw signUpError;
 
+      console.log('✅ Conta criada:', signUpData.user?.id);
+
       // Adicionar à organização
-      const { error: joinError } = await supabase
+      const { data: memberData, error: joinError } = await supabase
         .from('organization_members')
         .insert({
           organization_id: organization!.id,
           user_id: signUpData.user!.id,
           role: 'member',
-        });
+        })
+        .select();
 
-      if (joinError) throw joinError;
+      console.log('Tentando adicionar à org:', {
+        organization_id: organization!.id,
+        user_id: signUpData.user!.id,
+        result: memberData,
+        error: joinError
+      });
+
+      if (joinError) {
+        console.error('❌ Erro ao adicionar à organização:', joinError);
+        throw joinError;
+      }
+
+      console.log('✅ Adicionado à organização:', memberData);
 
       setSuccess('Conta criada! Bem-vindo à organização!');
       setTimeout(() => navigate('/'), 2000);
     } catch (err: any) {
+      console.error('❌ Erro completo:', err);
       setError(err.message);
     }
   };
