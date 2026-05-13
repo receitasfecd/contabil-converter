@@ -31,8 +31,21 @@ export default function ImportPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [contasBancarias, setContasBancarias] = useState<any[]>([]);
 
-  const contasBancarias = mappingService.getContasBancarias();
+  React.useEffect(() => {
+    loadContasBancarias();
+  }, []);
+
+  const loadContasBancarias = async () => {
+    try {
+      const contas = await mappingService.getContasBancarias();
+      setContasBancarias(contas);
+      console.log('Contas bancárias carregadas:', contas.length);
+    } catch (error) {
+      console.error('Erro ao carregar contas bancárias:', error);
+    }
+  };
 
   const contasFiltradas = useMemo(() => {
     if (!searchTerm.trim()) {
