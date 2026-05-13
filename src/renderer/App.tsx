@@ -225,12 +225,6 @@ function App() {
                   <Route path="/aceitar-convite" element={<AcceptInvitePage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
-                  <Route path="/taxas-administracao" element={<TaxasAdministracaoPage />} />
-                  <Route path="/taxas-config" element={<TaxaConfigPage />} />
-                  <Route path="/preview" element={<PreviewPage />} />
-                  <Route path="/balancete" element={<BalancetePage />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
               </Suspense>
             </Box>
           </Box>
