@@ -54,19 +54,23 @@ export default function BatchImportPage() {
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [planoContas, setPlanoContas] = useState<any[]>([]);
-
-  const contasBancarias = mappingService.getContasBancarias();
+  const [contasBancarias, setContasBancarias] = useState<ContaBancariaMapping[]>([]);
 
   React.useEffect(() => {
-    loadPlanoContas();
+    loadData();
   }, []);
 
-  const loadPlanoContas = async () => {
+  const loadData = async () => {
     try {
-      const plano = await mappingService.getPlanoContas();
+      const [plano, contas] = await Promise.all([
+        mappingService.getPlanoContas(),
+        mappingService.getContasBancarias()
+      ]);
       setPlanoContas(plano);
+      setContasBancarias(contas);
+      console.log('Dados carregados:', { planoContas: plano.length, contasBancarias: contas.length });
     } catch (error) {
-      console.error('Erro ao carregar plano de contas:', error);
+      console.error('Erro ao carregar dados:', error);
     }
   };
 
