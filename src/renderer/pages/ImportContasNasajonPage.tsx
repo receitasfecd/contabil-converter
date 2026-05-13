@@ -17,6 +17,7 @@ import {
   Alert,
   Stack,
   LinearProgress,
+  Autocomplete,
 } from '@mui/material';
 import { Upload, Save, ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +40,7 @@ export default function ImportContasNasajonPage() {
   const [contas, setContas] = useState<ContaNasajon[]>([]);
   const [loading, setLoading] = useState(false);
   const [imported, setImported] = useState(false);
+  const [planoContas, setPlanoContas] = useState<any[]>([]);
 
   useEffect(() => {
     // Carregar arquivo JSON gerado
@@ -46,7 +48,15 @@ export default function ImportContasNasajonPage() {
       .then(res => res.json())
       .then(data => setContas(data))
       .catch(err => console.error('Erro ao carregar contas:', err));
+
+    // Carregar plano de contas
+    loadPlanoContas();
   }, []);
+
+  const loadPlanoContas = async () => {
+    const plano = await mappingService.getPlanoContas();
+    setPlanoContas(plano);
+  };
 
   const handleCodigoChange = (index: number, newCodigo: string) => {
     const updated = [...contas];
@@ -222,11 +232,31 @@ export default function ImportContasNasajonPage() {
                       />
                     </TableCell>
                     <TableCell>
-                      <TextField
+                      <Autocomplete
                         size="small"
-                        value={conta.codigoContabil}
-                        onChange={(e) => handleCodigoChange(index, e.target.value)}
-                        sx={{ width: 120 }}
+                        options={planoContas}
+                        getOptionLabel={(option) => `${option.codigo} - ${option.nome}`}
+                        value={planoContas.find(p => p.codigo === conta.codigoContabil) || null}
+                        onChange={(_, newValue) => handleCodigoChange(index, newValue?.codigo || '')}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Selecione..."
+                            sx={{ width: 300 }}
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props} key={option.id}>
+                            <Box>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                {option.codigo}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {option.nome}
+                              </Typography>
+                            </Box>
+                          </li>
+                        )}
                       />
                     </TableCell>
                     <TableCell>
