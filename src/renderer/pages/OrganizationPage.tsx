@@ -60,6 +60,8 @@ export default function OrganizationPage() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'admin' | 'member'>('member');
+  const [editOrgDialogOpen, setEditOrgDialogOpen] = useState(false);
+  const [newOrgName, setNewOrgName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(true);
@@ -208,6 +210,33 @@ export default function OrganizationPage() {
     setSuccess('Link copiado para a área de transferência!');
   };
 
+  const handleEditOrgName = () => {
+    setNewOrgName(organization?.name || '');
+    setEditOrgDialogOpen(true);
+  };
+
+  const handleSaveOrgName = async () => {
+    if (!newOrgName.trim()) {
+      setError('Nome da organização não pode estar vazio');
+      return;
+    }
+
+    try {
+      const { error: updateError } = await supabase
+        .from('organizations')
+        .update({ name: newOrgName })
+        .eq('id', organization?.id);
+
+      if (updateError) throw updateError;
+
+      setSuccess('Nome da organização atualizado!');
+      setEditOrgDialogOpen(false);
+      loadData();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'owner': return 'error';
@@ -247,12 +276,21 @@ export default function OrganizationPage() {
       {/* Informações da Organização */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            {organization?.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Sua role: <Chip label={getRoleLabel(currentUserRole)} color={getRoleColor(currentUserRole)} size="small" />
-          </Typography>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                {organization?.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Sua role: <Chip label={getRoleLabel(currentUserRole)} color={getRoleColor(currentUserRole)} size="small" />
+              </Typography>
+            </Box>
+            {currentUserRole === 'owner' && (
+              <IconButton onClick={handleEditOrgName} color="primary">
+                <Edit />
+              </IconButton>
+            )}
+          </Stack>
         </CardContent>
       </Card>
 
@@ -420,6 +458,28 @@ export default function OrganizationPage() {
           <Button onClick={() => setInviteDialogOpen(false)}>Cancelar</Button>
           <Button onClick={handleInvite} variant="contained">
             Enviar Convite
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog de Edição do Nome da Organização */}
+      <Dialog open={editOrgDialogOpen} onClose={() => setEditOrgDialogOpen(false)}>
+        <DialogTitle>Editar Nome da Organização</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Nome da Organização"
+            type="text"
+            fullWidth
+            value={newOrgName}
+            onChange={(e) => setNewOrgName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditOrgDialogOpen(false)}>Cancelar</Button>
+          <Button onClick={handleSaveOrgName} variant="contained">
+            Salvar
           </Button>
         </DialogActions>
       </Dialog>
