@@ -1,6 +1,21 @@
 import { supabase } from './supabaseClient';
 import { ContaBancariaMapping, ClassificacaoMapping } from '../types';
 
+// Obter organization_id do usuário atual
+async function getOrganizationId(): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('organization_members')
+    .select('organization_id')
+    .single();
+
+  if (error) {
+    console.error('Erro ao obter organization_id:', error);
+    return null;
+  }
+
+  return data?.organization_id || null;
+}
+
 // Contas Bancárias
 export async function loadContasBancarias(): Promise<ContaBancariaMapping[]> {
   const { data, error } = await supabase
@@ -22,18 +37,18 @@ export async function loadContasBancarias(): Promise<ContaBancariaMapping[]> {
 }
 
 export async function saveContasBancarias(contas: ContaBancariaMapping[]): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  const orgId = await getOrganizationId();
+  if (!orgId) throw new Error('Organização não encontrada');
 
-  // Deletar todas as contas existentes do usuário
+  // Deletar todas as contas existentes da organização
   await supabase
     .from('contas_bancarias')
     .delete()
-    .eq('user_id', user.id);
+    .eq('organization_id', orgId);
 
   // Inserir novas contas
   const rows = contas.map(conta => ({
-    user_id: user.id,
+    organization_id: orgId,
     numero_conta: conta.numeroConta,
     codigo_contabil: conta.codigoContabil,
     tipo_aplicacao: conta.tipoAplicacao,
@@ -70,18 +85,18 @@ export async function loadClassificacoes(): Promise<ClassificacaoMapping[]> {
 }
 
 export async function saveClassificacoes(classificacoes: ClassificacaoMapping[]): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  const orgId = await getOrganizationId();
+  if (!orgId) throw new Error('Organização não encontrada');
 
-  // Deletar todas as classificações existentes do usuário
+  // Deletar todas as classificações existentes da organização
   await supabase
     .from('classificacoes_contabeis')
     .delete()
-    .eq('user_id', user.id);
+    .eq('organization_id', orgId);
 
   // Inserir novas classificações
   const rows = classificacoes.map(classificacao => ({
-    user_id: user.id,
+    organization_id: orgId,
     classificacao_financeira: classificacao.classificacaoFinanceira,
     classificacao_contabil: classificacao.classificacaoContabil,
     descricao: classificacao.descricao,

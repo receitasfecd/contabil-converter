@@ -1,7 +1,22 @@
 import { supabase } from './supabaseClient';
 import { Transfer, TransferPair, TransferStore } from '../types/Transfer';
 
-// Carregar todas as transferências do usuário
+// Obter organization_id do usuário atual
+async function getOrganizationId(): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('organization_members')
+    .select('organization_id')
+    .single();
+
+  if (error) {
+    console.error('Erro ao obter organization_id:', error);
+    return null;
+  }
+
+  return data?.organization_id || null;
+}
+
+// Carregar todas as transferências da organização
 export async function loadTransferStore(): Promise<TransferStore> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
@@ -12,7 +27,6 @@ export async function loadTransferStore(): Promise<TransferStore> {
   const { data: transfersData, error: transfersError } = await supabase
     .from('transferencias')
     .select('*')
-    .eq('user_id', user.id)
     .order('imported_at', { ascending: true });
 
   if (transfersError) {
@@ -28,7 +42,6 @@ export async function loadTransferStore(): Promise<TransferStore> {
       out_transfer:out_transfer_id(*),
       in_transfer:in_transfer_id(*)
     `)
-    .eq('user_id', user.id)
     .order('matched_at', { ascending: true });
 
   if (pairsError) {
@@ -104,12 +117,12 @@ export async function loadTransferStore(): Promise<TransferStore> {
 
 // Salvar transferências no Supabase
 export async function saveTransfers(transfers: Transfer[]): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  const orgId = await getOrganizationId();
+  if (!orgId) throw new Error('Organização não encontrada');
 
   const rows = transfers.map(t => ({
     id: t.id,
-    user_id: user.id,
+    organization_id: orgId,
     account_number: t.accountNumber,
     account_code: t.accountCode,
     data: t.date,
@@ -136,12 +149,12 @@ export async function saveTransfers(transfers: Transfer[]): Promise<void> {
 
 // Salvar pares no Supabase
 export async function savePairs(pairs: TransferPair[]): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
+  const orgId = await getOrganizationId();
+  if (!orgId) throw new Error('Organização não encontrada');
 
   const rows = pairs.map(p => ({
     id: p.id,
-    user_id: user.id,
+    organization_id: orgId,
     out_transfer_id: p.outTransfer.id,
     in_transfer_id: p.inTransfer.id,
     match_score: p.matchScore,
@@ -187,13 +200,9 @@ export async function deletePairFromDB(pairId: string): Promise<void> {
 
 // Deletar transferências por conta
 export async function deleteTransfersByAccountFromDB(accountNumber: string): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Usuário não autenticado');
-
   const { error } = await supabase
     .from('transferencias')
     .delete()
-    .eq('user_id', user.id)
     .eq('account_number', accountNumber);
 
   if (error) {
