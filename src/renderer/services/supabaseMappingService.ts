@@ -29,10 +29,12 @@ export async function loadContasBancarias(): Promise<ContaBancariaMapping[]> {
   }
 
   return data.map(row => ({
+    id: row.id,
     numeroConta: row.numero_conta,
     codigoContabil: row.codigo_contabil,
     tipoAplicacao: row.tipo_aplicacao,
     descricao: row.descricao,
+    banco: row.banco,
   }));
 }
 
