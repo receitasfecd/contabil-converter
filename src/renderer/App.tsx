@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, CircularProgress, Button } from '@mui/material';
-import { Upload, Settings, Preview, SwapHoriz, AccountBalance, UploadFile, AttachMoney, Logout } from '@mui/icons-material';
+import { Upload, Settings, Preview, SwapHoriz, AccountBalance, UploadFile, AttachMoney, Logout, Business } from '@mui/icons-material';
 import { theme } from './theme';
 import { AppProvider } from './AppContext';
 import { supabase } from './services/supabaseClient';
@@ -21,6 +21,8 @@ const TaxaConfigPage = lazy(() => import('./pages/TaxaConfigPage'));
 const ImportedAccountsPage = lazy(() => import('./pages/ImportedAccountsPage'));
 const AccountDetailPage = lazy(() => import('./pages/AccountDetailPage'));
 const BalancetePage = lazy(() => import('./pages/BalancetePage'));
+const OrganizationPage = lazy(() => import('./pages/OrganizationPage'));
+const AcceptInvitePage = lazy(() => import('./pages/AcceptInvitePage'));
 
 const drawerWidth = 240;
 
@@ -179,6 +181,15 @@ function App() {
                       <ListItemText primary="Preview" />
                     </ListItemButton>
                   </ListItem>
+
+                  <ListItem disablePadding>
+                    <ListItemButton component="a" href="/organizacao">
+                      <ListItemIcon>
+                        <Business />
+                      </ListItemIcon>
+                      <ListItemText primary="Organização" />
+                    </ListItemButton>
+                  </ListItem>
                 </List>
               </Box>
             </Drawer>
@@ -206,6 +217,14 @@ function App() {
                   <Route path="/contas/:accountId" element={<AccountDetailPage />} />
                   <Route path="/mapeamento" element={<MappingPage />} />
                   <Route path="/transferencias" element={<TransfersPage />} />
+                  <Route path="/taxas-administracao" element={<TaxasAdministracaoPage />} />
+                  <Route path="/taxas-config" element={<TaxaConfigPage />} />
+                  <Route path="/preview" element={<PreviewPage />} />
+                  <Route path="/balancete" element={<BalancetePage />} />
+                  <Route path="/organizacao" element={<OrganizationPage />} />
+                  <Route path="/aceitar-convite" element={<AcceptInvitePage />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
                   <Route path="/taxas-administracao" element={<TaxasAdministracaoPage />} />
                   <Route path="/taxas-config" element={<TaxaConfigPage />} />
                   <Route path="/preview" element={<PreviewPage />} />
