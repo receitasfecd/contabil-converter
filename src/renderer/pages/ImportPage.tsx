@@ -18,7 +18,7 @@ import {
 import { Upload as UploadIcon, Search as SearchIcon } from '@mui/icons-material';
 import { parseExcelFile } from '../services/excelParser';
 import { processEntriesWithTransferSeparation } from '../services/entryProcessor';
-import { mappingService } from '../services/mappingService';
+import { hybridMappingService } from '../services/hybridMappingService';
 import { addOrUpdateImportedAccount } from '../services/importedAccountsService';
 import { useAppContext } from '../AppContext';
 
@@ -39,7 +39,7 @@ export default function ImportPage() {
 
   const loadContasBancarias = async () => {
     try {
-      const contas = await mappingService.getContasBancarias();
+      const contas = await hybridMappingService.getContasBancarias();
       setContasBancarias(contas);
       console.log('Contas bancárias carregadas:', contas.length);
     } catch (error) {
@@ -109,7 +109,7 @@ export default function ImportPage() {
       }
 
       // Process entries separando financeiros de transferências
-      const classificacoes = mappingService.getClassificacoes();
+      const classificacoes = await hybridMappingService.getClassificacoes();
       const { financialEntries, transfers } = processEntriesWithTransferSeparation(
         excelEntries,
         classificacoes,

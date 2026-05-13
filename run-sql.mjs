@@ -8,39 +8,15 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 async function executeSql() {
   const sql = `
--- Criar tabela plano_contas
-CREATE TABLE IF NOT EXISTS plano_contas (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
-  codigo TEXT NOT NULL,
-  descricao TEXT NOT NULL,
-  tipo TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Permitir que owners atualizem roles de membros
+DROP POLICY IF EXISTS "Owners can update member roles" ON organization_members;
+CREATE POLICY "Owners can update member roles" ON organization_members FOR UPDATE
+USING (
+  organization_id IN (
+    SELECT organization_id FROM organization_members
+    WHERE user_id = auth.uid() AND role = 'owner'
+  )
 );
-
--- Índice
-CREATE INDEX IF NOT EXISTS idx_plano_contas_org ON plano_contas(organization_id);
-
--- RLS
-ALTER TABLE plano_contas ENABLE ROW LEVEL SECURITY;
-
--- Políticas
-DROP POLICY IF EXISTS "Users can view org plano_contas" ON plano_contas;
-CREATE POLICY "Users can view org plano_contas" ON plano_contas FOR SELECT
-USING (organization_id = get_user_organization_id());
-
-DROP POLICY IF EXISTS "Users can insert org plano_contas" ON plano_contas;
-CREATE POLICY "Users can insert org plano_contas" ON plano_contas FOR INSERT
-WITH CHECK (organization_id = get_user_organization_id());
-
-DROP POLICY IF EXISTS "Users can update org plano_contas" ON plano_contas;
-CREATE POLICY "Users can update org plano_contas" ON plano_contas FOR UPDATE
-USING (organization_id = get_user_organization_id());
-
-DROP POLICY IF EXISTS "Users can delete org plano_contas" ON plano_contas;
-CREATE POLICY "Users can delete org plano_contas" ON plano_contas FOR DELETE
-USING (organization_id = get_user_organization_id());
 `;
 
   console.log('🔧 Executando SQL...');

@@ -33,6 +33,7 @@ import {
 import { parseExcelFile } from '../services/excelParser';
 import { processEntriesWithTransferSeparation } from '../services/entryProcessor';
 import { mappingService } from '../services/mappingService';
+import { hybridMappingService } from '../services/hybridMappingService';
 import { addOrUpdateImportedAccount } from '../services/importedAccountsService';
 import { useAppContext } from '../AppContext';
 import { ContaBancariaMapping } from '../types/Mapping';
@@ -63,8 +64,8 @@ export default function BatchImportPage() {
   const loadData = async () => {
     try {
       const [plano, contas] = await Promise.all([
-        mappingService.getPlanoContas(),
-        mappingService.getContasBancarias()
+        hybridMappingService.getPlanoContas(),
+        hybridMappingService.getContasBancarias()
       ]);
       setPlanoContas(plano);
       setContasBancarias(contas);
@@ -139,7 +140,7 @@ export default function BatchImportPage() {
         }
 
         // Process entries separando financeiros de transferências
-        const classificacoes = mappingService.getClassificacoes();
+        const classificacoes = await hybridMappingService.getClassificacoes();
         const { financialEntries, transfers } = processEntriesWithTransferSeparation(
           excelEntries,
           classificacoes,

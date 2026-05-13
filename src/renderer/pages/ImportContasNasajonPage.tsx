@@ -22,6 +22,7 @@ import {
 import { Upload, Save, ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { mappingService } from '../services/mappingService';
+import { hybridMappingService } from '../services/hybridMappingService';
 import BankIcon from '../components/BankIcon';
 import { formatAccountNumber } from '../utils/formatters';
 
@@ -55,7 +56,7 @@ export default function ImportContasNasajonPage() {
 
   const loadPlanoContas = async () => {
     try {
-      const plano = await mappingService.getPlanoContas();
+      const plano = await hybridMappingService.getPlanoContas();
       console.log('Plano de contas carregado:', plano.length, 'itens');
       setPlanoContas(plano);
     } catch (error) {
