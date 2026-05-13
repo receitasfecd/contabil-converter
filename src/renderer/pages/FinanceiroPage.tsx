@@ -172,9 +172,6 @@ export default function FinanceiroPage() {
   };
 
   const loadAccountDetails = (account: ImportedAccount) => {
-    console.log('🔍 loadAccountDetails chamado para conta:', account.contaBancaria.numeroConta);
-    console.log('📊 Total de lançamentos na conta:', account.lancamentos?.length || 0);
-
     setSelectedAccount(account);
 
     // Carregar lançamentos financeiros
@@ -193,10 +190,6 @@ export default function FinanceiroPage() {
     }));
 
     // Carregar transferências
-    console.log('📦 TransferStore:', transferStore);
-    console.log('🔄 Pending transfers:', transferStore.pending?.length || 0);
-    console.log('🔗 Paired transfers:', transferStore.paired?.length || 0);
-
     const accountTransfers = [
       ...(transferStore.pending || []).filter(t => t.accountNumber === account.contaBancaria.numeroConta),
       ...(transferStore.paired || []).flatMap(p => {
@@ -227,9 +220,7 @@ export default function FinanceiroPage() {
 
     // Carregar taxas de administração
     const taxas = loadTaxasAdministracao();
-    console.log('💰 Total de taxas:', taxas.length);
     const accountTaxas = taxas.filter(t => t.accountNumber === account.contaBancaria.numeroConta);
-    console.log('💰 Taxas desta conta:', accountTaxas.length);
 
     const taxaEntries: CombinedEntry[] = accountTaxas.map(t => ({
       id: t.id,
@@ -247,10 +238,6 @@ export default function FinanceiroPage() {
 
     // Combinar e ordenar por data
     const allEntries = [...financialEntries, ...transferEntries, ...taxaEntries];
-    console.log('📋 Total de entradas combinadas:', allEntries.length);
-    console.log('  - Financeiros:', financialEntries.length);
-    console.log('  - Transferências:', transferEntries.length);
-    console.log('  - Taxas:', taxaEntries.length);
 
     allEntries.sort((a, b) => {
       const dateA = parseDate(a.data);
@@ -276,9 +263,6 @@ export default function FinanceiroPage() {
 
     setCombinedEntries(allEntries);
     setFilteredEntries(allEntries);
-    console.log('✅ Dados carregados e estados atualizados');
-    console.log('📊 combinedEntries:', allEntries.length);
-    console.log('📊 filteredEntries:', allEntries.length);
   };
 
   const determineGrupo = (lanc: ProcessedEntry): string => {
