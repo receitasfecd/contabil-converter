@@ -53,8 +53,27 @@ export default function BatchImportPage() {
   const [files, setFiles] = useState<FileToImport[]>([]);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [planoContas, setPlanoContas] = useState<any[]>([]);
 
   const contasBancarias = mappingService.getContasBancarias();
+
+  React.useEffect(() => {
+    loadPlanoContas();
+  }, []);
+
+  const loadPlanoContas = async () => {
+    try {
+      const plano = await mappingService.getPlanoContas();
+      setPlanoContas(plano);
+    } catch (error) {
+      console.error('Erro ao carregar plano de contas:', error);
+    }
+  };
+
+  const getContaName = (codigoContabil: string) => {
+    const conta = planoContas.find(p => p.codigo === codigoContabil);
+    return conta?.nome || '';
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -326,12 +345,16 @@ export default function BatchImportPage() {
                           <MenuItem value="">
                             <em>Selecione uma conta</em>
                           </MenuItem>
-                          {contasBancarias.map((conta) => (
-                            <MenuItem key={conta.id} value={conta.id}>
-                              {conta.numeroConta} - {conta.codigoContabil}
-                              {conta.tipoAplicacao && ` (${conta.tipoAplicacao})`}
-                            </MenuItem>
-                          ))}
+                          {contasBancarias.map((conta) => {
+                            const nomeRubrica = getContaName(conta.codigoContabil);
+                            return (
+                              <MenuItem key={conta.id} value={conta.id}>
+                                {conta.numeroConta} - {conta.codigoContabil}
+                                {nomeRubrica && ` - ${nomeRubrica}`}
+                                {conta.tipoAplicacao && ` (${conta.tipoAplicacao})`}
+                              </MenuItem>
+                            );
+                          })}
                         </Select>
                       </FormControl>
                     </TableCell>

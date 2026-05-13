@@ -43,19 +43,24 @@ export default function ImportContasNasajonPage() {
   const [planoContas, setPlanoContas] = useState<any[]>([]);
 
   useEffect(() => {
+    // Carregar plano de contas primeiro
+    loadPlanoContas();
+
     // Carregar arquivo JSON gerado
     fetch('/contas-nasajon-processadas.json')
       .then(res => res.json())
       .then(data => setContas(data))
       .catch(err => console.error('Erro ao carregar contas:', err));
-
-    // Carregar plano de contas
-    loadPlanoContas();
   }, []);
 
   const loadPlanoContas = async () => {
-    const plano = await mappingService.getPlanoContas();
-    setPlanoContas(plano);
+    try {
+      const plano = await mappingService.getPlanoContas();
+      console.log('Plano de contas carregado:', plano.length, 'itens');
+      setPlanoContas(plano);
+    } catch (error) {
+      console.error('Erro ao carregar plano de contas:', error);
+    }
   };
 
   const handleCodigoChange = (index: number, newCodigo: string) => {
