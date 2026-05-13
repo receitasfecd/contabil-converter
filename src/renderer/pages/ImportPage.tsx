@@ -55,23 +55,30 @@ export default function ImportPage() {
   };
 
   const contasFiltradas = useMemo(() => {
-    if (!searchTerm.trim()) {
-      return contasBancarias;
+    let contas = contasBancarias;
+
+    if (searchTerm.trim()) {
+      const termo = searchTerm.toLowerCase();
+      contas = contasBancarias.filter((conta) => {
+        const numeroConta = conta.numeroConta.toLowerCase();
+        const codigoContabil = conta.codigoContabil.toLowerCase();
+        const descricao = (conta.descricao || '').toLowerCase();
+        const tipoAplicacao = (conta.tipoAplicacao || '').toLowerCase();
+
+        return (
+          numeroConta.includes(termo) ||
+          codigoContabil.includes(termo) ||
+          descricao.includes(termo) ||
+          tipoAplicacao.includes(termo)
+        );
+      });
     }
 
-    const termo = searchTerm.toLowerCase();
-    return contasBancarias.filter((conta) => {
-      const numeroConta = conta.numeroConta.toLowerCase();
-      const codigoContabil = conta.codigoContabil.toLowerCase();
-      const descricao = (conta.descricao || '').toLowerCase();
-      const tipoAplicacao = (conta.tipoAplicacao || '').toLowerCase();
-
-      return (
-        numeroConta.includes(termo) ||
-        codigoContabil.includes(termo) ||
-        descricao.includes(termo) ||
-        tipoAplicacao.includes(termo)
-      );
+    // Ordenar por número de conta (numérico)
+    return contas.sort((a, b) => {
+      const numA = parseInt(a.numeroConta.replace(/\D/g, ''), 10);
+      const numB = parseInt(b.numeroConta.replace(/\D/g, ''), 10);
+      return numA - numB;
     });
   }, [contasBancarias, searchTerm]);
 

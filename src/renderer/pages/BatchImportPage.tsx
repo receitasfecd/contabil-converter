@@ -75,8 +75,16 @@ export default function BatchImportPage() {
         hybridMappingService.getContasBancarias()
       ]);
       setPlanoContas(plano);
-      setContasBancarias(contas);
-      console.log('Dados carregados:', { planoContas: plano.length, contasBancarias: contas.length });
+
+      // Ordenar contas por número de conta (numérico)
+      const contasOrdenadas = contas.sort((a, b) => {
+        const numA = parseInt(a.numeroConta.replace(/\D/g, ''), 10);
+        const numB = parseInt(b.numeroConta.replace(/\D/g, ''), 10);
+        return numA - numB;
+      });
+
+      setContasBancarias(contasOrdenadas);
+      console.log('Dados carregados:', { planoContas: plano.length, contasBancarias: contasOrdenadas.length });
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     }
