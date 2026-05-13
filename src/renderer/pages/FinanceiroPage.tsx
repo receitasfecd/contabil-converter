@@ -107,14 +107,16 @@ export default function FinanceiroPage() {
     if (filterDateStart) {
       filtered = filtered.filter(e => {
         const entryDate = parseDate(e.data);
-        const startDate = new Date(filterDateStart);
+        const startDate = parseBRDate(filterDateStart);
+        if (!startDate) return true;
         return entryDate >= startDate;
       });
     }
     if (filterDateEnd) {
       filtered = filtered.filter(e => {
         const entryDate = parseDate(e.data);
-        const endDate = new Date(filterDateEnd);
+        const endDate = parseBRDate(filterDateEnd);
+        if (!endDate) return true;
         return entryDate <= endDate;
       });
     }
@@ -259,6 +261,7 @@ export default function FinanceiroPage() {
     });
 
     setCombinedEntries(allEntries);
+    setFilteredEntries(allEntries);
   };
 
   const determineGrupo = (lanc: ProcessedEntry): string => {
@@ -274,6 +277,17 @@ export default function FinanceiroPage() {
   const parseDate = (dateStr: string): Date => {
     const [day, month, year] = dateStr.split('/');
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  };
+
+  const parseBRDate = (dateStr: string): Date | null => {
+    if (!dateStr) return null;
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return null;
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]);
+    const year = parseInt(parts[2]);
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+    return new Date(year, month - 1, day);
   };
 
   const formatCurrency = (value: string | number) => {
@@ -598,23 +612,21 @@ export default function FinanceiroPage() {
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Data Início"
-                  type="date"
+                  placeholder="dd/mm/aaaa"
                   value={filterDateStart}
                   onChange={(e) => setFilterDateStart(e.target.value)}
                   fullWidth
                   size="small"
-                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Data Fim"
-                  type="date"
+                  placeholder="dd/mm/aaaa"
                   value={filterDateEnd}
                   onChange={(e) => setFilterDateEnd(e.target.value)}
                   fullWidth
                   size="small"
-                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
