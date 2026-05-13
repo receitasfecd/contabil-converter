@@ -42,12 +42,12 @@ import {
   FilterList as FilterListIcon,
 } from '@mui/icons-material';
 import { loadImportedAccounts, saveImportedAccounts } from '../services/importedAccountsService';
-import { loadTransferStore, saveTransferStore } from '../services/transferStore';
 import { loadTaxasAdministracao } from '../services/taxaAdministracaoService';
 import { ImportedAccount } from '../types/ImportedAccount';
 import { ProcessedEntry } from '../types/Entry';
 import { generateCSV, downloadCSV, generateFilename } from '../services/csvExporter';
 import BankIcon from '../components/BankIcon';
+import { useAppContext } from '../AppContext';
 
 interface CombinedEntry {
   id: string;
@@ -65,6 +65,7 @@ interface CombinedEntry {
 
 export default function FinanceiroPage() {
   const navigate = useNavigate();
+  const { transferStore, updateTransferStore } = useAppContext();
   const [accounts, setAccounts] = useState<ImportedAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<ImportedAccount | null>(null);
   const [combinedEntries, setCombinedEntries] = useState<CombinedEntry[]>([]);
@@ -192,14 +193,13 @@ export default function FinanceiroPage() {
     }));
 
     // Carregar transferências
-    const transferStore = loadTransferStore();
     console.log('📦 TransferStore:', transferStore);
-    console.log('🔄 Pending transfers:', transferStore.pending.length);
-    console.log('🔗 Paired transfers:', transferStore.paired.length);
+    console.log('🔄 Pending transfers:', transferStore.pending?.length || 0);
+    console.log('🔗 Paired transfers:', transferStore.paired?.length || 0);
 
     const accountTransfers = [
-      ...transferStore.pending.filter(t => t.accountNumber === account.contaBancaria.numeroConta),
-      ...transferStore.paired.flatMap(p => {
+      ...(transferStore.pending || []).filter(t => t.accountNumber === account.contaBancaria.numeroConta),
+      ...(transferStore.paired || []).flatMap(p => {
         const transfers = [];
         if (p.outTransfer.accountNumber === account.contaBancaria.numeroConta) {
           transfers.push(p.outTransfer);
@@ -343,13 +343,13 @@ export default function FinanceiroPage() {
         }
       }
     } else if (editingEntry.tipo === 'TRANSFERENCIA') {
-      const transferStore = loadTransferStore();
+      const updatedStore = { ...transferStore };
 
       // Atualizar em pending
-      const pendingIndex = transferStore.pending.findIndex(t => t.id === editingEntry.id);
+      const pendingIndex = updatedStore.pending.findIndex(t => t.id === editingEntry.id);
       if (pendingIndex >= 0) {
-        transferStore.pending[pendingIndex] = {
-          ...transferStore.pending[pendingIndex],
+        updatedStore.pending[pendingIndex] = {
+          ...updatedStore.pending[pendingIndex],
           date: editingEntry.data,
           historico: editingEntry.historico,
           amount: editingEntry.valor,
@@ -358,7 +358,7 @@ export default function FinanceiroPage() {
       }
 
       // Atualizar em paired
-      transferStore.paired.forEach(pair => {
+      updatedStore.paired.forEach(pair => {
         if (pair.outTransfer.id === editingEntry.id) {
           pair.outTransfer = {
             ...pair.outTransfer,
@@ -379,7 +379,7 @@ export default function FinanceiroPage() {
         }
       });
 
-      saveTransferStore(transferStore);
+      updateTransferStore(updatedStore);
     }
 
     setEditDialogOpen(false);
@@ -401,12 +401,12 @@ export default function FinanceiroPage() {
         saveImportedAccounts(store);
       }
     } else if (entry.tipo === 'TRANSFERENCIA') {
-      const transferStore = loadTransferStore();
-      transferStore.pending = transferStore.pending.filter(t => t.id !== entry.id);
-      transferStore.paired = transferStore.paired.filter(p =>
+      const updatedStore = { ...transferStore };
+      updatedStore.pending = updatedStore.pending.filter(t => t.id !== entry.id);
+      updatedStore.paired = updatedStore.paired.filter(p =>
         p.outTransfer.id !== entry.id && p.inTransfer.id !== entry.id
       );
-      saveTransferStore(transferStore);
+      updateTransferStore(updatedStore);
     }
 
     loadAccountDetails(selectedAccount);
@@ -449,7 +449,7 @@ export default function FinanceiroPage() {
     if (!selectedAccount) return;
 
     const store = loadImportedAccounts();
-    const transferStore = loadTransferStore();
+    const updatedTransferStore = { ...transferStore };
     const accountIndex = store.accounts.findIndex(a => a.id === selectedAccount.id);
 
     selectedEntries.forEach(entryId => {
@@ -461,15 +461,15 @@ export default function FinanceiroPage() {
           l => l.id !== entryId
         );
       } else if (entry.tipo === 'TRANSFERENCIA') {
-        transferStore.pending = transferStore.pending.filter(t => t.id !== entryId);
-        transferStore.paired = transferStore.paired.filter(p =>
+        updatedTransferStore.pending = updatedTransferStore.pending.filter(t => t.id !== entryId);
+        updatedTransferStore.paired = updatedTransferStore.paired.filter(p =>
           p.outTransfer.id !== entryId && p.inTransfer.id !== entryId
         );
       }
     });
 
     saveImportedAccounts(store);
-    saveTransferStore(transferStore);
+    updateTransferStore(updatedTransferStore);
     setSelectedEntries([]);
     loadAccountDetails(selectedAccount);
   };
@@ -484,7 +484,7 @@ export default function FinanceiroPage() {
 
     let replacedCount = 0;
     const store = loadImportedAccounts();
-    const transferStore = loadTransferStore();
+    const updatedTransferStore = { ...transferStore };
     const accountIndex = store.accounts.findIndex(a => a.id === selectedAccount.id);
 
     if (accountIndex >= 0) {
@@ -497,14 +497,14 @@ export default function FinanceiroPage() {
     }
 
     // Atualizar transferências
-    transferStore.pending.forEach(t => {
+    updatedTransferStore.pending.forEach(t => {
       if (t.accountNumber === selectedAccount.contaBancaria.numeroConta && t.historico.includes(findText)) {
         t.historico = t.historico.replace(new RegExp(findText, 'g'), replaceText);
         replacedCount++;
       }
     });
 
-    transferStore.paired.forEach(p => {
+    updatedTransferStore.paired.forEach(p => {
       if (p.outTransfer.accountNumber === selectedAccount.contaBancaria.numeroConta && p.outTransfer.historico.includes(findText)) {
         p.outTransfer.historico = p.outTransfer.historico.replace(new RegExp(findText, 'g'), replaceText);
         replacedCount++;
@@ -516,7 +516,7 @@ export default function FinanceiroPage() {
     });
 
     saveImportedAccounts(store);
-    saveTransferStore(transferStore);
+    updateTransferStore(updatedTransferStore);
     setFindReplaceDialogOpen(false);
     setFindText('');
     setReplaceText('');
