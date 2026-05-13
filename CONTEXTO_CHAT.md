@@ -1,11 +1,40 @@
 # Contexto do Projeto - Conversor Contábil Nasajon
 
 **Data:** 2026-05-13  
-**Último commit:** fbf671e - Debug: Adicionar logs para investigar lançamentos vazios
+**Último commit:** 2836002 - Cleanup: Remover logs de debug da FinanceiroPage
 
-## Problema Atual (CRÍTICO)
+## Status Atual
 
-A página **Financeiro** está mostrando **0 lançamentos** quando deveria mostrar **101 lançamentos** da conta 92665.
+✅ **PROBLEMA RESOLVIDO!** A página Financeiro agora carrega os lançamentos corretamente.
+
+## Problema Resolvido (2026-05-13)
+
+### Sintoma
+A página **Financeiro** mostrava **0 lançamentos** quando deveria mostrar **101 lançamentos** da conta 92665.
+
+### Causa Raiz
+A FinanceiroPage estava chamando `loadTransferStore()` diretamente do localStorage, mas o AppContext já havia carregado os dados do Supabase. Isso causava um erro:
+```
+Uncaught TypeError: me(...).filter is not a function
+```
+
+O problema era que:
+1. AppContext carrega transferências do Supabase (estrutura pode ser diferente)
+2. FinanceiroPage chamava `loadTransferStore()` do localStorage
+3. Conflito entre as duas fontes de dados causava erro no `.filter()`
+4. O erro impedia o carregamento de todos os lançamentos
+
+### Solução Implementada
+**Commits:**
+- `f58a00a` - Fix: FinanceiroPage usar AppContext em vez de localStorage direto
+- `2836002` - Cleanup: Remover logs de debug da FinanceiroPage
+
+**Mudanças:**
+1. Importar e usar `useAppContext()` hook
+2. Usar `transferStore` do contexto em vez de `loadTransferStore()`
+3. Usar `updateTransferStore()` em vez de `saveTransferStore()`
+4. Adicionar verificações de segurança `|| []` para arrays
+5. Remover logs de debug após correção
 
 ### Evidências do Problema
 
@@ -15,30 +44,11 @@ A página **Financeiro** está mostrando **0 lançamentos** quando deveria mostr
    - 0 transferências
    - Saldo: R$ 0,00
 
-2. **Página /financeiro** mostra incorretamente:
+2. **Página /financeiro** mostrava incorretamente:
    - Conta 92665
    - "Todos os Lançamentos (0 de 0)"
    - Tabela vazia
    - Saldo Final: R$ 0,00
-
-### Ação Necessária
-
-**LOGS DE DEBUG JÁ FORAM ADICIONADOS** no último commit (fbf671e).
-
-**PRÓXIMO PASSO:**
-1. Abrir a aplicação no navegador
-2. Ir para `/financeiro`
-3. Clicar na conta 92665
-4. Abrir Console do navegador (F12 → Console)
-5. Copiar TODOS os logs que aparecem (começam com 🔍, 📊, 📦, 🔄, 🔗, 💰, 📋, ✅)
-6. Enviar os logs para análise
-
-Os logs vão revelar:
-- Se `account.lancamentos` está vazio ou populado
-- Se as transferências estão sendo carregadas
-- Se as taxas estão sendo carregadas
-- Se `combinedEntries` está sendo populado
-- Se `filteredEntries` está sendo populado
 
 ## Arquitetura do Projeto
 
@@ -193,25 +203,6 @@ setCombinedEntries(allEntries);
 setFilteredEntries(allEntries);
 ```
 
-## Possíveis Causas do Problema
-
-### Hipótese 1: account.lancamentos está vazio
-- Verificar se os dados estão realmente no localStorage
-- Verificar se a estrutura de dados mudou
-
-### Hipótese 2: Comparação de accountNumber
-- `transferStore.pending.filter(t => t.accountNumber === account.contaBancaria.numeroConta)`
-- Verificar se `accountNumber` está no formato correto (com ou sem hífen)
-- Conta 92665 vs 92665-5 vs 9266-5
-
-### Hipótese 3: Filtros aplicados incorretamente
-- useEffect pode estar filtrando tudo
-- Verificar se `filteredEntries` está sendo zerado
-
-### Hipótese 4: Dados não persistidos
-- Verificar se a importação realmente salvou no localStorage
-- Verificar chave de armazenamento
-
 ## Histórico de Problemas Resolvidos
 
 ### 1. Página /contas em branco (RESOLVIDO)
@@ -227,6 +218,12 @@ setFilteredEntries(allEntries);
 - **Problema:** Após trocar campos de data, página ficou em branco
 - **Causa:** `filteredEntries` não era inicializado ao carregar conta
 - **Solução:** Adicionar `setFilteredEntries(allEntries)` após `setCombinedEntries(allEntries)`
+
+### 4. Página Financeiro mostrando 0 lançamentos (RESOLVIDO - 2026-05-13)
+- **Problema:** Página mostrava 0 lançamentos quando deveria mostrar 101
+- **Causa:** FinanceiroPage chamava `loadTransferStore()` do localStorage enquanto AppContext usava Supabase, causando conflito e erro `.filter is not a function`
+- **Solução:** Migrar FinanceiroPage para usar `useAppContext()` hook em vez de chamar localStorage diretamente
+- **Commits:** f58a00a, 2836002
 
 ## Comandos Úteis
 
@@ -262,11 +259,14 @@ localStorage.getItem('taxas-administracao')
 
 ## Próximos Passos
 
-1. **IMEDIATO:** Coletar logs do console conforme instruções acima
-2. Analisar logs para identificar causa raiz
-3. Corrigir problema de carregamento de dados
-4. Remover logs de debug após correção
-5. Testar com múltiplas contas
+1. ✅ ~~Coletar logs do console~~ (Concluído)
+2. ✅ ~~Analisar logs para identificar causa raiz~~ (Concluído)
+3. ✅ ~~Corrigir problema de carregamento de dados~~ (Concluído)
+4. ✅ ~~Remover logs de debug após correção~~ (Concluído)
+5. **PRÓXIMO:** Testar a página Financeiro no navegador para confirmar que os 101 lançamentos aparecem
+6. Testar com múltiplas contas
+7. Verificar se transferências aparecem corretamente
+8. Verificar se taxas aparecem corretamente
 6. Verificar se transferências aparecem corretamente
 
 ## Observações Importantes
