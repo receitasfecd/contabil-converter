@@ -127,8 +127,9 @@ export async function loadPlanoContas(): Promise<any[]> {
   return data.map(row => ({
     id: row.id,
     codigo: row.codigo,
-    descricao: row.descricao,
-    tipo: row.tipo,
+    nome: row.descricao,  // Mapear descricao para nome
+    tipo: row.tipo || 'PLANO_CONTAS',
+    nivel: 0,  // Adicionar campo nivel
   }));
 }
 
@@ -146,7 +147,7 @@ export async function savePlanoContas(planoContas: any[]): Promise<void> {
   const rows = planoContas.map(item => ({
     organization_id: orgId,
     codigo: item.codigo,
-    descricao: item.descricao,
+    descricao: item.nome || item.descricao,  // Aceitar nome ou descricao
     tipo: item.tipo,
   }));
 
