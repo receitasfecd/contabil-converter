@@ -580,6 +580,7 @@ export default function TaxasAdministracaoPage() {
                 value={dataInicio}
                 onChange={(e) => setDataInicio(e.target.value)}
                 InputLabelProps={{ shrink: true }}
+                inputProps={{ placeholder: '' }}
                 size="small"
                 sx={{ width: 200 }}
               />
@@ -589,6 +590,7 @@ export default function TaxasAdministracaoPage() {
                 value={dataFim}
                 onChange={(e) => setDataFim(e.target.value)}
                 InputLabelProps={{ shrink: true }}
+                inputProps={{ placeholder: '' }}
                 size="small"
                 sx={{ width: 200 }}
               />
