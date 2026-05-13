@@ -58,21 +58,41 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const loadData = async () => {
     try {
+      console.log('📥 AppContext.loadData: Carregando transferências do Supabase...');
       const store = await loadTransferStoreSupabase();
+      console.log('✅ Transferências carregadas:', {
+        pending: store.pending.length,
+        paired: store.paired.length,
+        exported: store.exported.length
+      });
       setTransferStore(store);
     } catch (error) {
-      console.error('Erro ao carregar dados do Supabase:', error);
+      console.error('❌ Erro ao carregar dados do Supabase:', error);
     }
   };
 
   // Salvar transferStore (Supabase ou localStorage)
   useEffect(() => {
+    console.log('💾 useEffect - Salvando transferStore:', {
+      isAuthenticated,
+      pending: transferStore.pending.length,
+      paired: transferStore.paired.length,
+      exported: transferStore.exported.length
+    });
+
     if (isAuthenticated) {
       // Salvar no Supabase
-      saveTransfers(transferStore.pending).catch(console.error);
-      savePairs(transferStore.paired).catch(console.error);
+      console.log('☁️ Salvando no Supabase...');
+      saveTransfers(transferStore.pending)
+        .then(() => console.log('✅ Transferências salvas no Supabase'))
+        .catch(err => console.error('❌ Erro ao salvar transferências:', err));
+
+      savePairs(transferStore.paired)
+        .then(() => console.log('✅ Pares salvos no Supabase'))
+        .catch(err => console.error('❌ Erro ao salvar pares:', err));
     } else {
       // Salvar no localStorage
+      console.log('💿 Salvando no localStorage...');
       saveTransferStoreLocal(transferStore);
     }
   }, [transferStore, isAuthenticated]);
