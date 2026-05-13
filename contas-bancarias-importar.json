@@ -1,0 +1,2180 @@
+{
+  "contasBancarias": [
+    {
+      "id": "conta-6",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "310514",
+      "codigoContabil": "11010100",
+      "descricao": "PRINCIPAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-7",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "92665",
+      "codigoContabil": "11010101",
+      "descricao": "IMPORTACAO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-8",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "128609",
+      "codigoContabil": "11010102",
+      "descricao": "IMPORTACAO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-9",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143004",
+      "codigoContabil": "11010103",
+      "descricao": "ADMINISTRACAO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-10",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144408",
+      "codigoContabil": "11010104",
+      "descricao": "CONTA REMOTA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-12",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107506",
+      "codigoContabil": "11020100",
+      "descricao": "WEBER SYMPOSIUM",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-13",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107581",
+      "codigoContabil": "11020101",
+      "descricao": "WORSHOP FITOTERAPIA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-14",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107816",
+      "codigoContabil": "11020102",
+      "descricao": "DECANIA CCS UFRJ",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-15",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107832",
+      "codigoContabil": "11020103",
+      "descricao": "EQUIPAMENTOS CENABIO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-16",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107840",
+      "codigoContabil": "11020104",
+      "descricao": "BIOTERIO DECANIA CCS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-17",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107875",
+      "codigoContabil": "11020105",
+      "descricao": "LIGHT S/A",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-18",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107891",
+      "codigoContabil": "11020106",
+      "descricao": "UNIMICRO UFRJ",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-19",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107948",
+      "codigoContabil": "11020107",
+      "descricao": "EBBC6",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-20",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107972",
+      "codigoContabil": "11020108",
+      "descricao": "IBCCF CEMBIO RSMB",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-21",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107980",
+      "codigoContabil": "11020109",
+      "descricao": "IBCCF LABGENEST",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-22",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107999",
+      "codigoContabil": "11020110",
+      "descricao": "IBCCF MRC APCAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-23",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108014",
+      "codigoContabil": "11020111",
+      "descricao": "ICB WORKSHOP INFLAM.",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-24",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108065",
+      "codigoContabil": "11020112",
+      "descricao": "IB LABIM IDSN",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-25",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108073",
+      "codigoContabil": "11020113",
+      "descricao": "IBQM LBAH PL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-26",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "190276",
+      "codigoContabil": "11020114",
+      "descricao": "LMCP",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-27",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "210986",
+      "codigoContabil": "11020115",
+      "descricao": "CRISTAL PM",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-28",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "237388",
+      "codigoContabil": "11020116",
+      "descricao": "XII SILAE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-29",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "3038009",
+      "codigoContabil": "11020117",
+      "descricao": "PROJ DIVERSOS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-30",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "338516",
+      "codigoContabil": "11020118",
+      "descricao": "EGF 151",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-31",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "356352",
+      "codigoContabil": "11020119",
+      "descricao": "CE ANATO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-32",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "383759",
+      "codigoContabil": "11020120",
+      "descricao": "CONGRESS DIVERS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-33",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "395005",
+      "codigoContabil": "11020121",
+      "descricao": "MN UFRJ VOTORAN",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-34",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "395862",
+      "codigoContabil": "11020122",
+      "descricao": "BIOTERIO IMPPG",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-35",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "407054",
+      "codigoContabil": "11020123",
+      "descricao": "LUCHM IBCCF",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-36",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "421065",
+      "codigoContabil": "11020124",
+      "descricao": "F G CENPES LS IMPPG",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-37",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "78689",
+      "codigoContabil": "11020125",
+      "descricao": "FUNDACAO EDUC. CIENCIA E DESENVOLVIMENTO FECD",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-38",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "78697",
+      "codigoContabil": "11020126",
+      "descricao": "RIO PARAIBA DO SUL II",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-39",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "84476",
+      "codigoContabil": "11020127",
+      "descricao": "UMMC ICB UFRJ",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-40",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "85820",
+      "codigoContabil": "11020128",
+      "descricao": "SIMPO FAC FARMACI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-41",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "88315",
+      "codigoContabil": "11020129",
+      "descricao": "JNUTCLIN",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-42",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "92185",
+      "codigoContabil": "11020130",
+      "descricao": "SERVATIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-43",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "92193",
+      "codigoContabil": "11020131",
+      "descricao": "LABIOM",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-44",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "93599",
+      "codigoContabil": "11020132",
+      "descricao": "BNI LMPPG",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-45",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "142881",
+      "codigoContabil": "11020133",
+      "descricao": "CRISTAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-46",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143103",
+      "codigoContabil": "11020134",
+      "descricao": "INCT - PLO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-47",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143384",
+      "codigoContabil": "11020135",
+      "descricao": "SAE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-48",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143525",
+      "codigoContabil": "11020136",
+      "descricao": "INCT - TK",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-49",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143533",
+      "codigoContabil": "11020137",
+      "descricao": "CONV. DE ESTOCOLMO NACOES UNIDAS - GILBERTO KAC",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-50",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143608",
+      "codigoContabil": "11020138",
+      "descricao": "LVM INSTITUTO BIOLOGIA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-51",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143616",
+      "codigoContabil": "11020139",
+      "descricao": "TUBAROES - SALVAR",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-52",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143855",
+      "codigoContabil": "11020140",
+      "descricao": "NOVARTIS - APCAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-53",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144077",
+      "codigoContabil": "11020141",
+      "descricao": "PRODIET",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-54",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150025",
+      "codigoContabil": "11020142",
+      "descricao": "SEQUENCIAMEN.DE DNA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-55",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150033",
+      "codigoContabil": "11020143",
+      "descricao": "PRO OCEANICO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-56",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998571",
+      "codigoContabil": "11020144",
+      "descricao": "CRISTÁLIA PRFª GISELE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-57",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998639",
+      "codigoContabil": "11020145",
+      "descricao": "BIOINOVAR - PROFª ALANE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-58",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998621",
+      "codigoContabil": "11020146",
+      "descricao": "META2MS - LABMETA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-59",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998704",
+      "codigoContabil": "11020147",
+      "descricao": "BIOCHIMICO PROF. LUCIO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-60",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998720",
+      "codigoContabil": "11020148",
+      "descricao": "BIOBUREAL PROFª CLAUDIA RUSSO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-61",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998738",
+      "codigoContabil": "11020149",
+      "descricao": "PRIME AGRO - PROF. ANDREW",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-62",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998803",
+      "codigoContabil": "11020150",
+      "descricao": "CONTA AZUL RECEBA FACIL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-63",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998845",
+      "codigoContabil": "11020151",
+      "descricao": "IBQM",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-64",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108081",
+      "codigoContabil": "11020152",
+      "descricao": "ISHR",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-65",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998498",
+      "codigoContabil": "11020153",
+      "descricao": "PROJETOS DIVERSOS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-66",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998456",
+      "codigoContabil": "11020154",
+      "descricao": "BIOTERIO DECANIA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-67",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998696",
+      "codigoContabil": "11020155",
+      "descricao": "UMAA PROF. VINICIUS PERUZZI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-68",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998530",
+      "codigoContabil": "11020156",
+      "descricao": "CAUÇÃO SAE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-69",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "11020157",
+      "codigoContabil": "11020157",
+      "descricao": "BANCO ITAÚ C/C",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-70",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998860",
+      "codigoContabil": "11020158",
+      "descricao": "BIOTECMAR - PROF. FABIANO THOMPSON",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-71",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998670",
+      "codigoContabil": "11020159",
+      "descricao": "SENAI - ISI QV - PROF. LUIZ HENRIQUE DE ALMEIDA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-72",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997920",
+      "codigoContabil": "11020160",
+      "descricao": "LUCHM",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-73",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997938",
+      "codigoContabil": "11020161",
+      "descricao": "IBQM LBAH PLO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-74",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997946",
+      "codigoContabil": "11020162",
+      "descricao": "ENEVA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-75",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997953",
+      "codigoContabil": "11020163",
+      "descricao": "KPS - PROF. RODRIGO CORREIA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-76",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997961",
+      "codigoContabil": "11020164",
+      "descricao": "CRIOMICROSCOPIA - PROFA. MARCIA ATTIAS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-77",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998050",
+      "codigoContabil": "11020165",
+      "descricao": "UNIMICRO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-78",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998068",
+      "codigoContabil": "11020166",
+      "descricao": "KPSBR-CTT-028-24/02 - RODRIGO CORREA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-79",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998274",
+      "codigoContabil": "11020167",
+      "descricao": "LVM ABBOTT KIT DENGUE ECO DIAGNOSTICA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-80",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998324",
+      "codigoContabil": "11020168",
+      "descricao": "ARCELOMITAL (VOTORANTIN)",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-81",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998340",
+      "codigoContabil": "11020169",
+      "descricao": "IBCCF CEMBIO RSMB",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-82",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998357",
+      "codigoContabil": "11020170",
+      "descricao": "CE ANATO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-83",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998365",
+      "codigoContabil": "11020171",
+      "descricao": "ICB WORKSHOP INFLAMA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-84",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998423",
+      "codigoContabil": "11020172",
+      "descricao": "RESERVADO PARA INSCRICOES",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-85",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998498",
+      "codigoContabil": "11020173",
+      "descricao": "PROJETOS DIVERSOS (ITAU)",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-86",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998506",
+      "codigoContabil": "11020174",
+      "descricao": "SIMPOSIO PROF. WANDERLEY",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-87",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998605",
+      "codigoContabil": "11020175",
+      "descricao": "CSL BRASIL - FABIANO THOMPSON",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-89",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "102709",
+      "codigoContabil": "11030100",
+      "descricao": "FUNB ECO NUTR",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-90",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "102717",
+      "codigoContabil": "11030101",
+      "descricao": "FUNBIO MULTIP",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-91",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "102741",
+      "codigoContabil": "11030102",
+      "descricao": "FUNB COST ROCHO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-92",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108057",
+      "codigoContabil": "11030103",
+      "descricao": "IBQM IS OBA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-93",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "357766",
+      "codigoContabil": "11030104",
+      "descricao": "WBBT",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-94",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "375268",
+      "codigoContabil": "11030105",
+      "descricao": "RIBHAC EMBRAPA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-95",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "395021",
+      "codigoContabil": "11030106",
+      "descricao": "WELCOME APL IBCCF",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-96",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "85685",
+      "codigoContabil": "11030107",
+      "descricao": "OUHSC NORTON",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-97",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "142410",
+      "codigoContabil": "11030108",
+      "descricao": "LAGUNARES",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-98",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144010",
+      "codigoContabil": "11030109",
+      "descricao": "BIOGEOMAR",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-99",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "149092",
+      "codigoContabil": "11030110",
+      "descricao": "SERRAPILHEIRA OLAVO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-100",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150017",
+      "codigoContabil": "11030111",
+      "descricao": "SERRAPILHERA  AMILCA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-101",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998613",
+      "codigoContabil": "11030112",
+      "descricao": "NANOBUSINESS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-102",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998746",
+      "codigoContabil": "11030113",
+      "descricao": "PETRO COSTAO ROCHOSO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-103",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998761",
+      "codigoContabil": "11030114",
+      "descricao": "FUNBIO - MARE LIMPA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-104",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998860",
+      "codigoContabil": "11030115",
+      "descricao": "BIOTECMAR",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-105",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998928",
+      "codigoContabil": "11030116",
+      "descricao": "FUNBIO - MANGUEZAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-106",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998936",
+      "codigoContabil": "11030117",
+      "descricao": "REDE D OR",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-107",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998985",
+      "codigoContabil": "11030118",
+      "descricao": "TUBAROES - ELASMOTOX",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-108",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998993",
+      "codigoContabil": "11030119",
+      "descricao": "TUBAROES - ECOSHARK",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-109",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "89311",
+      "codigoContabil": "11030120",
+      "descricao": "NANO VALID INMETRO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-110",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998688",
+      "codigoContabil": "11030121",
+      "descricao": "REDE CPE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-111",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998027",
+      "codigoContabil": "11030122",
+      "descricao": "REDE DOR - APC",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-112",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998258",
+      "codigoContabil": "11030123",
+      "descricao": "RBP - FJLES - PROF. OLAVO BOHER",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-113",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998480",
+      "codigoContabil": "11030124",
+      "descricao": "IDOR - PESQUISA CLINICA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-115",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107867",
+      "codigoContabil": "11040001",
+      "descricao": "IBCCF F NEWTON APCAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-116",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143400",
+      "codigoContabil": "11040002",
+      "descricao": "PROFª. ANA PAULA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-117",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143657",
+      "codigoContabil": "11040003",
+      "descricao": "NOZIKA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-118",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143731",
+      "codigoContabil": "11040004",
+      "descricao": "PROFª CARLA HOLANDINO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-119",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144051",
+      "codigoContabil": "11040005",
+      "descricao": "ALZHEIMER S ASSOCIATION",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-120",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998902",
+      "codigoContabil": "11040006",
+      "descricao": "GRANTS ORPAGS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-121",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998977",
+      "codigoContabil": "11040007",
+      "descricao": "LVM - FIND",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-122",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998969",
+      "codigoContabil": "11040008",
+      "descricao": "LVM - ABBOTT NASAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-123",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998951",
+      "codigoContabil": "11040009",
+      "descricao": "LVM ABBOTT ASSINTOMATICOS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-124",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998944",
+      "codigoContabil": "11040010",
+      "descricao": "LVM ABBOTT RAPID DIAGNOSTICS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-125",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998894",
+      "codigoContabil": "11040011",
+      "descricao": "ANA PAULA C A LIMA DNDI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-126",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998878",
+      "codigoContabil": "11040012",
+      "descricao": "LVM OMICRON",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-127",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998852",
+      "codigoContabil": "11040013",
+      "descricao": "UNIVERSID MINNESOTA - LUCIA JE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-128",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998837",
+      "codigoContabil": "11040014",
+      "descricao": "BARTIRA - GRANTS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-129",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998589",
+      "codigoContabil": "11040015",
+      "descricao": "BILL E MELINDA GATES",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-130",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998597",
+      "codigoContabil": "11040016",
+      "descricao": "SMBE - PROFª CLAUDIA RUSSO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-131",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998647",
+      "codigoContabil": "11040017",
+      "descricao": "UNIVERSIDADE MASSACHUSETTS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-132",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998753",
+      "codigoContabil": "11040018",
+      "descricao": "GRANT RKI CLARISSA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-133",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998779",
+      "codigoContabil": "11040019",
+      "descricao": "LVM ABBOTT SPIKE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-134",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998787",
+      "codigoContabil": "11040020",
+      "descricao": "LVM ABBOTT PANBIO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-135",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998795",
+      "codigoContabil": "11040021",
+      "descricao": "ABBOTT COVID FLU",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-136",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998811",
+      "codigoContabil": "11040022",
+      "descricao": "ANA PAULA MRC FAPESP",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-137",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143608",
+      "codigoContabil": "11040023",
+      "descricao": "LVM AMILC",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-138",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998944",
+      "codigoContabil": "11040024",
+      "descricao": "ABBOTT RAPID DIAGNOSTICS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-139",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998522",
+      "codigoContabil": "11040025",
+      "descricao": "GALACTOSEMIA - CLAUDIO MASUDA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-140",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143533",
+      "codigoContabil": "11040026",
+      "descricao": "WHO GILBERTO KAC",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-141",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998472",
+      "codigoContabil": "11040027",
+      "descricao": "LVM ABBOTT DUO DENGUE",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-142",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998415",
+      "codigoContabil": "11040028",
+      "descricao": "HOLISTIC",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-143",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998308",
+      "codigoContabil": "11040029",
+      "descricao": "THE ROCKEFELLER UNIVERSITY",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-144",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997888",
+      "codigoContabil": "11040030",
+      "descricao": "PNUMA - HASSAN SOHN",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-145",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997896",
+      "codigoContabil": "11040031",
+      "descricao": "ISN PROFª SUSANA CARVAJAL",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-146",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997904",
+      "codigoContabil": "11040032",
+      "descricao": "FAILSAFE - PROF. ALLAN JEFFERSON GUIMARÃES",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-147",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998035",
+      "codigoContabil": "11040033",
+      "descricao": "FUJIREBIO PROFª ANA BISPO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-148",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998043",
+      "codigoContabil": "11040034",
+      "descricao": "RT META",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-149",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998266",
+      "codigoContabil": "11040035",
+      "descricao": "FAILSAFE - UNIVERSITY OF EXETER - PROF LEONARDO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-150",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998290",
+      "codigoContabil": "11040036",
+      "descricao": "PEW GRANT",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-151",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998373",
+      "codigoContabil": "11040037",
+      "descricao": "WELCOME LEISHMANIA - PROFA. ANA PAULA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-152",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998381",
+      "codigoContabil": "11040038",
+      "descricao": "BILL E MELINDA - ALEXANDRE TEN CATEN (ADRIANA HEMERLY)",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-153",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998431",
+      "codigoContabil": "11040039",
+      "descricao": "OCEAN FOREST - PROF. MAURO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-154",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998449",
+      "codigoContabil": "11040040",
+      "descricao": "IMS PROFª EDUARDA BARBOSA",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-156",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "128609",
+      "codigoContabil": "11050001",
+      "descricao": "IMPORTACAO  - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-157",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143004",
+      "codigoContabil": "11050002",
+      "descricao": "ADMINISTRACAO - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-158",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "11050003",
+      "codigoContabil": "11050003",
+      "descricao": "ITAÚ C/C14.300-4 - ADMINISTRACAO - PREMIUM REFERENCIADO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-159",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "310514",
+      "codigoContabil": "11050004",
+      "descricao": "PRINCIPAL - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-160",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "92665",
+      "codigoContabil": "11050005",
+      "descricao": "IMPORTACAO - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-161",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144408",
+      "codigoContabil": "11050006",
+      "descricao": "PRESIDENCIA TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-162",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "128609",
+      "codigoContabil": "11050007",
+      "descricao": "A2 IMPORTACAO - INDEX SELIC EMP RENDA FIXA",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-164",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143608",
+      "codigoContabil": "11060001",
+      "descricao": "LVM AMILCAR TANURE - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-165",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "84476",
+      "codigoContabil": "11060002",
+      "descricao": "UMMC ICB - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-166",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107581",
+      "codigoContabil": "11060003",
+      "descricao": "WORSHOP FITOT - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-167",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107832",
+      "codigoContabil": "11060004",
+      "descricao": "EQUIPAM CENABIO - RF AUTOMATICO EMPRES",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-168",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107840",
+      "codigoContabil": "11060005",
+      "descricao": "BIOTERIO DECANIA CCS - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-169",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107875",
+      "codigoContabil": "11060006",
+      "descricao": "LIGHT S A RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-170",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107891",
+      "codigoContabil": "11060007",
+      "descricao": "UNIMICRO UFRJ - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-171",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107972",
+      "codigoContabil": "11060008",
+      "descricao": "IBCCF CEMBIO RS - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-172",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107980",
+      "codigoContabil": "11060009",
+      "descricao": "IBCCF LABGENEST RSM - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-173",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107999",
+      "codigoContabil": "11060010",
+      "descricao": "IBCCF MRC APCAL - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-174",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108065",
+      "codigoContabil": "11060011",
+      "descricao": "IB LABIM IDSN - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-175",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108073",
+      "codigoContabil": "11060012",
+      "descricao": "IBQM LBAH P - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-176",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "142881",
+      "codigoContabil": "11060013",
+      "descricao": "CRISTAL 2  - PREMIUM REFERENCIADO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-177",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "142881",
+      "codigoContabil": "11060014",
+      "descricao": "CRISTAL 2 - APLIC. AUTO MAIS",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-178",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143103",
+      "codigoContabil": "11060015",
+      "descricao": "V WORKSHOP - ESPECIAL DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-179",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143384",
+      "codigoContabil": "11060016",
+      "descricao": "SAE - APLIC. AUTO MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-180",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143384",
+      "codigoContabil": "11060017",
+      "descricao": "SAE - TRUST DI",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-181",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143616",
+      "codigoContabil": "11060018",
+      "descricao": "WORKSHOP NUTRIÇÃO - MIX CREDITO PRIVADO",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-182",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150025",
+      "codigoContabil": "11060020",
+      "descricao": "SEQUENCIAMEN.DE DNA - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-183",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150033",
+      "codigoContabil": "11060021",
+      "descricao": "PRO OCEANO - APLIC. AUT.MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-184",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150033",
+      "codigoContabil": "11060022",
+      "descricao": "PRO OCEANO - PREMIUM REFERENCIADO",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-185",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "210986",
+      "codigoContabil": "11060023",
+      "descricao": "CRISTAL - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-186",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "23738",
+      "codigoContabil": "11060024",
+      "descricao": "XII SILAE - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-187",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "3038009",
+      "codigoContabil": "11060025",
+      "descricao": "PROJ DIVERSOS - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-188",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "338516",
+      "codigoContabil": "11060026",
+      "descricao": "EGF 151 - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-189",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "356352",
+      "codigoContabil": "11060027",
+      "descricao": "CE ANATO - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-190",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "395005",
+      "codigoContabil": "11060028",
+      "descricao": "MN UFRJ VOTORANTIN - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-191",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "407054",
+      "codigoContabil": "11060029",
+      "descricao": "LUCHM IBCCF (II) - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-192",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "421065",
+      "codigoContabil": "11060030",
+      "descricao": "F G CENPES LS IMPPG - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-193",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144077",
+      "codigoContabil": "11060031",
+      "descricao": "PRODIET - ESPECIAL DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-194",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "99863",
+      "codigoContabil": "11060035",
+      "descricao": "9 - LAB BIOINOVAR - PROFA. ALANE - TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-195",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143103",
+      "codigoContabil": "11060036",
+      "descricao": "V WORKSHOP - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-196",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108014",
+      "codigoContabil": "11060037",
+      "descricao": "ICB INFLAMA - POUPANÇA",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-197",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "190276",
+      "codigoContabil": "11060038",
+      "descricao": "LMCP RF AUT. EMPRESA",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-198",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "88315",
+      "codigoContabil": "11060039",
+      "descricao": "JUTCLIN  RF AUT. EMPRESA",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-199",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107844",
+      "codigoContabil": "11060040",
+      "descricao": "BIOTERIO DECANIA RF SIMP. SOLIDEZ",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-200",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107891",
+      "codigoContabil": "11060041",
+      "descricao": "UNIMICRO RF SIMP. SOLIDEZ",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-201",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107972",
+      "codigoContabil": "11060042",
+      "descricao": "CEMBIO RF SIMP. SOLIDEZ",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-202",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "108065",
+      "codigoContabil": "11060043",
+      "descricao": "LABIM IDSN RF SIMP. SOLIDEZ",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-203",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "407054",
+      "codigoContabil": "11060044",
+      "descricao": "LUCHM RF SIMP. SOLIDEZ",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-204",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "78689",
+      "codigoContabil": "11060045",
+      "descricao": "ESTREITO S. PUBLICO AUT.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-205",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "78697",
+      "codigoContabil": "11060046",
+      "descricao": "RIO PARAIBA DO SUL RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-206",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "85820",
+      "codigoContabil": "11060047",
+      "descricao": "SIMPO RF AUT. EMPRESA",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-207",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "92193",
+      "codigoContabil": "11060048",
+      "descricao": "LABION - RF AUT. EMPRESA",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-208",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998696",
+      "codigoContabil": "11060049",
+      "descricao": "UMAA PROF. VINICIUS PERUZZI - APLIC AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-209",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998530",
+      "codigoContabil": "11060050",
+      "descricao": "CAUÇÃO SAE - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-210",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998415",
+      "codigoContabil": "11060051",
+      "descricao": "HOLISTIC - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-211",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998860",
+      "codigoContabil": "11060052",
+      "descricao": "BIOTECMAR - APLIC. AUT. MAIS",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-212",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143525",
+      "codigoContabil": "11060053",
+      "descricao": "INCT - TK - TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-213",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143103",
+      "codigoContabil": "11060054",
+      "descricao": "INCT - PLO - TRUST DI",
+      "tipoAplicacao": "A3"
+    },
+    {
+      "id": "conta-214",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "84476",
+      "codigoContabil": "11060055",
+      "descricao": "UMMC ICB - BB RF SIMP SOLIDEZ",
+      "tipoAplicacao": "A2"
+    },
+    {
+      "id": "conta-215",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998498",
+      "codigoContabil": "11060056",
+      "descricao": "PROJETOS DIVERSOS (ITAU) TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-216",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998704",
+      "codigoContabil": "11060057",
+      "descricao": "BIOCHIMICO PROF LUCIO - TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-217",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998720",
+      "codigoContabil": "11060058",
+      "descricao": "BIOBUREAL PROFS CLAUDIA RUSSO - TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-218",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998738",
+      "codigoContabil": "11060059",
+      "descricao": "PRIME AGRO - PROF. ANDREW - TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-219",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998803",
+      "codigoContabil": "11060060",
+      "descricao": "CONTA AZUL - RECEBA FACIL - TRUST DI",
+      "tipoAplicacao": "A"
+    },
+    {
+      "id": "conta-221",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "142410",
+      "codigoContabil": "11070100",
+      "descricao": "LAGUNARES - APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-222",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144010",
+      "codigoContabil": "11070101",
+      "descricao": "BIOGEOMAR - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-223",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "149092",
+      "codigoContabil": "11070102",
+      "descricao": "SERRAPILHEIRA OLAVO - PREMIUM REFERENCIADO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-224",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150017",
+      "codigoContabil": "11070103",
+      "descricao": "SERRAPILHERA  AMILCAR - CDB DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-225",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "375268",
+      "codigoContabil": "11070104",
+      "descricao": "RIBHAC EMBRAPA - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-226",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "395021",
+      "codigoContabil": "11070105",
+      "descricao": "WELCOME APL IBCCF - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-227",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "85685",
+      "codigoContabil": "11070106",
+      "descricao": "OUHSC - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-228",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "89311",
+      "codigoContabil": "11070107",
+      "descricao": "NANO VALID INMETRO - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-229",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "93599",
+      "codigoContabil": "11070108",
+      "descricao": "BNI IMP - RF AUTOMATICO EMPRES.",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-230",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "357766",
+      "codigoContabil": "11070110",
+      "descricao": "WBBT",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-231",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998928",
+      "codigoContabil": "11070111",
+      "descricao": "FUNBIO MANGUEZAIS TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-232",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998936",
+      "codigoContabil": "11070112",
+      "descricao": "REDE DOR TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-233",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998985",
+      "codigoContabil": "11070113",
+      "descricao": "FUNBIO TUBAROES ELASMOTOX",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-234",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998993",
+      "codigoContabil": "11070114",
+      "descricao": "FUNBIO TUBAROES ECOSHARK",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-235",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998928",
+      "codigoContabil": "11070115",
+      "descricao": "FUNBIO MANGUEZAIS APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-236",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998936",
+      "codigoContabil": "11070116",
+      "descricao": "REDE DOR APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-237",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "150017",
+      "codigoContabil": "11070117",
+      "descricao": "SERRAPILHEIRA  AMILCAR APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-238",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "149092",
+      "codigoContabil": "11070118",
+      "descricao": "SERRAPILHEIRA OLAVO APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-239",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998688",
+      "codigoContabil": "11070119",
+      "descricao": "REDE CPE - APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-240",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998258",
+      "codigoContabil": "11070120",
+      "descricao": "RBP - FJLES - PROF. OLAVO BOHER - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-241",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998480",
+      "codigoContabil": "11070121",
+      "descricao": "IDOR - PESQUISA CLINICA - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-242",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998688",
+      "codigoContabil": "11070122",
+      "descricao": "REDE CPE - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-243",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998746",
+      "codigoContabil": "11070123",
+      "descricao": "PETRO COSTÃO ROCHOSO - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-244",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998761",
+      "codigoContabil": "11070124",
+      "descricao": "FUNBIO MARE LIMPA - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-246",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "107867",
+      "codigoContabil": "11080001",
+      "descricao": "IBCCF F NEWTON APCAL - S. PUBLICO AUTOMATICO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-247",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143400",
+      "codigoContabil": "11080002",
+      "descricao": "PROFª ANA PAULA - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-248",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143657",
+      "codigoContabil": "11080003",
+      "descricao": "NOZIKA GRANTS - APLIC. AUT. MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-249",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143731",
+      "codigoContabil": "11080004",
+      "descricao": "PROF CARLOS HOLANDINO - APLIC. AUTO MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-250",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143731",
+      "codigoContabil": "11080005",
+      "descricao": "PROF CARLOS HOLANDINO - ESPECIAL DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-251",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "144051",
+      "codigoContabil": "11080006",
+      "descricao": "ALZHEIMER S ASSOC. - PREMIUM REFERENCIADO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-252",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143400",
+      "codigoContabil": "11080007",
+      "descricao": "PROFª ANA PAULA - GRANTS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-253",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143657",
+      "codigoContabil": "11080008",
+      "descricao": "NOZIKA GRANTS - PREMIUM REFERENCIADO",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-254",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998944",
+      "codigoContabil": "11080009",
+      "descricao": "ABBOTT RAPID CDB DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-255",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998944",
+      "codigoContabil": "11080010",
+      "descricao": "ABBOTT RAPID KINEA IPCA II",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-256",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998944",
+      "codigoContabil": "11080011",
+      "descricao": "ABBOTT RAPID TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-257",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998951",
+      "codigoContabil": "11080012",
+      "descricao": "ABBOTT ASSINTOMATICOS TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-258",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998969",
+      "codigoContabil": "11080013",
+      "descricao": "ABBOTT NASAL TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-259",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998977",
+      "codigoContabil": "11080014",
+      "descricao": "FIND TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-260",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998944",
+      "codigoContabil": "11080015",
+      "descricao": "ABBOTT RAPID AUTO MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-261",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998951",
+      "codigoContabil": "11080016",
+      "descricao": "ABBOTT ASSINTOMATICOS AUTO MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-262",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998969",
+      "codigoContabil": "11080017",
+      "descricao": "ABBOTT NASAL AUTO MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-263",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998977",
+      "codigoContabil": "11080018",
+      "descricao": "FIND AUTO MAIS",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-264",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143533",
+      "codigoContabil": "11080019",
+      "descricao": "WHO - GILBERTO KAC TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-265",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143731",
+      "codigoContabil": "11080020",
+      "descricao": "PROFª CARLA HOLANDINO - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-266",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "143855",
+      "codigoContabil": "11080021",
+      "descricao": "NOVARTIS APCAL - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-267",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997888",
+      "codigoContabil": "11080022",
+      "descricao": "PNUMA - HASSAN SOHN - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-268",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997896",
+      "codigoContabil": "11080023",
+      "descricao": "ISN PROFª SUSANA CARVAJAL - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-269",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "997904",
+      "codigoContabil": "11080024",
+      "descricao": "FAILSAFE - PROF. ALLAN JEFFERSON GUIMARÃES - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-270",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998266",
+      "codigoContabil": "11080025",
+      "descricao": "FAILSAFE - UNIVERSITY OF EXETER - PROF LEONARDO - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-271",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998290",
+      "codigoContabil": "11080026",
+      "descricao": "PEW GRANT",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-272",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998308",
+      "codigoContabil": "11080027",
+      "descricao": "THE ROCKEFELLER UNIVERSITY - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-273",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998381",
+      "codigoContabil": "11080028",
+      "descricao": "BILL E MELINDA - ALEXANDRE TEN CATEN ( ADRIANA SILVA HERMELY) - TRUST",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-274",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998431",
+      "codigoContabil": "11080029",
+      "descricao": "OCEAN FOREST - PROF. MAURO TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-275",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998449",
+      "codigoContabil": "11080030",
+      "descricao": "IMS PROFª EDUARDA BARBOSA - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-276",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998472",
+      "codigoContabil": "11080031",
+      "descricao": "LVM ABBOTT DUO DENGUE - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-277",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998522",
+      "codigoContabil": "11080032",
+      "descricao": "GALACTOSEMIA - PROF. CLAUDIO MASUDA - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-278",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998589",
+      "codigoContabil": "11080033",
+      "descricao": "BILL E MELINDA GATES - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-279",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998597",
+      "codigoContabil": "11080034",
+      "descricao": "SMBE - PROFS CLAUDIA RUSSO - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-280",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998647",
+      "codigoContabil": "11080035",
+      "descricao": "UNIVERSIDADE MASSACHUSETTS - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-281",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998753",
+      "codigoContabil": "11080036",
+      "descricao": "GRANT RKI CLARISSA - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-282",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998795",
+      "codigoContabil": "11080037",
+      "descricao": "ABOTT COVID FLU - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-283",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998811",
+      "codigoContabil": "11080038",
+      "descricao": "ANA PAULA MRC FAPESP - TRUST DI",
+      "tipoAplicacao": null
+    },
+    {
+      "id": "conta-284",
+      "tipo": "CONTA_BANCARIA",
+      "numeroConta": "998902",
+      "codigoContabil": "11080039",
+      "descricao": "GRANTS ORPAGS - TRUST DI",
+      "tipoAplicacao": null
+    }
+  ]
+}

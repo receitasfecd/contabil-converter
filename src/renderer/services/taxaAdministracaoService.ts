@@ -1,0 +1,543 @@
+import { TaxaAdministracao, TaxaAdministracaoStore, CONTA_ADM, GRUPOS_CONTABEIS } from '../types/TaxaAdministracao';
+import { Transfer } from '../types/Transfer';
+import { mappingService } from './mappingService';
+import { loadTaxaConfig } from './taxaConfigService';
+
+const STORAGE_KEY = 'taxas-administracao-store';
+
+export function loadTaxasAdministracao(): TaxaAdministracaoStore {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        taxas: parsed.taxas.map((taxa: any) => ({
+          ...taxa,
+          pairedAt: taxa.pairedAt ? new Date(taxa.pairedAt) : undefined,
+          processedAt: taxa.processedAt ? new Date(taxa.processedAt) : undefined,
+        })),
+      };
+    }
+  } catch (error) {
+    console.error('Erro ao carregar taxas de administração:', error);
+  }
+
+  return { taxas: [] };
+}
+
+export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  } catch (error) {
+    console.error('Erro ao salvar taxas de administração:', error);
+  }
+}
+
+// Identificar se uma transferência é taxa de administração
+export function isTaxaAdministracao(transfer: Transfer): boolean {
+  const historico = transfer.historico.toLowerCase();
+
+  // Verificar palavras-chave no histórico
+  const keywords = [
+    'taxa adm',
+    'taxa de administração',
+    'taxa de administracao',
+    'tx adm',
+    'taxa administrativa',
+    'tx administrativa'
+  ];
+  const hasTaxaKeyword = keywords.some(keyword => historico.includes(keyword));
+
+  // Verificar classificação financeira (se disponível no transfer)
+  const classificacao = (transfer as any).original?.classificacaoFinanceira;
+  let hasClassificacaoTaxa = false;
+
+  if (classificacao) {
+    // Normalizar: remover espaços e converter para maiúsculas
+    const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
+    hasClassificacaoTaxa =
+      classifUpper.includes('PROJ002.1.4.01.99') ||
+      classifUpper.includes('GRANT002.1.4.01.99') ||
+      classifUpper.includes('TEP002.1.4.01.99') ||
+      classifUpper.includes('IMP004.19') ||
+      classifUpper.startsWith('FECD001.1.4') ||
+      classifUpper.startsWith('FECD001.1.5');
+  }
+
+  return hasTaxaKeyword || hasClassificacaoTaxa;
+}
+
+// Vincular automaticamente contas de despesa e receita baseado na classificação financeira
+function vincularContasAutomaticamente(taxa: TaxaAdministracao): void {
+  console.log(`🔗 Tentando vincular contas automaticamente para taxa ${taxa.id}`);
+
+  if (!taxa.grupoContabil) {
+    console.log(`⚠️ Taxa sem grupo contábil definido`);
+    return;
+  }
+
+  // Buscar a classificação financeira da transferência
+  const transfer = taxa.transferOut || taxa.transferIn;
+  if (!transfer) {
+    console.log(`⚠️ Taxa sem transferência associada`);
+    return;
+  }
+
+  const classificacao = (transfer as any).original?.classificacaoFinanceira;
+  console.log(`📋 Classificação financeira encontrada: ${classificacao}`);
+
+  if (!classificacao) {
+    console.log(`⚠️ Transferência sem classificação financeira`);
+    return;
+  }
+
+  // Buscar no mapeamento de classificações
+  const classificacoes = mappingService.getClassificacoes();
+  console.log(`📚 Total de classificações no mapeamento: ${classificacoes.length}`);
+
+  const mapping = classificacoes.find(c => c.classificacaoFinanceira === classificacao);
+  console.log(`🔍 Mapeamento encontrado:`, mapping);
+
+  if (mapping) {
+    // Normalizar: remover espaços e converter para maiúsculas
+    const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
+
+    // Se for despesa (PROJ, GRANT, TEP, IMP)
+    if (classifUpper.includes('PROJ002.1.4.01.99') ||
+        classifUpper.includes('GRANT002.1.4.01.99') ||
+        classifUpper.includes('TEP002.1.4.01.99') ||
+        classifUpper.includes('IMP004.19')) {
+      // Conta de despesa vem do mapeamento
+      taxa.contaDespesa = mapping.codigoContabil;
+      console.log(`✓ Conta de despesa vinculada automaticamente: ${taxa.contaDespesa} (${mapping.descricao})`);
+    }
+
+    // Se for receita (FECD001.1.4 ou FECD001.1.5)
+    if (classifUpper.startsWith('FECD001.1.4') || classifUpper.startsWith('FECD001.1.5')) {
+      // Conta de receita vem do mapeamento
+      taxa.contaReceita = mapping.codigoContabil;
+      console.log(`✓ Conta de receita vinculada automaticamente: ${taxa.contaReceita} (${mapping.descricao})`);
+    }
+  } else {
+    console.log(`⚠️ Nenhum mapeamento encontrado para classificação: ${classificacao}`);
+  }
+}
+
+// Adicionar transferência como taxa de administração
+export function addTaxaAdministracao(transfer: Transfer): void {
+  const store = loadTaxasAdministracao();
+
+  const taxaData = {
+    transferId: transfer.id,
+    accountNumber: transfer.accountNumber,
+    accountCode: transfer.accountCode,
+    date: transfer.date,
+    amount: transfer.amount,
+    historico: transfer.historico,
+  };
+
+  // Verificar se é saída (débito) ou entrada (crédito)
+  const isOut = transfer.direction === 'OUT';
+  const isIn = transfer.direction === 'IN';
+
+  // Verificar se já existe uma taxa pendente que pode parear
+  const existingTaxa = store.taxas.find(t => {
+    if (!t.status.startsWith('PENDING')) return false;
+
+    // Se a nova transferência é saída (OUT), procurar taxa que está esperando saída (PENDING_IN)
+    if (isOut && t.status === 'PENDING_IN' && t.transferIn) {
+      return t.transferIn.date === transfer.date && t.transferIn.amount === transfer.amount;
+    }
+
+    // Se a nova transferência é entrada (IN), procurar taxa que está esperando entrada (PENDING_OUT)
+    if (isIn && t.status === 'PENDING_OUT' && t.transferOut) {
+      return t.transferOut.date === transfer.date && t.transferOut.amount === transfer.amount;
+    }
+
+    return false;
+  });
+
+  if (existingTaxa) {
+    // Parear com taxa existente
+    if (isOut) {
+      existingTaxa.transferOut = taxaData;
+    } else {
+      existingTaxa.transferIn = taxaData;
+    }
+    existingTaxa.status = 'PAIRED';
+    existingTaxa.pairedAt = new Date();
+
+    // Identificar grupo contábil automaticamente (usar a transferência atual que tem a classificação)
+    const grupoIdentificado = identificarGrupoContabil(transfer);
+    if (grupoIdentificado) {
+      existingTaxa.grupoContabil = grupoIdentificado;
+    }
+
+    // Vincular contas automaticamente usando a transferência atual
+    vincularContasAutomaticamenteDirect(existingTaxa, transfer);
+  } else {
+    // Criar nova taxa pendente
+    const grupoIdentificado = identificarGrupoContabil(transfer);
+
+    const novaTaxa: TaxaAdministracao = {
+      id: `taxa-${Date.now()}-${Math.random()}`,
+      status: isOut ? 'PENDING_OUT' : 'PENDING_IN',
+      grupoContabil: grupoIdentificado,
+    };
+
+    if (isOut) {
+      novaTaxa.transferOut = taxaData;
+    } else {
+      novaTaxa.transferIn = taxaData;
+    }
+
+    // Vincular contas automaticamente usando a transferência atual
+    vincularContasAutomaticamenteDirect(novaTaxa, transfer);
+
+    store.taxas.push(novaTaxa);
+  }
+
+  saveTaxasAdministracao(store);
+}
+
+// Vincular contas usando diretamente a transferência (que tem o original com classificação)
+function vincularContasAutomaticamenteDirect(taxa: TaxaAdministracao, transfer: Transfer): void {
+  if (!taxa.grupoContabil) {
+    return;
+  }
+
+  // Carregar configurações
+  const config = loadTaxaConfig();
+
+  // Buscar a conta bancária para pegar a categoria
+  const contaBancaria = mappingService.getContasBancarias().find(
+    c => c.numeroConta === transfer.accountNumber
+  );
+
+  if (!contaBancaria) {
+    return;
+  }
+
+  // Determinar se é despesa (OUT) ou receita (IN)
+  const isDespesa = transfer.direction === 'OUT';
+  const isReceita = transfer.direction === 'IN';
+
+  if (isDespesa) {
+    // Lançamento de Despesa
+    switch (taxa.grupoContabil) {
+      case 'PROJETOS':
+        taxa.contaDespesa = config.despesa.PROJETOS.debito;
+        break;
+      case 'GRANTS':
+        taxa.contaDespesa = config.despesa.GRANTS.debito;
+        break;
+      case 'TERMOS_PARCERIAS':
+        taxa.contaDespesa = config.despesa.TERMOS_PARCERIAS.debito;
+        break;
+      case 'IMPORTACOES':
+        taxa.contaDespesa = config.despesa.IMPORTACAO.debito;
+        break;
+    }
+  }
+
+  if (isReceita) {
+    // Lançamento de Receita
+    switch (taxa.grupoContabil) {
+      case 'PROJETOS':
+        taxa.contaReceita = config.receita.categorias.PROJETOS.credito;
+        break;
+      case 'GRANTS':
+        taxa.contaReceita = config.receita.categorias.GRANTS.credito;
+        break;
+      case 'TERMOS_PARCERIAS':
+        taxa.contaReceita = config.receita.categorias.TERMOS_PARCERIAS.credito;
+        break;
+      case 'IMPORTACOES':
+        taxa.contaReceita = config.receita.categorias.IMPORTACAO.credito;
+        break;
+    }
+  }
+}
+
+// Identificar grupo contábil baseado na classificação financeira
+function identificarGrupoContabil(transfer: Transfer): 'PROJETOS' | 'GRANTS' | 'TERMOS_PARCERIAS' | 'IMPORTACOES' | undefined {
+  const classificacao = (transfer as any).original?.classificacaoFinanceira;
+
+  if (classificacao) {
+    const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
+
+    // Identificar por classificação financeira de despesa
+    if (classifUpper.includes('PROJ002.1.4.01.99')) {
+      return 'PROJETOS';
+    }
+    if (classifUpper.includes('GRANT002.1.4.01.99')) {
+      return 'GRANTS';
+    }
+    if (classifUpper.includes('TEP002.1.4.01.99')) {
+      return 'TERMOS_PARCERIAS';
+    }
+    if (classifUpper.includes('IMP004.19')) {
+      return 'IMPORTACOES';
+    }
+
+    // Receitas (FECD001.1.4 e FECD001.1.5) - identificar pelo subgrupo específico
+    if (classifUpper.startsWith('FECD001.1.4') || classifUpper.startsWith('FECD001.1.5')) {
+      if (classifUpper.includes('.01.')) {
+        return 'PROJETOS';
+      }
+      if (classifUpper.includes('.02.')) {
+        return 'GRANTS';
+      }
+      if (classifUpper.includes('.03.')) {
+        return 'TERMOS_PARCERIAS';
+      }
+      if (classifUpper.includes('.04.')) {
+        return 'IMPORTACOES';
+      }
+    }
+  }
+
+  // Fallback: identificar pela conta específica de importações
+  const accountNumber = transfer.accountNumber;
+  if (accountNumber === GRUPOS_CONTABEIS.IMPORTACOES.contaEspecifica) {
+    return 'IMPORTACOES';
+  }
+
+  // Fallback: buscar no plano de contas
+  const contaBancaria = mappingService.getContasBancarias().find(
+    c => c.numeroConta === accountNumber
+  );
+
+  if (!contaBancaria) {
+    return undefined;
+  }
+
+  const codigoContabil = contaBancaria.codigoContabil;
+
+  // Identificar grupo pelo código contábil
+  if (codigoContabil.startsWith('1102010')) {
+    return 'PROJETOS';
+  }
+  if (codigoContabil.startsWith('1102011')) {
+    return 'GRANTS';
+  }
+  if (codigoContabil.startsWith('1102012')) {
+    return 'TERMOS_PARCERIAS';
+  }
+
+  return undefined;
+}
+
+// Definir contas contábeis para uma taxa
+export function definirContasTaxa(
+  taxaId: string,
+  grupoContabil: 'PROJETOS' | 'GRANTS' | 'TERMOS_PARCERIAS' | 'IMPORTACOES',
+  contaDespesa: string,
+  contaReceita: string
+): void {
+  const store = loadTaxasAdministracao();
+  const taxa = store.taxas.find(t => t.id === taxaId);
+
+  if (taxa) {
+    taxa.grupoContabil = grupoContabil;
+    taxa.contaDespesa = contaDespesa;
+    taxa.contaReceita = contaReceita;
+    saveTaxasAdministracao(store);
+  }
+}
+
+// Processar taxa pareada em lançamentos contábeis
+export function processarTaxa(taxaId: string): {
+  lancamentoDespesa: any;
+  lancamentoReceita: any;
+} | null {
+  const store = loadTaxasAdministracao();
+  const taxa = store.taxas.find(t => t.id === taxaId);
+
+  if (!taxa || taxa.status !== 'PAIRED' || !taxa.grupoContabil) {
+    return null;
+  }
+
+  if (!taxa.transferOut || !taxa.transferIn) {
+    return null;
+  }
+
+  // Carregar configurações
+  const config = loadTaxaConfig();
+
+  // Determinar crédito para despesa
+  let creditoDespesa = taxa.transferOut.accountCode; // Padrão: banco de origem
+
+  // Importação tem crédito fixo
+  if (taxa.grupoContabil === 'IMPORTACOES') {
+    creditoDespesa = config.despesa.IMPORTACAO.credito;
+  }
+
+  // Lançamento de Despesa: Débito Despesa, Crédito Banco (saída)
+  const lancamentoDespesa = {
+    data: taxa.transferOut.date,
+    debito: taxa.contaDespesa || (taxa.grupoContabil === 'IMPORTACOES' ? config.despesa.IMPORTACAO.debito : config.despesa[taxa.grupoContabil].debito),
+    credito: creditoDespesa,
+    centroCusto: '',
+    historico: `Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil!].descricao}`,
+    valor: taxa.transferOut.amount,
+    tipo: 'FINANCEIRO',
+  };
+
+  // Lançamento de Receita: Débito Banco Adm (14300-4), Crédito Receita
+  const lancamentoReceita = {
+    data: taxa.transferIn.date,
+    debito: config.receita.contaDebito, // Sempre 11010103 - BANCO ITAU C/C 14.300-4
+    credito: taxa.contaReceita || (taxa.grupoContabil === 'IMPORTACOES' ? config.receita.categorias.IMPORTACAO.credito : config.receita.categorias[taxa.grupoContabil].credito),
+    centroCusto: '',
+    historico: `Receita Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil!].descricao}`,
+    valor: taxa.transferIn.amount,
+    tipo: 'FINANCEIRO',
+  };
+
+  // Marcar como processada
+  taxa.status = 'PROCESSED';
+  taxa.processedAt = new Date();
+  saveTaxasAdministracao(store);
+
+  return { lancamentoDespesa, lancamentoReceita };
+}
+
+// Obter taxas por status
+export function getTaxasPendentes(): TaxaAdministracao[] {
+  const store = loadTaxasAdministracao();
+  return store.taxas.filter(t => t.status.startsWith('PENDING'));
+}
+
+export function getTaxasPareadas(): TaxaAdministracao[] {
+  const store = loadTaxasAdministracao();
+  return store.taxas.filter(t => t.status === 'PAIRED');
+}
+
+export function getTaxasProcessadas(): TaxaAdministracao[] {
+  const store = loadTaxasAdministracao();
+  return store.taxas.filter(t => t.status === 'PROCESSED');
+}
+
+// Excluir taxa
+export function deleteTaxa(taxaId: string): void {
+  const store = loadTaxasAdministracao();
+  store.taxas = store.taxas.filter(t => t.id !== taxaId);
+  saveTaxasAdministracao(store);
+}
+
+// Limpar todas as taxas
+export function clearAllTaxas(): void {
+  saveTaxasAdministracao({ taxas: [] });
+}
+
+// Limpar taxas de uma conta específica
+export function clearTaxasByAccount(accountNumber: string): void {
+  const store = loadTaxasAdministracao();
+  store.taxas = store.taxas.filter(t => {
+    const outAccount = t.transferOut?.accountNumber;
+    const inAccount = t.transferIn?.accountNumber;
+    return outAccount !== accountNumber && inAccount !== accountNumber;
+  });
+  saveTaxasAdministracao(store);
+}
+
+// Exportar taxas processadas para CSV
+export function exportTaxasProcessadas(): { csv: string; taxasExportadas: TaxaAdministracao[] } {
+  const store = loadTaxasAdministracao();
+  const taxasParaExportar = store.taxas.filter(t => t.status === 'PROCESSED' && !t.exported);
+
+  if (taxasParaExportar.length === 0) {
+    return { csv: '', taxasExportadas: [] };
+  }
+
+  // Gerar linhas do CSV
+  const linhas: string[] = [];
+  const erros: string[] = [];
+
+  taxasParaExportar.forEach(taxa => {
+    if (!taxa.transferOut || !taxa.transferIn || !taxa.grupoContabil) {
+      erros.push(`Taxa ${taxa.id}: dados incompletos`);
+      return;
+    }
+
+    const config = loadTaxaConfig();
+
+    // Lançamento de Despesa
+    const creditoDespesa = taxa.grupoContabil === 'IMPORTACOES'
+      ? config.despesa.IMPORTACAO.credito
+      : taxa.transferOut.accountCode;
+
+    const debitoDespesa = taxa.contaDespesa || '';
+
+    // Validar lançamento de despesa
+    if (!debitoDespesa || !creditoDespesa) {
+      erros.push(`Taxa ${taxa.id} (Despesa): débito ou crédito vazio`);
+      return;
+    }
+    if (debitoDespesa === creditoDespesa) {
+      erros.push(`Taxa ${taxa.id} (Despesa): débito igual ao crédito`);
+      return;
+    }
+
+    linhas.push([
+      taxa.transferOut.date,
+      debitoDespesa,
+      creditoDespesa,
+      '',
+      `Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil].descricao}`,
+      taxa.transferOut.amount,
+      'FINANCEIRO'
+    ].join(';'));
+
+    // Lançamento de Receita
+    const debitoReceita = config.receita.contaDebito;
+    const creditoReceita = taxa.contaReceita || '';
+
+    // Validar lançamento de receita
+    if (!debitoReceita || !creditoReceita) {
+      erros.push(`Taxa ${taxa.id} (Receita): débito ou crédito vazio`);
+      return;
+    }
+    if (debitoReceita === creditoReceita) {
+      erros.push(`Taxa ${taxa.id} (Receita): débito igual ao crédito`);
+      return;
+    }
+
+    linhas.push([
+      taxa.transferIn.date,
+      debitoReceita,
+      creditoReceita,
+      '',
+      `Receita Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil].descricao}`,
+      taxa.transferIn.amount,
+      'FINANCEIRO'
+    ].join(';'));
+  });
+
+  // Se houver erros, lançar exceção
+  if (erros.length > 0) {
+    throw new Error(
+      `Não é possível exportar: ${erros.length} erro(s) encontrado(s):\n` +
+      erros.join('\n')
+    );
+  }
+
+  const csv = '﻿' + linhas.join('\n');
+
+  // Marcar como exportadas
+  taxasParaExportar.forEach(taxa => {
+    taxa.exported = true;
+    taxa.exportedAt = new Date();
+  });
+
+  saveTaxasAdministracao(store);
+
+  return { csv, taxasExportadas: taxasParaExportar };
+}
+
+// Obter taxas processadas não exportadas
+export function getTaxasProcessadasNaoExportadas(): TaxaAdministracao[] {
+  const store = loadTaxasAdministracao();
+  return store.taxas.filter(t => t.status === 'PROCESSED' && !t.exported);
+}

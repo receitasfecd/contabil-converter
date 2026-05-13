@@ -1,0 +1,2252 @@
+[
+  {
+    "numeroConta": "998357",
+    "codigoContabil": "11020106",
+    "descricao": "FECD CE ANATO (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99835-7 - FECD CE ANATO (ITAU)"
+  },
+  {
+    "numeroConta": "998449",
+    "codigoContabil": "11020106",
+    "descricao": "IMS PROFª EDUARDA BARBOSA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99844-9 - IMS PROFª EDUARDA BARBOSA"
+  },
+  {
+    "numeroConta": "107840",
+    "codigoContabil": "11020106",
+    "descricao": "FECD BIOTERIO DECANIA CCS (BB)",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10784-0 - FECD BIOTERIO DECANIA CCS (BB)"
+  },
+  {
+    "numeroConta": "998506",
+    "codigoContabil": "11020106",
+    "descricao": "SIMPOSIO PROF. WANDERLEY",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99850-6 - SIMPOSIO PROF. WANDERLEY"
+  },
+  {
+    "numeroConta": "998621",
+    "codigoContabil": "11020106",
+    "descricao": "META2MS - LABMETA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99862-1 - META2MS - LABMETA"
+  },
+  {
+    "numeroConta": "997938",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IBQM LBAH PLO (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99793-8 - FECD IBQM LBAH PLO (ITAU)"
+  },
+  {
+    "numeroConta": "998738",
+    "codigoContabil": "11020106",
+    "descricao": "FECD - PRIME AGRO - PROF. ANDREW",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99873-8 - FECD - PRIME AGRO - PROF. ANDREW"
+  },
+  {
+    "numeroConta": "143004",
+    "codigoContabil": "11020106",
+    "descricao": "ADMINISTRACAO FECD",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14300-4 - ADMINISTRACAO FECD"
+  },
+  {
+    "numeroConta": "998993",
+    "codigoContabil": "11020106",
+    "descricao": "FUNBIO TUBAROES ECOSHARK",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99899-3 - FUNBIO TUBAROES ECOSHARK "
+  },
+  {
+    "numeroConta": "998860",
+    "codigoContabil": "11020106",
+    "descricao": "BIOTECMAR",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99886-0 - BIOTECMAR"
+  },
+  {
+    "numeroConta": "210986",
+    "codigoContabil": "11020106",
+    "descricao": "CRISTAL PM",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "21098-6 - CRISTAL PM"
+  },
+  {
+    "numeroConta": "998787",
+    "codigoContabil": "11020106",
+    "descricao": "LVM - ABBOTT REAMOSTRAGEM",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99878-7 - LVM - ABBOTT REAMOSTRAGEM"
+  },
+  {
+    "numeroConta": "998696",
+    "codigoContabil": "11020106",
+    "descricao": "UMAA PROF. VINICIUS PERUZZI",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99869-6 - UMAA PROF. VINICIUS PERUZZI"
+  },
+  {
+    "numeroConta": "998985",
+    "codigoContabil": "11020106",
+    "descricao": "FUNBIO TUBAROES ELASMOTOX",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99898-5 - FUNBIO TUBAROES ELASMOTOX "
+  },
+  {
+    "numeroConta": "998530",
+    "codigoContabil": "11020106",
+    "descricao": "FECD CAUCAO SAE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99853-0 - FECD CAUCAO SAE"
+  },
+  {
+    "numeroConta": "998977",
+    "codigoContabil": "11020106",
+    "descricao": "LVM - FIND",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99897-7 - LVM - FIND"
+  },
+  {
+    "numeroConta": "997888",
+    "codigoContabil": "11020106",
+    "descricao": "PNUMA - HASSAN SOHN",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99788-8 - PNUMA - HASSAN SOHN"
+  },
+  {
+    "numeroConta": "998258",
+    "codigoContabil": "11020106",
+    "descricao": "RBP - FJLES -  PROF OLAVO BOHRER",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99825-8 - RBP - FJLES -  PROF OLAVO BOHRER"
+  },
+  {
+    "numeroConta": "998589",
+    "codigoContabil": "11020106",
+    "descricao": "BILL E MELINDA GATES",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99858-9 - BILL E MELINDA GATES "
+  },
+  {
+    "numeroConta": "998050",
+    "codigoContabil": "11020106",
+    "descricao": "UNIMICRO - ITAÚ",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99805-0 - UNIMICRO - ITAÚ"
+  },
+  {
+    "numeroConta": "998472",
+    "codigoContabil": "11020106",
+    "descricao": "LVM ABBOTT DUO DENGUE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99847-2 - LVM ABBOTT DUO DENGUE"
+  },
+  {
+    "numeroConta": "143400",
+    "codigoContabil": "11020106",
+    "descricao": "FECD PROFS ANA PAULA - GRANTS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14340-0 - FECD PROFS ANA PAULA - GRANTS "
+  },
+  {
+    "numeroConta": "998605",
+    "codigoContabil": "11020106",
+    "descricao": "CSL BRASIL - FABIANO THOMPSON",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99860-5 - CSL BRASIL - FABIANO THOMPSON"
+  },
+  {
+    "numeroConta": "998365",
+    "codigoContabil": "11020106",
+    "descricao": "FECD ICB WORKSHOP INFLAMA (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99836-5 - FECD ICB WORKSHOP INFLAMA (ITAU)"
+  },
+  {
+    "numeroConta": "143657",
+    "codigoContabil": "11020106",
+    "descricao": "NOZIKA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14365-7 - NOZIKA "
+  },
+  {
+    "numeroConta": "998761",
+    "codigoContabil": "11020106",
+    "descricao": "FUNBIO MARE LIMPA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99876-1 - FUNBIO MARE LIMPA"
+  },
+  {
+    "numeroConta": "998381",
+    "codigoContabil": "11020106",
+    "descricao": "BILL E MELINDA - ALEXANDRE TEN CATEN ( ADRIANA SILVA HERMELY)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99838-1 - BILL E MELINDA - ALEXANDRE TEN CATEN ( ADRIANA SILVA HERMELY) "
+  },
+  {
+    "numeroConta": "998845",
+    "codigoContabil": "11020106",
+    "descricao": "FUNDO IBQM",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99884-5 - FUNDO IBQM"
+  },
+  {
+    "numeroConta": "998043",
+    "codigoContabil": "11020106",
+    "descricao": "RT META",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99804-3 - RT META"
+  },
+  {
+    "numeroConta": "144077",
+    "codigoContabil": "11020106",
+    "descricao": "PRODIET",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14407-7 - PRODIET"
+  },
+  {
+    "numeroConta": "998837",
+    "codigoContabil": "11020106",
+    "descricao": "BARTIRA - GRANTS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99883-7 - BARTIRA - GRANTS"
+  },
+  {
+    "numeroConta": "143103",
+    "codigoContabil": "11020106",
+    "descricao": "INCT - PLO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14310-3 - INCT - PLO"
+  },
+  {
+    "numeroConta": "998274",
+    "codigoContabil": "11020106",
+    "descricao": "LVM ABBOTT KIT DENGUE ECO DIAGNOSTICA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99827-4 - LVM ABBOTT KIT DENGUE ECO DIAGNOSTICA"
+  },
+  {
+    "numeroConta": "92193",
+    "codigoContabil": "11020106",
+    "descricao": "FECD LABIOM",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "9219-3 - FECD LABIOM"
+  },
+  {
+    "numeroConta": "998803",
+    "codigoContabil": "11020106",
+    "descricao": "CONTA AZUL - RECEBA FACIL",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99880-3 - CONTA AZUL - RECEBA FACIL"
+  },
+  {
+    "numeroConta": "998266",
+    "codigoContabil": "11020106",
+    "descricao": "FAILSAFE - UNIVERSITY OF EXETER - PROF LEONARDO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99826-6 - FAILSAFE - UNIVERSITY OF EXETER - PROF LEONARDO"
+  },
+  {
+    "numeroConta": "998373",
+    "codigoContabil": "11020106",
+    "descricao": "WELCOME LEISHMANIA - PROFA. ANA PAULA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99837-3 - WELCOME LEISHMANIA - PROFA. ANA PAULA"
+  },
+  {
+    "numeroConta": "142881",
+    "codigoContabil": "11020106",
+    "descricao": "CRISTAL PM",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14288-1 - CRISTAL PM"
+  },
+  {
+    "numeroConta": "998951",
+    "codigoContabil": "11020106",
+    "descricao": "LVM ABBOTT ASSINTOMATICOS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99895-1 - LVM ABBOTT ASSINTOMATICOS "
+  },
+  {
+    "numeroConta": "998571",
+    "codigoContabil": "11020106",
+    "descricao": "CRISTALIA - PROF. GISELE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99857-1 - CRISTALIA - PROF. GISELE"
+  },
+  {
+    "numeroConta": "998035",
+    "codigoContabil": "11020106",
+    "descricao": "FUJIREBIO PROFª ANA BISPO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99803-5 - FUJIREBIO PROFª ANA BISPO"
+  },
+  {
+    "numeroConta": "998381",
+    "codigoContabil": "11020106",
+    "descricao": "1PLOCAN - PLOCAN",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99838-1PLOCAN - PLOCAN"
+  },
+  {
+    "numeroConta": "998878",
+    "codigoContabil": "11020106",
+    "descricao": "LVM OMICRON",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99887-8 - LVM OMICRON "
+  },
+  {
+    "numeroConta": "144010",
+    "codigoContabil": "11020106",
+    "descricao": "BIOGEOMAR",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14401-0 - BIOGEOMAR"
+  },
+  {
+    "numeroConta": "998944",
+    "codigoContabil": "11020106",
+    "descricao": "LVM ABBOTT RAPID DIAGNOSTICS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99894-4 - LVM ABBOTT RAPID DIAGNOSTICS"
+  },
+  {
+    "numeroConta": "998480",
+    "codigoContabil": "11020106",
+    "descricao": "IDOR - PESQUISA CLINICA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99848-0 - IDOR - PESQUISA CLINICA"
+  },
+  {
+    "numeroConta": "998969",
+    "codigoContabil": "11020106",
+    "descricao": "LVM - ABBOTT NASAL",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99896-9 - LVM - ABBOTT NASAL"
+  },
+  {
+    "numeroConta": "998324",
+    "codigoContabil": "11020106",
+    "descricao": "ARCELOMITAL (VOTORANTIN) - ITAU",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99832-4 - ARCELOMITAL (VOTORANTIN) - ITAU"
+  },
+  {
+    "numeroConta": "3038009",
+    "codigoContabil": "11020106",
+    "descricao": "FECD PROJ DIVERSOS",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "303800-9 - FECD PROJ DIVERSOS"
+  },
+  {
+    "numeroConta": "998068",
+    "codigoContabil": "11020106",
+    "descricao": "KPSBR-CTT-028-24/02 - RODRIGO CORREA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99806-8 - KPSBR-CTT-028-24/02 - RODRIGO CORREA"
+  },
+  {
+    "numeroConta": "150025",
+    "codigoContabil": "11020106",
+    "descricao": "PLATAFORMA SEQUENCIAMENTO DNA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "15002-5 - PLATAFORMA SEQUENCIAMENTO DNA"
+  },
+  {
+    "numeroConta": "143384",
+    "codigoContabil": "11020106",
+    "descricao": "SAE - GS.518.2018",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14338-4 - SAE - GS.518.2018"
+  },
+  {
+    "numeroConta": "998704",
+    "codigoContabil": "11020106",
+    "descricao": "BIOCHIMICO PROF LUCIO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99870-4 - BIOCHIMICO PROF LUCIO "
+  },
+  {
+    "numeroConta": "998852",
+    "codigoContabil": "11020106",
+    "descricao": "UNIVERSID MINNESOTA - LUCIA JE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99885-2 - UNIVERSID MINNESOTA - LUCIA JE"
+  },
+  {
+    "numeroConta": "144051",
+    "codigoContabil": "11020106",
+    "descricao": "ALZHEIMER ASSOCIATION",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14405-1 - ALZHEIMER ASSOCIATION "
+  },
+  {
+    "numeroConta": "407054",
+    "codigoContabil": "11020106",
+    "descricao": "FECD LUCHM IBCCF",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "40705-4 - FECD LUCHM IBCCF"
+  },
+  {
+    "numeroConta": "310514",
+    "codigoContabil": "11020106",
+    "descricao": "FECD PRINCIPAL",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "31051-4 - FECD PRINCIPAL"
+  },
+  {
+    "numeroConta": "998308",
+    "codigoContabil": "11020106",
+    "descricao": "THE ROCKEFELLER UNIVERSITY",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99830-8 - THE ROCKEFELLER UNIVERSITY"
+  },
+  {
+    "numeroConta": "143731",
+    "codigoContabil": "11020106",
+    "descricao": "PROFS CARLA HOLANDINO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14373-1 - PROFS CARLA HOLANDINO"
+  },
+  {
+    "numeroConta": "108073",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IBQM LBAH PLO",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10807-3 - FECD IBQM LBAH PLO"
+  },
+  {
+    "numeroConta": "997961",
+    "codigoContabil": "11020106",
+    "descricao": "CRIOMICROSCOPIA - PROFA. MARCIA ATTIAS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99796-1 - CRIOMICROSCOPIA - PROFA. MARCIA ATTIAS"
+  },
+  {
+    "numeroConta": "998720",
+    "codigoContabil": "11020106",
+    "descricao": "BIOBUREAL PROFS CLAUDIA RUSSO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99872-0 - BIOBUREAL PROFS CLAUDIA RUSSO"
+  },
+  {
+    "numeroConta": "998639",
+    "codigoContabil": "11020106",
+    "descricao": "FECD LAB BIOINOVAR - PROFA. ALANE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99863-9 - FECD LAB BIOINOVAR - PROFA. ALANE "
+  },
+  {
+    "numeroConta": "92665",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IMPORTACOES",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "9266-5 - FECD IMPORTACOES"
+  },
+  {
+    "numeroConta": "107867",
+    "codigoContabil": "11020106",
+    "descricao": "IBCCF F NEWTON APCAL",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10786-7 - IBCCF F NEWTON APCAL"
+  },
+  {
+    "numeroConta": "998779",
+    "codigoContabil": "11020106",
+    "descricao": "LVM - ABBOTT SPIKE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99877-9 - LVM - ABBOTT SPIKE"
+  },
+  {
+    "numeroConta": "997946",
+    "codigoContabil": "11020106",
+    "descricao": "ENEVA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99794-6 - ENEVA"
+  },
+  {
+    "numeroConta": "997953",
+    "codigoContabil": "11020106",
+    "descricao": "KPS - PROF. RODRIGO CORREIA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99795-3 - KPS - PROF. RODRIGO CORREIA"
+  },
+  {
+    "numeroConta": "395005",
+    "codigoContabil": "11020106",
+    "descricao": "FECD MN UFRJ VOTORANTIN",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "39500-5 - FECD MN UFRJ VOTORANTIN"
+  },
+  {
+    "numeroConta": "997896",
+    "codigoContabil": "11020106",
+    "descricao": "ISN - PROFª SUSANA CARVAJAL",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99789-6 - ISN - PROFª SUSANA CARVAJAL"
+  },
+  {
+    "numeroConta": "143608",
+    "codigoContabil": "11020106",
+    "descricao": "LVM INSTITUTO BIOLOGIA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14360-8 - LVM INSTITUTO BIOLOGIA"
+  },
+  {
+    "numeroConta": "107832",
+    "codigoContabil": "11020106",
+    "descricao": "FECD EQUIPAMENTOS CENABIO",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10783-2 - FECD EQUIPAMENTOS CENABIO "
+  },
+  {
+    "numeroConta": "997920",
+    "codigoContabil": "11020106",
+    "descricao": "LUCHM (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99792-0 - LUCHM (ITAU)"
+  },
+  {
+    "numeroConta": "998423",
+    "codigoContabil": "11020106",
+    "descricao": "FECD RESERVADO PARA INSCRICOES",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99842-3 - FECD RESERVADO PARA INSCRICOES"
+  },
+  {
+    "numeroConta": "998811",
+    "codigoContabil": "11020106",
+    "descricao": "FECD - ANA PAULA MRC FAPESP",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99881-1 - FECD - ANA PAULA MRC FAPESP"
+  },
+  {
+    "numeroConta": "998902",
+    "codigoContabil": "11020106",
+    "descricao": "FECD GRANTS ORPAGS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99890-2 - FECD GRANTS ORPAGS"
+  },
+  {
+    "numeroConta": "998613",
+    "codigoContabil": "11020106",
+    "descricao": "NANOBUSINESS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99861-3 - NANOBUSINESS"
+  },
+  {
+    "numeroConta": "998290",
+    "codigoContabil": "11020106",
+    "descricao": "PEW GRANT",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99829-0 - PEW GRANT"
+  },
+  {
+    "numeroConta": "998746",
+    "codigoContabil": "11020106",
+    "descricao": "PETRO COSTÃO ROCHOSO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99874-6 - PETRO COSTÃO ROCHOSO"
+  },
+  {
+    "numeroConta": "143533",
+    "codigoContabil": "11020106",
+    "descricao": "WHO - GILBERTO KAC",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14353-3 - WHO - GILBERTO KAC"
+  },
+  {
+    "numeroConta": "143855",
+    "codigoContabil": "11020106",
+    "descricao": "NOVARTIS - APCAL",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14385-5 - NOVARTIS - APCAL"
+  },
+  {
+    "numeroConta": "998456",
+    "codigoContabil": "11020106",
+    "descricao": "FECD BIOTERIO DECANIA CCS (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99845-6 - FECD BIOTERIO DECANIA CCS (ITAU)"
+  },
+  {
+    "numeroConta": "998431",
+    "codigoContabil": "11020106",
+    "descricao": "FECD OCEAN FOREST - PROF. MAURO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99843-1 - FECD OCEAN FOREST - PROF. MAURO"
+  },
+  {
+    "numeroConta": "107999",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IBCCF MRC APCAL",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10799-9 - FECD IBCCF MRC APCAL"
+  },
+  {
+    "numeroConta": "143616",
+    "codigoContabil": "11020106",
+    "descricao": "FUNBIO TUBARÕES SALVAR",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14361-6 - FUNBIO TUBARÕES SALVAR"
+  },
+  {
+    "numeroConta": "998688",
+    "codigoContabil": "11020106",
+    "descricao": "REDE CPE",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99868-8 - REDE CPE"
+  },
+  {
+    "numeroConta": "998647",
+    "codigoContabil": "11020106",
+    "descricao": "UNIVERSIDADE MASSACHUSETTS",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99864-7 - UNIVERSIDADE MASSACHUSETTS"
+  },
+  {
+    "numeroConta": "998498",
+    "codigoContabil": "11020106",
+    "descricao": "FECD PROJETOS DIVERSOS (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99849-8 - FECD PROJETOS DIVERSOS (ITAU)"
+  },
+  {
+    "numeroConta": "108065",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IB LABIM IDSN",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10806-5 - FECD IB LABIM IDSN"
+  },
+  {
+    "numeroConta": "107972",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IBCCF CEMBIO RSMB (BB)",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10797-2 - FECD IBCCF CEMBIO RSMB (BB)"
+  },
+  {
+    "numeroConta": "998753",
+    "codigoContabil": "11020106",
+    "descricao": "GRANT RKI CLARISSA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99875-3 - GRANT RKI CLARISSA"
+  },
+  {
+    "numeroConta": "997904",
+    "codigoContabil": "11020106",
+    "descricao": "FAILSAFE - PROF. ALLAN JEFFERSON GUIMARÃES",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99790-4 - FAILSAFE - PROF. ALLAN JEFFERSON GUIMARÃES"
+  },
+  {
+    "numeroConta": "356352",
+    "codigoContabil": "11020106",
+    "descricao": "FECD CE ANATO (BB)",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "35635-2 - FECD CE ANATO (BB)"
+  },
+  {
+    "numeroConta": "998522",
+    "codigoContabil": "11020106",
+    "descricao": "FECD GALACTOSEMIA - PROF. CLAUDIO MASUDA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99852-2 - FECD GALACTOSEMIA - PROF. CLAUDIO MASUDA"
+  },
+  {
+    "numeroConta": "998795",
+    "codigoContabil": "11020106",
+    "descricao": "ABBOTT COVID FLU",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99879-5 - ABBOTT COVID FLU"
+  },
+  {
+    "numeroConta": "108014",
+    "codigoContabil": "11020106",
+    "descricao": "FECD ICB WORKSHOP INFLAMA (BB)",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10801-4 - FECD ICB WORKSHOP INFLAMA (BB)"
+  },
+  {
+    "numeroConta": "998340",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IBCCF CEMBIO RSMB (ITAU)",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99834-0 - FECD IBCCF CEMBIO RSMB (ITAU)"
+  },
+  {
+    "numeroConta": "998936",
+    "codigoContabil": "11020106",
+    "descricao": "REDE DOR",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99893-6 - REDE DOR "
+  },
+  {
+    "numeroConta": "150017",
+    "codigoContabil": "11020106",
+    "descricao": "SERRAPILHEIRA - ORLANDO - COVID19",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "15001-7 - SERRAPILHEIRA - ORLANDO - COVID19"
+  },
+  {
+    "numeroConta": "998597",
+    "codigoContabil": "11020106",
+    "descricao": "SMBE - PROFS CLAUDIA RUSSO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99859-7 - SMBE - PROFS CLAUDIA RUSSO"
+  },
+  {
+    "numeroConta": "998415",
+    "codigoContabil": "11020106",
+    "descricao": "FECD HOLISTIC",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99841-5 - FECD HOLISTIC"
+  },
+  {
+    "numeroConta": "143525",
+    "codigoContabil": "11020106",
+    "descricao": "INCT - TK",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14352-5 - INCT - TK"
+  },
+  {
+    "numeroConta": "149092",
+    "codigoContabil": "11020106",
+    "descricao": "SERRAPILHEIRA - OLAVO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14909-2 - SERRAPILHEIRA - OLAVO "
+  },
+  {
+    "numeroConta": "998894",
+    "codigoContabil": "11020106",
+    "descricao": "ANA PAULA C A LIMA - DNDI",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99889-4 - ANA PAULA C A LIMA - DNDI"
+  },
+  {
+    "numeroConta": "84476",
+    "codigoContabil": "11020106",
+    "descricao": "FECD UMMC ICB UFRJ",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "8447-6 - FECD UMMC ICB UFRJ"
+  },
+  {
+    "numeroConta": "128609",
+    "codigoContabil": "11020106",
+    "descricao": "FECD - IMPORTACAO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "12860-9 - FECD - IMPORTACAO"
+  },
+  {
+    "numeroConta": "998027",
+    "codigoContabil": "11020106",
+    "descricao": "REDE DOR - APC",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99802-7 - REDE DOR - APC"
+  },
+  {
+    "numeroConta": "107891",
+    "codigoContabil": "11020106",
+    "descricao": "FECD UNIMICRO UFRJ",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10789-1 - FECD UNIMICRO UFRJ"
+  },
+  {
+    "numeroConta": "383759",
+    "codigoContabil": "11020106",
+    "descricao": "BB CONGRESSO DIVERSOS",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "38375-9 - BB CONGRESSO DIVERSOS"
+  },
+  {
+    "numeroConta": "107875",
+    "codigoContabil": "11020106",
+    "descricao": "FECD LIGHT S A",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10787-5 - FECD LIGHT S A"
+  },
+  {
+    "numeroConta": "142410",
+    "codigoContabil": "11020106",
+    "descricao": "LAGUNARES",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14241-0 - LAGUNARES "
+  },
+  {
+    "numeroConta": "102741",
+    "codigoContabil": "11020106",
+    "descricao": "FUNBIO COSTAO ROCHOSO",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10274-1 - FUNBIO COSTAO ROCHOSO "
+  },
+  {
+    "numeroConta": "92185",
+    "codigoContabil": "11020106",
+    "descricao": "SERVATIS",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "9218-5 - SERVATIS"
+  },
+  {
+    "numeroConta": "89311",
+    "codigoContabil": "11020106",
+    "descricao": "FECD NANO VALID INMETRO",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "8931-1 - FECD NANO VALID INMETRO"
+  },
+  {
+    "numeroConta": "91871",
+    "codigoContabil": "11020106",
+    "descricao": "CONVENIO779417/2012",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "9187-1 - CONVENIO779417/2012"
+  },
+  {
+    "numeroConta": "338516",
+    "codigoContabil": "11020106",
+    "descricao": "FECD EGF 151",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "33851-6 - FECD EGF 151"
+  },
+  {
+    "numeroConta": "375268",
+    "codigoContabil": "11020106",
+    "descricao": "RIBHAC EMBRAPA",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "37526-8 - RIBHAC EMBRAPA"
+  },
+  {
+    "numeroConta": "85820",
+    "codigoContabil": "11020106",
+    "descricao": "FECD SIMPO FAC FARMACIA",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "8582-0 - FECD SIMPO FAC FARMACIA"
+  },
+  {
+    "numeroConta": "107581",
+    "codigoContabil": "11020106",
+    "descricao": "FECD WORSHOP FITOTERAPIA",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10758-1 - FECD WORSHOP FITOTERAPIA"
+  },
+  {
+    "numeroConta": "102709",
+    "codigoContabil": "11020106",
+    "descricao": "FUNBIO ECO NUTRIÇAO",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10270-9 - FUNBIO ECO NUTRIÇAO"
+  },
+  {
+    "numeroConta": "107948",
+    "codigoContabil": "11020106",
+    "descricao": "EBBC6",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10794-8 - EBBC6"
+  },
+  {
+    "numeroConta": "395021",
+    "codigoContabil": "11020106",
+    "descricao": "FECD WELCOME APL IBCCF",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "39502-1 - FECD WELCOME APL IBCCF"
+  },
+  {
+    "numeroConta": "998514",
+    "codigoContabil": "11020106",
+    "descricao": "APPCALL - PROF. MARCEL FRAJBLAT",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99851-4 - APPCALL - PROF. MARCEL FRAJBLAT"
+  },
+  {
+    "numeroConta": "88315",
+    "codigoContabil": "11020106",
+    "descricao": "FECD JNUTCLIN",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "8831-5 - FECD JNUTCLIN"
+  },
+  {
+    "numeroConta": "102717",
+    "codigoContabil": "11020106",
+    "descricao": "FECD FUNBIO MULTIPESCA",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10271-7 - FECD FUNBIO MULTIPESCA "
+  },
+  {
+    "numeroConta": "998670",
+    "codigoContabil": "11020106",
+    "descricao": "SENAI - ISI QV - PROF. LUIZ HENRIQUE DE ALMEIDA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "99867-0 - SENAI - ISI QV - PROF. LUIZ HENRIQUE DE ALMEIDA"
+  },
+  {
+    "numeroConta": "357766",
+    "codigoContabil": "11020106",
+    "descricao": "WBBT",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "35776-6 - WBBT"
+  },
+  {
+    "numeroConta": "107816",
+    "codigoContabil": "11020106",
+    "descricao": "DECANIA CCS UFRJ",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10781-6 - DECANIA CCS UFRJ "
+  },
+  {
+    "numeroConta": "108081",
+    "codigoContabil": "11020106",
+    "descricao": "FECD ISHR",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10808-1 - FECD ISHR"
+  },
+  {
+    "numeroConta": "93599",
+    "codigoContabil": "11020106",
+    "descricao": "FECD BNI LMPPG",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "9359-9 - FECD BNI LMPPG"
+  },
+  {
+    "numeroConta": "237388",
+    "codigoContabil": "11020106",
+    "descricao": "FECD - XII SILAE",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "23738-8 - FECD - XII SILAE"
+  },
+  {
+    "numeroConta": "107980",
+    "codigoContabil": "11020106",
+    "descricao": "FECD IBCCF LABGENEST RSMB",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10798-0 - FECD IBCCF LABGENEST RSMB"
+  },
+  {
+    "numeroConta": "395862",
+    "codigoContabil": "11020106",
+    "descricao": "BB BIOTERIO LMPPG",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "39586-2 - BB BIOTERIO LMPPG"
+  },
+  {
+    "numeroConta": "78697",
+    "codigoContabil": "11020106",
+    "descricao": "RIO PARAIBA SUL II",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "7869-7 - RIO PARAIBA SUL II"
+  },
+  {
+    "numeroConta": "85685",
+    "codigoContabil": "11020106",
+    "descricao": "FECD OUHSC NORTON",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "8568-5 - FECD OUHSC NORTON "
+  },
+  {
+    "numeroConta": "107506",
+    "codigoContabil": "11020106",
+    "descricao": "WEBER SYMPOSIUM",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10750-6 - WEBER SYMPOSIUM"
+  },
+  {
+    "numeroConta": "108057",
+    "codigoContabil": "11020106",
+    "descricao": "IBQM IS OBA",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "10805-7 - IBQM IS OBA"
+  },
+  {
+    "numeroConta": "78689",
+    "codigoContabil": "11020106",
+    "descricao": "ESTREITO",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "7868-9 - ESTREITO"
+  },
+  {
+    "numeroConta": "375258",
+    "codigoContabil": "11020106",
+    "descricao": "FUND EDUC CIEN DESENV",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "37525-8 - FUND EDUC CIEN DESENV "
+  },
+  {
+    "numeroConta": "150033",
+    "codigoContabil": "11020106",
+    "descricao": "PRO OCEANICO",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "15003-3 - PRO OCEANICO"
+  },
+  {
+    "numeroConta": "421065",
+    "codigoContabil": "11020106",
+    "descricao": "F G CENPES LS IMPPG",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "42106-5 - F G CENPES LS IMPPG"
+  },
+  {
+    "numeroConta": "190276",
+    "codigoContabil": "11020106",
+    "descricao": "FECD LMCP",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "19027-6 - FECD LMCP"
+  },
+  {
+    "numeroConta": "22349",
+    "codigoContabil": "11020106",
+    "descricao": "9 21.098-6 - FECD CRISTAL PM",
+    "tipoAplicacao": null,
+    "banco": "BB",
+    "tipo": "CC",
+    "contaOriginal": "2234-9 21.098-6 - FECD CRISTAL PM"
+  },
+  {
+    "numeroConta": "144408",
+    "codigoContabil": "11020106",
+    "descricao": "CONTA REMOTA",
+    "tipoAplicacao": null,
+    "banco": "ITAU",
+    "tipo": "CC",
+    "contaOriginal": "14440-8 - CONTA REMOTA"
+  },
+  {
+    "numeroConta": "143400",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - FECD PROFS ANA PAULA - GRANTS - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14340-0 A - FECD PROFS ANA PAULA - GRANTS - TRUST DI"
+  },
+  {
+    "numeroConta": "3038009",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - PROJ DIVERSOS - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "303800-9 A - PROJ DIVERSOS - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "338516",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - FECD EGF 151 - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "33851-6 A - FECD EGF 151 - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "107980",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - IBCCF LABGENEST RSM - S. PÚBLICO AUT.",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10798-0 A - IBCCF LABGENEST RSM - S. PÚBLICO AUT. "
+  },
+  {
+    "numeroConta": "84476",
+    "codigoContabil": "11020107",
+    "descricao": "6 APLIC - FECD UMMC ICB - BB RF SIMP SOLIDEZ",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "8447-6 APLIC - FECD UMMC ICB - BB RF SIMP SOLIDEZ "
+  },
+  {
+    "numeroConta": "998969",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - LVM - ABBOTT NASAL - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99896-9 A - LVM - ABBOTT NASAL - TRUST DI"
+  },
+  {
+    "numeroConta": "997896",
+    "codigoContabil": "11020107",
+    "descricao": "6 A  - ISN - PROFª SUSANA CARVAJAL - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99789-6 A  - ISN - PROFª SUSANA CARVAJAL - TRUST DI"
+  },
+  {
+    "numeroConta": "998761",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - FUNBIO MARE LIMPA TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99876-1 A - FUNBIO MARE LIMPA TRUST DI"
+  },
+  {
+    "numeroConta": "143103",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - INCT - PLO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14310-3 A - INCT - PLO - TRUST DI "
+  },
+  {
+    "numeroConta": "144077",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - PRODIET - ESPECIAL DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14407-7 A - PRODIET - ESPECIAL DI"
+  },
+  {
+    "numeroConta": "107581",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - WORSHOP FITOT - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10758-1 A - WORSHOP FITOT - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998639",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - FECD LAB BIOINOVAR - PROFA. ALANE - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99863-9 A - FECD LAB BIOINOVAR - PROFA. ALANE - TRUST DI"
+  },
+  {
+    "numeroConta": "89311",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - NANO VALID INMETRO - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "8931-1 A - NANO VALID INMETRO - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998647",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - UNIVERSIDADE MASSACHUSETTS - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99864-7 A - UNIVERSIDADE MASSACHUSETTS - TRUST DI"
+  },
+  {
+    "numeroConta": "998472",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - LVM ABBOTT DUO DENGUE - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99847-2 A - LVM ABBOTT DUO DENGUE - TRUST DI"
+  },
+  {
+    "numeroConta": "998415",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - FECD HOLISTIC - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99841-5 A - FECD HOLISTIC - TRUST DI "
+  },
+  {
+    "numeroConta": "407054",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - LUCHM IBCCF - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "40705-4 A - LUCHM IBCCF - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998787",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - LVM - ABBOTT REAMOSTRAGEM - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99878-7 A - LVM - ABBOTT REAMOSTRAGEM - TRUST DI"
+  },
+  {
+    "numeroConta": "107840",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - FECD BIOTERIO DECANIA APLICAÇAO RF SIMP. SOLIDEZ",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10784-0 A - FECD BIOTERIO DECANIA APLICAÇAO RF SIMP. SOLIDEZ"
+  },
+  {
+    "numeroConta": "998498",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - FECD PROJETOS DIVERSOS TRUST DI (ITAU)",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99849-8 A - FECD PROJETOS DIVERSOS TRUST DI (ITAU)"
+  },
+  {
+    "numeroConta": "143855",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - NOVARTIS - APCAL - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14385-5 A - NOVARTIS - APCAL - TRUST DI "
+  },
+  {
+    "numeroConta": "998381",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - BILL E MELINDA - ALEXANDRE TEN CATEN ( ADRIANA SILVA HERMELY) - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99838-1 A - BILL E MELINDA - ALEXANDRE TEN CATEN ( ADRIANA SILVA HERMELY) - TRUST DI"
+  },
+  {
+    "numeroConta": "143533",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - WHO - GILBERTO KAC - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14353-3 A - WHO - GILBERTO KAC - TRUST DI "
+  },
+  {
+    "numeroConta": "144051",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - ALZHEIMER ASSOCIATION - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14405-1 A - ALZHEIMER ASSOCIATION - TRUST DI"
+  },
+  {
+    "numeroConta": "310514",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - PRINCIPAL -  RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "31051-4 A - PRINCIPAL -  RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998480",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - IDOR-  PESQUISA CLINICA - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99848-0 A - IDOR-  PESQUISA CLINICA - TRUST DI"
+  },
+  {
+    "numeroConta": "998266",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - FAILSAFE - UNIVERSITY OF EXETER - PROF LEONARDO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99826-6 A - FAILSAFE - UNIVERSITY OF EXETER - PROF LEONARDO - TRUST DI"
+  },
+  {
+    "numeroConta": "998308",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - THE ROCKEFELLER UNIVERSITY - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99830-8 A - THE ROCKEFELLER UNIVERSITY - TRUST DI"
+  },
+  {
+    "numeroConta": "998258",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - RBP - FJLES - PROF OLAVO BOHER TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99825-8 A - RBP - FJLES - PROF OLAVO BOHER TRUST DI"
+  },
+  {
+    "numeroConta": "108065",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - FECD IB LABIM IDSN APLICAÇAO RF SIMP. SOLIDEZ",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10806-5 A - FECD IB LABIM IDSN APLICAÇAO RF SIMP. SOLIDEZ "
+  },
+  {
+    "numeroConta": "108014",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - FECD ICB WORKSHOP INFLAMA - INVESTIMENTO FUNDOS",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10801-4 A - FECD ICB WORKSHOP INFLAMA - INVESTIMENTO FUNDOS"
+  },
+  {
+    "numeroConta": "421065",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - F G CENPES LS IMPPG - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "42106-5 A - F G CENPES LS IMPPG - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998746",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - PETRO COSTÃO ROCHOSO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99874-6 A - PETRO COSTÃO ROCHOSO - TRUST DI"
+  },
+  {
+    "numeroConta": "84476",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - FECD UMMC ICB - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "8447-6 A - FECD UMMC ICB - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "107999",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - FECD IBCCF MRC APCAL - S. PÚBLICO AUT.",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10799-9 A - FECD IBCCF MRC APCAL - S. PÚBLICO AUT."
+  },
+  {
+    "numeroConta": "998878",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - LVM OMICRON - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99887-8 A - LVM OMICRON - TRUST DI"
+  },
+  {
+    "numeroConta": "107867",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - IBCCF F NEWTON APCAL - S. PÚBLICO AUT.",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10786-7 A - IBCCF F NEWTON APCAL - S. PÚBLICO AUT."
+  },
+  {
+    "numeroConta": "407054",
+    "codigoContabil": "11020107",
+    "descricao": "4 A2 - LUCHM RF SIMP. SOLIDEZ",
+    "tipoAplicacao": "A2",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "40705-4 A2 - LUCHM RF SIMP. SOLIDEZ"
+  },
+  {
+    "numeroConta": "143384",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - SAE - GS.518.2018 - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14338-4 A - SAE - GS.518.2018 - TRUST DI"
+  },
+  {
+    "numeroConta": "998696",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - UMAA PROF. VINICIUS PERUZZI - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99869-6 A - UMAA PROF. VINICIUS PERUZZI - TRUST DI"
+  },
+  {
+    "numeroConta": "85685",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - FECD OUHSC NORTON - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "8568-5 A - FECD OUHSC NORTON - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "997904",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - FAILSAFE - PROF. ALLAN JEFFERSON GUIMARÃES - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99790-4 A - FAILSAFE - PROF. ALLAN JEFFERSON GUIMARÃES - TRUST DI"
+  },
+  {
+    "numeroConta": "3038009",
+    "codigoContabil": "11020107",
+    "descricao": "9 APLIC BB RF - 303800-9 APLIC BB RF SIMP SOLIDEZ",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "303800-9 APLIC BB RF - 303800-9 APLIC BB RF SIMP SOLIDEZ"
+  },
+  {
+    "numeroConta": "998894",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - ANA PAULA C A LIMA - DNDI - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99889-4 A - ANA PAULA C A LIMA - DNDI - TRUST DI"
+  },
+  {
+    "numeroConta": "998936",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - REDE D OR - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99893-6 A - REDE D OR - TRUST DI"
+  },
+  {
+    "numeroConta": "998837",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - BARTIRA - GRANTS - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99883-7 A - BARTIRA - GRANTS - TRUST DI"
+  },
+  {
+    "numeroConta": "150025",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - PLATAFORMA SEQUENCIAMENTO DNA - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "15002-5 A - PLATAFORMA SEQUENCIAMENTO DNA - TRUST DI "
+  },
+  {
+    "numeroConta": "998738",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - FECD - PRIME AGRO - PROF. ANDREW - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99873-8 A - FECD - PRIME AGRO - PROF. ANDREW - TRUST DI"
+  },
+  {
+    "numeroConta": "998597",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - SMBE - PROFS CLAUDIA RUSSO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99859-7 A - SMBE - PROFS CLAUDIA RUSSO - TRUST DI"
+  },
+  {
+    "numeroConta": "998977",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - LVM - FIND - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99897-7 A - LVM - FIND - TRUST DI"
+  },
+  {
+    "numeroConta": "998753",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - GRANT RKI CLARISSA - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99875-3 A - GRANT RKI CLARISSA - TRUST DI"
+  },
+  {
+    "numeroConta": "998795",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - ABBOTT COVID FLU - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99879-5 A - ABBOTT COVID FLU - TRUST DI"
+  },
+  {
+    "numeroConta": "108014",
+    "codigoContabil": "11020107",
+    "descricao": "4 A2 - ICB INFLAMA - POUPANÇA",
+    "tipoAplicacao": "A2",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10801-4 A2 - ICB INFLAMA - POUPANÇA"
+  },
+  {
+    "numeroConta": "375268",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - RIBHAC EMBRAPA - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "37526-8 A - RIBHAC EMBRAPA - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998852",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - UNIVERSID MINNESOTA - LUCIA JESUS - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99885-2 A - UNIVERSID MINNESOTA - LUCIA JESUS - TRUST DI"
+  },
+  {
+    "numeroConta": "143731",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - PROFS CARLA HOLANDINO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14373-1 A - PROFS CARLA HOLANDINO - TRUST DI"
+  },
+  {
+    "numeroConta": "998688",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - REDE CPE - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99868-8 A - REDE CPE - TRUST DI"
+  },
+  {
+    "numeroConta": "998779",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - LVM - ABBOTT SPIKE",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99877-9 A - LVM - ABBOTT SPIKE"
+  },
+  {
+    "numeroConta": "108073",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - FECD IBQM LBAH PLO - S. PÚBLICO AUT.",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10807-3 A - FECD IBQM LBAH PLO - S. PÚBLICO AUT."
+  },
+  {
+    "numeroConta": "998720",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - BIOBUREAL PROFS CLAUDIA RUSSO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99872-0 A - BIOBUREAL PROFS CLAUDIA RUSSO - TRUST DI"
+  },
+  {
+    "numeroConta": "356352",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - FECD CE ANATO - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "35635-2 A - FECD CE ANATO - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998944",
+    "codigoContabil": "11020107",
+    "descricao": "4 AA - LVM ABBOTT RAPID DIAGNOSTICS - CDB",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99894-4 AA - LVM ABBOTT RAPID DIAGNOSTICS - CDB"
+  },
+  {
+    "numeroConta": "998902",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - FECD GRANTS ORPAGS - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99890-2 A - FECD GRANTS ORPAGS - TRUST DI"
+  },
+  {
+    "numeroConta": "998449",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - IMS PROFª EDUARDA BARBOSA - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99844-9 A - IMS PROFª EDUARDA BARBOSA - TRUST DI"
+  },
+  {
+    "numeroConta": "92665",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - FECD IMPORTAÇOES - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "9266-5 A - FECD IMPORTAÇOES - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "143525",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - INCT - TK - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14352-5 A - INCT - TK - TRUST DI"
+  },
+  {
+    "numeroConta": "92193",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - LABIOM - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "9219-3 A - LABIOM - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998704",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - BIOCHIMICO PROF LUCIO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99870-4 A - BIOCHIMICO PROF LUCIO - TRUST DI"
+  },
+  {
+    "numeroConta": "997888",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - PNUMA - HASSAN SOHN - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99788-8 A - PNUMA - HASSAN SOHN - TRUST DI"
+  },
+  {
+    "numeroConta": "998803",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - CONTA AZUL - RECEBA FACIL - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99880-3 A - CONTA AZUL - RECEBA FACIL - TRUST DI"
+  },
+  {
+    "numeroConta": "107972",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - FECD IBCCF CEMBIO RS - S. PÚBLICO AUT.",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10797-2 A - FECD IBCCF CEMBIO RS - S. PÚBLICO AUT."
+  },
+  {
+    "numeroConta": "143004",
+    "codigoContabil": "11020107",
+    "descricao": "4 APLIC - ADMINISTRAÇAO PREMIUM REFERENCIADO",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14300-4 APLIC - ADMINISTRAÇAO PREMIUM REFERENCIADO"
+  },
+  {
+    "numeroConta": "149092",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - SERRAPILHEIRA OLAVO - PREMIUM REFERENCIADO",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14909-2 A - SERRAPILHEIRA OLAVO - PREMIUM REFERENCIADO "
+  },
+  {
+    "numeroConta": "998431",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - FECD OCEAN FOREST - PROF. MAURO TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99843-1 A - FECD OCEAN FOREST - PROF. MAURO TRUST DI"
+  },
+  {
+    "numeroConta": "107832",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - FECD EQUIPAMENTOS CENABIO - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10783-2 A - FECD EQUIPAMENTOS CENABIO - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998860",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - BIOTECMAR - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99886-0 A - BIOTECMAR - TRUST DI"
+  },
+  {
+    "numeroConta": "107891",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - FECD UNIMICRO APLICAÇAO FR SIMP. SOLIDEZ",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10789-1 A - FECD UNIMICRO APLICAÇAO FR SIMP. SOLIDEZ"
+  },
+  {
+    "numeroConta": "998290",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - PEW GRANT - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99829-0 A - PEW GRANT - TRUST DI"
+  },
+  {
+    "numeroConta": "357766",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - WBBT POUPANÇA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "35776-6 A - WBBT POUPANÇA "
+  },
+  {
+    "numeroConta": "142881",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - CRISTAL 2 - PREMIUM REFERENCIADO",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14288-1 A - CRISTAL 2 - PREMIUM REFERENCIADO "
+  },
+  {
+    "numeroConta": "128609",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - FECD - IMPORTAÇAO - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "12860-9 A - FECD - IMPORTAÇAO - TRUST DI"
+  },
+  {
+    "numeroConta": "998811",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - FECD - ANA PAULA MRC FAPESP - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99881-1 A - FECD - ANA PAULA MRC FAPESP - TRUST DI"
+  },
+  {
+    "numeroConta": "998944",
+    "codigoContabil": "11020107",
+    "descricao": "4 A - LVM ABBOTT RAPID DIAGNOSTICS - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99894-4 A - LVM ABBOTT RAPID DIAGNOSTICS - TRUST DI"
+  },
+  {
+    "numeroConta": "998522",
+    "codigoContabil": "11020107",
+    "descricao": "2 A - FECD GALACTOSEMIA - PROF. CLAUDIO MASUDA - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99852-2 A - FECD GALACTOSEMIA - PROF. CLAUDIO MASUDA - TRUST DI"
+  },
+  {
+    "numeroConta": "395021",
+    "codigoContabil": "11020107",
+    "descricao": "1 A - WELCOME APL IBCCF - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "39502-1 A - WELCOME APL IBCCF - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "128609",
+    "codigoContabil": "11020107",
+    "descricao": "9 A2 - IMPORTACAO - INDEX SELIC EMP RENDA FIXA",
+    "tipoAplicacao": "A2",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "12860-9 A2 - IMPORTACAO - INDEX SELIC EMP RENDA FIXA"
+  },
+  {
+    "numeroConta": "78697",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - RIO PÁRAÍBA DO SUL - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "7869-7 A - RIO PÁRAÍBA DO SUL - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "150017",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - SERRAPILHEIRA ORLANDO CDB DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "15001-7 A - SERRAPILHEIRA ORLANDO CDB DI"
+  },
+  {
+    "numeroConta": "143616",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - WORKSHOP NUTRIÇAO - MIX CRÉDITO PRIVADO",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14361-6 A - WORKSHOP NUTRIÇAO - MIX CRÉDITO PRIVADO "
+  },
+  {
+    "numeroConta": "210986",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - CRISTAL PM RF - Automático Empres",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "21098-6 A - CRISTAL PM RF - Automático Empres"
+  },
+  {
+    "numeroConta": "144010",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - BIOGEOMAR - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14401-0 A - BIOGEOMAR - TRUST DI"
+  },
+  {
+    "numeroConta": "85820",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - FECD SIMPO - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "8582-0 A - FECD SIMPO - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "107875",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - FECD LIGHT S A RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "10787-5 A - FECD LIGHT S A RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998928",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - FUNBIO MANGUEZAIS TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99892-8 A - FUNBIO MANGUEZAIS TRUST DI "
+  },
+  {
+    "numeroConta": "144408",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - PRESIDENCIA TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14440-8 A - PRESIDENCIA TRUST DI"
+  },
+  {
+    "numeroConta": "150033",
+    "codigoContabil": "11020107",
+    "descricao": "3 A - PRO OCEANO - PREMIUM REFERENCIADO",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "15003-3 A - PRO OCEANO - PREMIUM REFERENCIADO "
+  },
+  {
+    "numeroConta": "190276",
+    "codigoContabil": "11020107",
+    "descricao": "6 A - FECD LMCP - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "19027-6 A - FECD LMCP - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "93599",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - BNI IMP - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "9359-9 A - BNI IMP - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "998589",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - BILL E MELINDA GATES - TRUST DI",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99858-9 A - BILL E MELINDA GATES - TRUST DI"
+  },
+  {
+    "numeroConta": "88315",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - JUTCLIN RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "8831-5 A - JUTCLIN RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "143657",
+    "codigoContabil": "11020107",
+    "descricao": "7 A - NOZIKA GRANTS - PREMIUM REFERENCIADO",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "14365-7 A - NOZIKA GRANTS - PREMIUM REFERENCIADO"
+  },
+  {
+    "numeroConta": "78689",
+    "codigoContabil": "11020107",
+    "descricao": "9 A - ESTREITO - S. PÚBLICO AUT.",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "7868-9 A - ESTREITO - S. PÚBLICO AUT. "
+  },
+  {
+    "numeroConta": "237388",
+    "codigoContabil": "11020107",
+    "descricao": "8 A - XII SILAE - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "23738-8 A - XII SILAE - RF AUT. EMPRESA"
+  },
+  {
+    "numeroConta": "210986",
+    "codigoContabil": "11020107",
+    "descricao": "FECD CRISTAL PM APLICAÇAO",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "21.098-6A - FECD CRISTAL PM APLICAÇAO"
+  },
+  {
+    "numeroConta": "998530",
+    "codigoContabil": "11020107",
+    "descricao": "0 A - FECD CAUCAO SAE - APLIC. AUT.",
+    "tipoAplicacao": "A",
+    "banco": "ITAU",
+    "tipo": "APP",
+    "contaOriginal": "99853-0 A - FECD CAUCAO SAE - APLIC. AUT."
+  },
+  {
+    "numeroConta": "395005",
+    "codigoContabil": "11020107",
+    "descricao": "5 A - MN UFRJ VOTORANTIN - RF AUT. EMPRESA",
+    "tipoAplicacao": "A",
+    "banco": "BB",
+    "tipo": "APP",
+    "contaOriginal": "39500-5 A - MN UFRJ VOTORANTIN - RF AUT. EMPRESA"
+  }
+]
