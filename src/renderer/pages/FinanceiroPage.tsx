@@ -611,8 +611,7 @@ export default function FinanceiroPage() {
             <Grid container spacing={2}>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Data Início"
-                  placeholder="dd/mm/aaaa"
+                  placeholder="Data Início (dd/mm/aaaa)"
                   value={filterDateStart}
                   onChange={(e) => setFilterDateStart(e.target.value)}
                   fullWidth
@@ -621,8 +620,7 @@ export default function FinanceiroPage() {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Data Fim"
-                  placeholder="dd/mm/aaaa"
+                  placeholder="Data Fim (dd/mm/aaaa)"
                   value={filterDateEnd}
                   onChange={(e) => setFilterDateEnd(e.target.value)}
                   fullWidth
