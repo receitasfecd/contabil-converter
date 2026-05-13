@@ -75,44 +75,32 @@ export default function OrganizationPage() {
       const { data: memberData, error: memberError } = await supabase
         .from('organization_members')
         .select('organization_id, role, organizations(id, name)')
-        .single();
+        .limit(1);
 
       if (memberError) throw memberError;
+      if (!memberData || memberData.length === 0) {
+        throw new Error('Você não pertence a nenhuma organização');
+      }
 
-      setOrganization(memberData.organizations as Organization);
-      setCurrentUserRole(memberData.role);
+      const firstMember = memberData[0];
+      setOrganization(firstMember.organizations as Organization);
+      setCurrentUserRole(firstMember.role);
 
-      // Carregar membros
+      // Carregar membros com emails
       const { data: membersData, error: membersError } = await supabase
-        .from('organization_members')
-        .select(`
-          id,
-          user_id,
-          role,
-          created_at
-        `)
-        .eq('organization_id', memberData.organization_id);
+        .from('organization_members_with_email')
+        .select('*')
+        .eq('organization_id', firstMember.organization_id);
 
       if (membersError) throw membersError;
 
-      // Buscar emails dos usuários
-      const membersWithEmails = await Promise.all(
-        membersData.map(async (member) => {
-          const { data: userData } = await supabase.auth.admin.getUserById(member.user_id);
-          return {
-            ...member,
-            email: userData.user?.email || 'N/A',
-          };
-        })
-      );
-
-      setMembers(membersWithEmails);
+      setMembers(membersData || []);
 
       // Carregar convites
       const { data: invitesData, error: invitesError } = await supabase
         .from('organization_invites')
         .select('*')
-        .eq('organization_id', memberData.organization_id)
+        .eq('organization_id', firstMember.organization_id)
         .order('created_at', { ascending: false });
 
       if (invitesError) throw invitesError;
