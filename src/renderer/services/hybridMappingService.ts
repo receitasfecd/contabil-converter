@@ -30,7 +30,7 @@ class HybridMappingService {
   async updateContaBancaria(id: string, conta: Partial<ContaBancariaMapping>): Promise<void> {
     if (await this.isAuthenticated()) {
       const contas = await loadContasBancarias();
-      const index = contas.findIndex((c: any) => c.numeroConta === id);
+      const index = contas.findIndex((c: any) => c.id === id);
       if (index !== -1) {
         contas[index] = { ...contas[index], ...conta };
         await saveContasBancarias(contas);
@@ -43,7 +43,7 @@ class HybridMappingService {
   async deleteContaBancaria(id: string): Promise<void> {
     if (await this.isAuthenticated()) {
       const contas = await loadContasBancarias();
-      const filtered = contas.filter((c: any) => c.numeroConta !== id);
+      const filtered = contas.filter((c: any) => c.id !== id);
       await saveContasBancarias(filtered);
     } else {
       localMappingService.deleteContaBancaria(id);
@@ -144,40 +144,49 @@ class HybridMappingService {
   }
 
   async importMappings(data: string): Promise<void> {
-    const parsed = JSON.parse(data);
-    if (await this.isAuthenticated()) {
-      // Contas bancárias
-      if (parsed.contas || parsed.contasBancarias) {
-        const contas = (parsed.contas || parsed.contasBancarias).map((c: any) => ({
-          numeroConta: c.numeroConta,
-          codigoContabil: c.codigoContabil,
-          tipoAplicacao: c.tipoAplicacao,
-          descricao: c.descricao,
-        }));
-        await saveContasBancarias(contas);
-      }
+    try {
+      const parsed = JSON.parse(data);
+      if (await this.isAuthenticated()) {
+        // Contas bancárias
+        if (parsed.contas || parsed.contasBancarias) {
+          const contas = (parsed.contas || parsed.contasBancarias).map((c: any) => ({
+            banco: c.banco || 'BANCO DO BRASIL', // Default se não tiver
+            numeroConta: c.numeroConta,
+            codigoContabil: c.codigoContabil,
+            tipoAplicacao: c.tipoAplicacao,
+            descricao: c.descricao,
+          }));
+          console.log('Salvando contas bancárias:', contas.length);
+          await saveContasBancarias(contas);
+        }
 
-      // Classificações
-      if (parsed.classificacoes) {
-        const classificacoes = parsed.classificacoes.map((c: any) => ({
-          classificacaoFinanceira: c.classificacaoFinanceira,
-          classificacaoContabil: c.classificacaoContabil,
-          descricao: c.descricao,
-        }));
-        await saveClassificacoes(classificacoes);
-      }
+        // Classificações
+        if (parsed.classificacoes) {
+          const classificacoes = parsed.classificacoes.map((c: any) => ({
+            classificacaoFinanceira: c.classificacaoFinanceira,
+            classificacaoContabil: c.classificacaoContabil,
+            descricao: c.descricao,
+          }));
+          console.log('Salvando classificações:', classificacoes.length);
+          await saveClassificacoes(classificacoes);
+        }
 
-      // Plano de contas
-      if (parsed.planoContas) {
-        const planoContas = parsed.planoContas.map((p: any) => ({
-          codigo: p.codigo,
-          descricao: p.descricao,
-          tipo: p.tipo,
-        }));
-        await savePlanoContas(planoContas);
+        // Plano de contas
+        if (parsed.planoContas) {
+          const planoContas = parsed.planoContas.map((p: any) => ({
+            codigo: p.codigo,
+            descricao: p.descricao,
+            tipo: p.tipo,
+          }));
+          console.log('Salvando plano de contas:', planoContas.length);
+          await savePlanoContas(planoContas);
+        }
+      } else {
+        localMappingService.importMappings(data);
       }
-    } else {
-      localMappingService.importMappings(data);
+    } catch (error: any) {
+      console.error('Erro detalhado na importação:', error);
+      throw new Error(`Falha ao importar: ${error?.message || error}`);
     }
   }
 }

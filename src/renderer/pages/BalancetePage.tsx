@@ -42,20 +42,24 @@ export default function BalancetePage() {
   const grupo = searchParams.get('grupo');
 
   useEffect(() => {
-    setBalancete(balanceteData);
+    const loadTitle = async () => {
+      setBalancete(balanceteData);
 
-    // Atualizar título
-    if (accountId) {
-      const store = loadImportedAccounts();
-      const account = store.accounts.find(acc => acc.id === accountId);
-      if (account) {
-        setTitle(`Balancete - ${account.contaBancaria.numeroConta}`);
+      // Atualizar título
+      if (accountId) {
+        const store = await loadImportedAccounts();
+        const account = store.accounts.find(acc => acc.id === accountId);
+        if (account) {
+          setTitle(`Balancete - ${account.contaBancaria.numeroConta}`);
+        }
+      } else if (grupo) {
+        setTitle(`Balancete - ${grupo}`);
+      } else {
+        setTitle('Balancete Geral');
       }
-    } else if (grupo) {
-      setTitle(`Balancete - ${grupo}`);
-    } else {
-      setTitle('Balancete Geral');
-    }
+    };
+
+    loadTitle();
   }, [accountId, grupo, balanceteData]);
 
   const formatCurrency = useCallback((value: number) => {
@@ -69,50 +73,53 @@ export default function BalancetePage() {
     return nivel * 20;
   }, []);
 
-  const balanceteData = useMemo(() => {
-    const store = loadImportedAccounts();
-    const transferStore = loadTransferStore();
-    const planoContas = mappingService.getPlanoContas();
+  const [balanceteData, setBalanceteData] = useState<BalanceteItem[]>([]);
 
-    let filteredAccounts: ImportedAccount[] = store.accounts;
+  useEffect(() => {
+    const loadBalancete = async () => {
+      const store = await loadImportedAccounts();
+      const transferStore = loadTransferStore();
+      const planoContas = mappingService.getPlanoContas();
 
-    // Filtrar por conta específica
-    if (accountId) {
-      const account = store.accounts.find(acc => acc.id === accountId);
-      if (account) {
-        filteredAccounts = [account];
+      let filteredAccounts: ImportedAccount[] = store.accounts;
+
+      // Filtrar por conta específica
+      if (accountId) {
+        const account = store.accounts.find(acc => acc.id === accountId);
+        if (account) {
+          filteredAccounts = [account];
+        }
       }
-    }
-    // Filtrar por grupo
-    else if (grupo) {
-      filteredAccounts = store.accounts.filter(acc => {
-        const codigoContabil = acc.contaBancaria.codigoContabil;
-        const grupoItem = planoContas
-          .filter(item => item.nivel <= 2)
-          .find(item => codigoContabil.startsWith(item.codigo));
-        return grupoItem?.nome === grupo;
+      // Filtrar por grupo
+      else if (grupo) {
+        filteredAccounts = store.accounts.filter(acc => {
+          const codigoContabil = acc.contaBancaria.codigoContabil;
+          const grupoItem = planoContas
+            .filter(item => item.nivel <= 2)
+            .find(item => codigoContabil.startsWith(item.codigo));
+          return grupoItem?.nome === grupo;
+        });
+      }
+
+      // Calcular saldos por código contábil
+      const saldosPorCodigo: { [key: string]: { lancamentos: number; transferencias: number } } = {};
+
+      // Somar lançamentos financeiros
+      filteredAccounts.forEach(account => {
+        const codigo = account.contaBancaria.codigoContabil;
+        if (!saldosPorCodigo[codigo]) {
+          saldosPorCodigo[codigo] = { lancamentos: 0, transferencias: 0 };
+        }
+        saldosPorCodigo[codigo].lancamentos += account.saldo;
       });
-    }
 
-    // Calcular saldos por código contábil
-    const saldosPorCodigo: { [key: string]: { lancamentos: number; transferencias: number } } = {};
-
-    // Somar lançamentos financeiros
-    filteredAccounts.forEach(account => {
-      const codigo = account.contaBancaria.codigoContabil;
-      if (!saldosPorCodigo[codigo]) {
-        saldosPorCodigo[codigo] = { lancamentos: 0, transferencias: 0 };
-      }
-      saldosPorCodigo[codigo].lancamentos += account.saldo;
-    });
-
-    // Somar transferências (apenas as pareadas e não exportadas)
-    transferStore.paired
-      .filter(pair => !pair.exported)
-      .forEach(pair => {
-        const outCode = pair.outTransfer.accountCode;
-        const inCode = pair.inTransfer.accountCode;
-        const amount = parseFloat(pair.outTransfer.amount.replace(/\./g, '').replace(',', '.'));
+      // Somar transferências (apenas as pareadas e não exportadas)
+      transferStore.paired
+        .filter(pair => !pair.exported)
+        .forEach(pair => {
+          const outCode = pair.outTransfer.accountCode;
+          const inCode = pair.inTransfer.accountCode;
+          const amount = parseFloat(pair.outTransfer.amount.replace(/\./g, '').replace(',', '.'));
 
         // Filtrar se necessário
         const outAccount = filteredAccounts.find(acc => acc.contaBancaria.codigoContabil === outCode);
@@ -180,8 +187,11 @@ export default function BalancetePage() {
       }
     });
 
-    return balanceteItems;
-  }, [accountId, grupo]);
+    setBalanceteData(balanceteItems);
+  };
+
+  loadBalancete();
+}, [accountId, grupo]);
 
   return (
     <Box>

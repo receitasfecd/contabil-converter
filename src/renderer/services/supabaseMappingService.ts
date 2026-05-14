@@ -1,19 +1,16 @@
 import { supabase } from './supabaseClient';
 import { ContaBancariaMapping, ClassificacaoMapping } from '../types';
 
-// Obter organization_id do usuário atual
-async function getOrganizationId(): Promise<string | null> {
-  const { data, error } = await supabase
-    .from('organization_members')
-    .select('organization_id')
-    .single();
+// Obter user_id do usuário atual
+async function getUserId(): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error('Erro ao obter organization_id:', error);
+  if (!user) {
+    console.error('Usuário não autenticado');
     return null;
   }
 
-  return data?.organization_id || null;
+  return user.id;
 }
 
 // Contas Bancárias
@@ -39,18 +36,20 @@ export async function loadContasBancarias(): Promise<ContaBancariaMapping[]> {
 }
 
 export async function saveContasBancarias(contas: ContaBancariaMapping[]): Promise<void> {
-  const orgId = await getOrganizationId();
-  if (!orgId) throw new Error('Organização não encontrada');
+  const userId = await getUserId();
+  if (!userId) throw new Error('Usuário não autenticado');
 
-  // Deletar todas as contas existentes da organização
+  // Deletar todas as contas existentes do usuário
   await supabase
     .from('contas_bancarias')
     .delete()
-    .eq('organization_id', orgId);
+    .eq('user_id', userId);
 
-  // Inserir novas contas
+  // Inserir novas contas (preservando IDs se existirem)
   const rows = contas.map(conta => ({
-    organization_id: orgId,
+    ...(conta.id && { id: conta.id }), // Preservar ID se existir
+    user_id: userId,
+    banco: conta.banco,
     numero_conta: conta.numeroConta,
     codigo_contabil: conta.codigoContabil,
     tipo_aplicacao: conta.tipoAplicacao,
@@ -87,18 +86,18 @@ export async function loadClassificacoes(): Promise<ClassificacaoMapping[]> {
 }
 
 export async function saveClassificacoes(classificacoes: ClassificacaoMapping[]): Promise<void> {
-  const orgId = await getOrganizationId();
-  if (!orgId) throw new Error('Organização não encontrada');
+  const userId = await getUserId();
+  if (!userId) throw new Error('Usuário não autenticado');
 
-  // Deletar todas as classificações existentes da organização
+  // Deletar todas as classificações existentes do usuário
   await supabase
     .from('classificacoes_contabeis')
     .delete()
-    .eq('organization_id', orgId);
+    .eq('user_id', userId);
 
   // Inserir novas classificações
   const rows = classificacoes.map(classificacao => ({
-    organization_id: orgId,
+    user_id: userId,
     classificacao_financeira: classificacao.classificacaoFinanceira,
     classificacao_contabil: classificacao.classificacaoContabil,
     descricao: classificacao.descricao,
@@ -136,20 +135,20 @@ export async function loadPlanoContas(): Promise<any[]> {
 }
 
 export async function savePlanoContas(planoContas: any[]): Promise<void> {
-  const orgId = await getOrganizationId();
-  if (!orgId) throw new Error('Organização não encontrada');
+  const userId = await getUserId();
+  if (!userId) throw new Error('Usuário não autenticado');
 
-  // Deletar todos os itens existentes da organização
+  // Deletar todos os itens existentes do usuário
   await supabase
     .from('plano_contas')
     .delete()
-    .eq('organization_id', orgId);
+    .eq('user_id', userId);
 
-  // Inserir novos itens
+  // Inserir novos itens, garantindo que descricao nunca seja null
   const rows = planoContas.map(item => ({
-    organization_id: orgId,
+    user_id: userId,
     codigo: item.codigo,
-    descricao: item.nome || item.descricao,  // Aceitar nome ou descricao
+    descricao: item.nome || item.descricao || item.codigo,  // Usar codigo como fallback se descricao for null
     tipo: item.tipo,
   }));
 

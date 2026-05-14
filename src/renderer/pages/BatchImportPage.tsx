@@ -169,7 +169,7 @@ export default function BatchImportPage() {
         // Salvar lançamentos financeiros
         if (financialEntries.length > 0) {
           const { loadImportedAccounts, saveImportedAccounts } = await import('../services/importedAccountsService');
-          const store = loadImportedAccounts();
+          const store = await loadImportedAccounts();
 
           const existingIndex = store.accounts.findIndex(
             (acc) => acc.contaBancaria.id === account.id
@@ -196,7 +196,7 @@ export default function BatchImportPage() {
             store.accounts.push(importedAccount);
           }
 
-          saveImportedAccounts(store);
+          await saveImportedAccounts(store);
         }
 
         // Adicionar transferências

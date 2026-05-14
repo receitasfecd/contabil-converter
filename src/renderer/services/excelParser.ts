@@ -2,6 +2,94 @@ import * as XLSX from 'xlsx';
 import { ExcelEntry } from '../types/Entry';
 import { parseExcelDate } from '../utils/formatters';
 
+// Função para fazer parsing de valores numéricos do Excel
+// Os valores do Excel Nasajon já vêm como números corretos (ex: 3150 = R$ 3.150,00)
+// NÃO devemos dividir por 100 - a análise do formato de célula (w="3,150.00") confirma
+function parseBrazilianNumber(value: any): number | null {
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+
+  // Se já é número, retornar diretamente sem nenhuma transformação
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  // Se é string, fazer parsing brasileiro
+  if (typeof value === 'string') {
+    // Remover espaços
+    let cleaned = value.trim();
+
+    // Remover pontos (separador de milhar)
+    cleaned = cleaned.replace(/\./g, '');
+
+    // Trocar vírgula por ponto (separador decimal)
+    cleaned = cleaned.replace(',', '.');
+
+    // Converter para número
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? null : num;
+  }
+
+  return null;
+}
+
+// Função para sanitizar os dados do Excel validando com o saldo linha a linha
+// Usa o saldo do Excel (que tem casas decimais corretas) como referência
+function sanitizeExcelData(entries: ExcelEntry[]): ExcelEntry[] {
+  console.log('🔧 Iniciando validação de saldo linha a linha...');
+  
+  let saldoCalculado: number | null = null;
+  let erros = 0;
+  let acertos = 0;
+
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+    const saldoExcel = entry.saldo;
+    const simbolo = entry.simbolo; // D = Devedor, C = Credor
+    
+    // O saldo no Excel tem sinal determinado pelo símbolo D/C
+    // D = saldo devedor (banco deve), C = saldo credor (banco tem dinheiro)
+    // Para conta bancária de ativo: C = positivo, D = negativo
+    const saldoComSinal = simbolo === 'D' ? -saldoExcel : saldoExcel;
+
+    if (saldoCalculado === null) {
+      // Primeiro lançamento: definir saldo inicial a partir do Excel
+
+      saldoCalculado = saldoComSinal;
+      console.log(`🔧 Linha ${i}: Saldo inicial definido como ${saldoCalculado.toFixed(2)} (Excel: ${saldoExcel}, símbolo: ${simbolo})`);
+      acertos++;
+      continue;
+    }
+
+    // Calcular saldo esperado com base no lançamento
+    let saldoEsperado = saldoCalculado;
+    if (entry.valorDebito) {
+      saldoEsperado -= entry.valorDebito; // Débito = saída
+    }
+    if (entry.valorCredito) {
+      saldoEsperado += entry.valorCredito; // Crédito = entrada
+    }
+
+    const diff = Math.abs(saldoEsperado - saldoComSinal);
+    
+    if (diff < 0.02) {
+      acertos++;
+      saldoCalculado = saldoComSinal;
+    } else {
+      erros++;
+      if (erros <= 20) {
+        console.warn(`⚠️ Linha ${i}: Saldo divergente! Calculado: ${saldoEsperado.toFixed(2)}, Excel: ${saldoComSinal.toFixed(2)}, Diff: ${diff.toFixed(2)}, Deb: ${entry.valorDebito}, Cred: ${entry.valorCredito}`);
+      }
+      // Seguir com saldo do Excel como referência para não acumular erro
+      saldoCalculado = saldoComSinal;
+    }
+  }
+
+  console.log(`🔧 Validação concluída: ${acertos} acertos, ${erros} divergências de ${entries.length} lançamentos`);
+  return entries;
+}
+
 export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -64,6 +152,9 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
           mergedData.push(currentRow);
         }
 
+        console.log('📋 Total de linhas após mesclagem:', mergedData.length);
+        console.log('📋 Primeiras 3 linhas mescladas:', mergedData.slice(0, 3));
+
         const entries: ExcelEntry[] = [];
         let lastHistorico = '';
         let lastDocumento = '';
@@ -93,6 +184,24 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                 historico = lastHistorico;
               }
 
+              // Log dos valores brutos para debug
+              if (i < 10) {
+                console.log(`📋 Linha ${i} - Data: ${row[0]}, Valores brutos:`, {
+                  valorDebito: row[7],
+                  valorDebitoType: typeof row[7],
+                  valorCredito: row[8],
+                  valorCreditoType: typeof row[8],
+                  saldo: row[9],
+                  saldoType: typeof row[9],
+                  historico: String(row[2] || '').substring(0, 50)
+                });
+              }
+
+              // Fazer parsing dos valores
+              let valorDebito = parseBrazilianNumber(row[7]);
+              let valorCredito = parseBrazilianNumber(row[8]);
+              let saldo = parseBrazilianNumber(row[9]) || 0;
+
               entry = {
                 data: parseExcelDate(row[0]),
                 documento: documento,
@@ -100,9 +209,9 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                 status: String(row[3] || ''),
                 classificacaoFinanceira: String(row[4] || '').replace(/\s+/g, ''),
                 codigoCentroCusto: String(row[5] || ''),
-                valorDebito: row[7] ? Number(row[7]) : null,
-                valorCredito: row[8] ? Number(row[8]) : null,
-                saldo: Number(row[9] || 0),
+                valorDebito: valorDebito,
+                valorCredito: valorCredito,
+                saldo: saldo,
                 simbolo: (row[10] === 'D' || row[10] === 'C') ? row[10] : 'D',
               };
 
@@ -130,9 +239,9 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                 status: String(row[3] || ''),
                 classificacaoFinanceira: String(row[4] || '').replace(/\s+/g, ''),
                 codigoCentroCusto: String(row[5] || ''),
-                valorDebito: row[6] ? Number(row[6]) : null,
-                valorCredito: row[7] ? Number(row[7]) : null,
-                saldo: Number(row[8] || 0),
+                valorDebito: parseBrazilianNumber(row[6]),
+                valorCredito: parseBrazilianNumber(row[7]),
+                saldo: parseBrazilianNumber(row[8]) || 0,
                 simbolo: (row[9] === 'D' || row[9] === 'C') ? row[9] : 'D',
               };
 
@@ -151,7 +260,14 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
           }
         }
 
-        resolve(entries);
+        console.log('📋 Total de entries processadas:', entries.length);
+        console.log('📋 Primeiras 3 entries:', entries.slice(0, 3));
+        console.log('📋 Primeira entry - saldo:', entries[0]?.saldo);
+
+        // Sanitizar dados antes de retornar
+        const sanitizedEntries = sanitizeExcelData(entries);
+
+        resolve(sanitizedEntries);
       } catch (error) {
         reject(new Error(`Erro ao ler arquivo Excel: ${error}`));
       }

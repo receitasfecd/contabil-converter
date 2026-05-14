@@ -1,19 +1,16 @@
 import { supabase } from './supabaseClient';
 import { Transfer, TransferPair, TransferStore } from '../types/Transfer';
 
-// Obter organization_id do usuário atual
-async function getOrganizationId(): Promise<string | null> {
-  const { data, error } = await supabase
-    .from('organization_members')
-    .select('organization_id')
-    .single();
+// Obter user_id do usuário atual
+async function getUserId(): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error('Erro ao obter organization_id:', error);
+  if (!user) {
+    console.error('Usuário não autenticado');
     return null;
   }
 
-  return data?.organization_id || null;
+  return user.id;
 }
 
 // Carregar todas as transferências da organização
@@ -117,12 +114,12 @@ export async function loadTransferStore(): Promise<TransferStore> {
 
 // Salvar transferências no Supabase
 export async function saveTransfers(transfers: Transfer[]): Promise<void> {
-  const orgId = await getOrganizationId();
-  if (!orgId) throw new Error('Organização não encontrada');
+  const userId = await getUserId();
+  if (!userId) throw new Error('Usuário não autenticado');
 
   const rows = transfers.map(t => ({
     id: t.id,
-    organization_id: orgId,
+    user_id: userId,
     account_number: t.accountNumber,
     account_code: t.accountCode,
     data: t.date,
@@ -149,12 +146,12 @@ export async function saveTransfers(transfers: Transfer[]): Promise<void> {
 
 // Salvar pares no Supabase
 export async function savePairs(pairs: TransferPair[]): Promise<void> {
-  const orgId = await getOrganizationId();
-  if (!orgId) throw new Error('Organização não encontrada');
+  const userId = await getUserId();
+  if (!userId) throw new Error('Usuário não autenticado');
 
   const rows = pairs.map(p => ({
     id: p.id,
-    organization_id: orgId,
+    user_id: userId,
     out_transfer_id: p.outTransfer.id,
     in_transfer_id: p.inTransfer.id,
     match_score: p.matchScore,

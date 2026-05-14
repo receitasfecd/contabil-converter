@@ -47,18 +47,22 @@ export default function PreviewPage() {
   const [dataFim, setDataFim] = useState('');
 
   useEffect(() => {
-    // Carregar contas importadas
-    const store = loadImportedAccounts();
-    setImportedAccounts(store.accounts);
+    const loadData = async () => {
+      // Carregar contas importadas
+      const store = await loadImportedAccounts();
+      setImportedAccounts(store.accounts);
 
-    // Se há processedEntries do contexto, usar eles
-    if (processedEntries.length > 0) {
-      setEntries(processedEntries);
-    } else if (store.accounts.length > 0) {
-      // Caso contrário, usar a primeira conta importada
-      setSelectedImportedAccount(store.accounts[0]);
-      setEntries(store.accounts[0].lancamentos);
-    }
+      // Se há processedEntries do contexto, usar eles
+      if (processedEntries.length > 0) {
+        setEntries(processedEntries);
+      } else if (store.accounts.length > 0) {
+        // Caso contrário, usar a primeira conta importada
+        setSelectedImportedAccount(store.accounts[0]);
+        setEntries(store.accounts[0].lancamentos);
+      }
+    };
+
+    loadData();
   }, [processedEntries]);
 
   const handleAccountChange = (accountId: string) => {
@@ -294,7 +298,16 @@ export default function PreviewPage() {
         return params.value;
       }
     },
-    { field: 'valor', headerName: 'Valor', width: 120 },
+    {
+      field: 'valor',
+      headerName: 'Valor',
+      width: 120,
+      renderCell: (params) => {
+        const entry = params.row as ProcessedEntry;
+        const color = entry.original?.valorDebito ? 'error.main' : entry.original?.valorCredito ? 'info.main' : 'inherit';
+        return <Typography color={color} sx={{ fontWeight: 500 }}>{params.value}</Typography>;
+      }
+    },
     {
       field: 'tipo',
       headerName: 'Tipo',

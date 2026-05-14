@@ -27,7 +27,22 @@ export function parseExcelDate(excelDate: any): Date {
 
   // Se é string, tentar parsear
   if (typeof excelDate === 'string') {
-    const parsed = new Date(excelDate);
+    const trimmed = excelDate.trim();
+    // Identificar formato DD/MM/YYYY para evitar que new Date tente ler no formato Americano (MM/DD/YYYY) e quebre no Mês > 12.
+    if (trimmed.includes('/')) {
+      const parts = trimmed.split('/');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JavaScript months are 0-indexed
+        const year = parseInt(parts[2], 10);
+        const parsedBr = new Date(year, month, day);
+        if (!isNaN(parsedBr.getTime())) {
+          return parsedBr;
+        }
+      }
+    }
+
+    const parsed = new Date(trimmed);
     if (!isNaN(parsed.getTime())) {
       return parsed;
     }

@@ -6,7 +6,6 @@ import {
   CardContent,
   Typography,
   LinearProgress,
-  Grid,
   Chip,
   IconButton,
   Alert,
@@ -27,13 +26,10 @@ import {
   Checkbox,
 } from '@mui/material';
 import {
-  AccountBalance as AccountBalanceIcon,
   Delete as DeleteIcon,
   Visibility as VisibilityIcon,
   ExpandMore as ExpandMoreIcon,
   Assessment as AssessmentIcon,
-  Download as DownloadIcon,
-  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import {
   loadImportedAccounts,
@@ -41,13 +37,10 @@ import {
   getImportProgress,
   markAccountAsExported,
   markMultipleAccountsAsExported,
-  getPendingAccounts,
-  getExportedAccounts,
   syncImportedAccountsWithMapping,
-  saveImportedAccounts,
 } from '../services/importedAccountsService';
-import { loadTransferStore } from '../services/transferStore';
 import { mappingService } from '../services/mappingService';
+import { useAppContext } from '../AppContext';
 import { ImportedAccount } from '../types/ImportedAccount';
 import { generateBatchCSV, downloadCSV, generateBatchFilename, generateCSV, generateFilename } from '../services/csvExporter';
 import BankIcon from '../components/BankIcon';
@@ -55,43 +48,52 @@ import { formatAccountNumber } from '../utils/formatters';
 
 export default function ImportedAccountsPage() {
   const navigate = useNavigate();
+  const { transferStore, updateTransferStore } = useAppContext();
   const [accounts, setAccounts] = useState<ImportedAccount[]>([]);
+  const [pendingAccounts, setPendingAccounts] = useState<ImportedAccount[]>([]);
+  const [exportedAccounts, setExportedAccounts] = useState<ImportedAccount[]>([]);
   const [progress, setProgress] = useState(0);
   const [totalLancamentos, setTotalLancamentos] = useState(0);
   const [totalTransferencias, setTotalTransferencias] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
-  const loadData = useCallback(() => {
+  const loadData = useCallback(async () => {
     // Sincronizar dados das contas importadas com o mapeamento
-    syncImportedAccountsWithMapping();
+    await syncImportedAccountsWithMapping();
 
-    const store = loadImportedAccounts();
+    const store = await loadImportedAccounts();
     setAccounts(store.accounts);
 
+    // Separar contas pendentes e exportadas
+    const pending = store.accounts.filter(acc => !acc.exported);
+    const exported = store.accounts.filter(acc => acc.exported);
+    setPendingAccounts(pending);
+    setExportedAccounts(exported);
+
     const totalContas = mappingService.getContasBancarias().length;
-    setProgress(getImportProgress(totalContas));
+    const progress = await getImportProgress(totalContas);
+    setProgress(progress);
 
     // Contar total de lançamentos
     const lancamentos = store.accounts.reduce((sum, acc) => sum + acc.lancamentos.length, 0);
     setTotalLancamentos(lancamentos);
 
-    // Contar total de transferências
-    const transferStore = loadTransferStore();
-    const transferencias = transferStore.pending.length + transferStore.paired.length;
+    // Contar total de transferências do AppContext
+    const transferencias = (transferStore.pending?.length || 0) + (transferStore.paired?.length || 0);
     setTotalTransferencias(transferencias);
-  }, []);
+  }, [transferStore]);
 
   useEffect(() => {
     loadData();
   }, []);
 
-  const handleDelete = useCallback((accountId: string) => {
+  const handleDelete = useCallback(async (accountId: string) => {
     if (confirm('Deseja realmente excluir esta conta e todos os seus lançamentos?')) {
-      deleteImportedAccount(accountId);
-      loadData();
+      await deleteImportedAccount(accountId, transferStore, updateTransferStore);
+      await loadData();
     }
-  }, [loadData]);
+  }, [loadData, transferStore, updateTransferStore]);
 
   const handleView = useCallback((accountId: string) => {
     navigate(`/contas/${accountId}`);
@@ -110,18 +112,18 @@ export default function ImportedAccountsPage() {
     }
   }, [navigate]);
 
-  const handleExportSingle = useCallback((account: ImportedAccount) => {
+  const handleExportSingle = useCallback(async (account: ImportedAccount) => {
     const csv = generateCSV(account.lancamentos);
     const filename = generateFilename(
       account.contaBancaria.numeroConta,
       account.contaBancaria.tipoAplicacao
     );
     downloadCSV(csv, filename);
-    markAccountAsExported(account.id);
-    loadData();
+    await markAccountAsExported(account.id);
+    await loadData();
   }, [loadData]);
 
-  const handleExportBatch = useCallback(() => {
+  const handleExportBatch = useCallback(async () => {
     if (selectedAccounts.length === 0) {
       alert('Selecione pelo menos uma conta para exportar');
       return;
@@ -131,7 +133,7 @@ export default function ImportedAccountsPage() {
     const csv = generateBatchCSV(accountsToExport);
     const filename = generateBatchFilename(accountsToExport.length);
     downloadCSV(csv, filename);
-    markMultipleAccountsAsExported(selectedAccounts);
+    await markMultipleAccountsAsExported(selectedAccounts);
     setSelectedAccounts([]);
     loadData();
   }, [selectedAccounts, accounts, loadData]);
@@ -252,7 +254,7 @@ export default function ImportedAccountsPage() {
   const groupedByBank = useMemo(() => {
     const grouped: {
       [key: string]: {
-        banco: 'BB' | 'ITAU' | 'SEM_BANCO';
+        banco: string;
         nome: string;
         contas: ImportedAccount[];
         saldoTotal: number;
@@ -265,6 +267,17 @@ export default function ImportedAccountsPage() {
 
     accounts.forEach(account => {
       const banco = account.contaBancaria.banco || 'SEM_BANCO';
+
+      // Criar grupo se não existir
+      if (!grouped[banco]) {
+        grouped[banco] = {
+          banco: banco,
+          nome: banco,
+          contas: [],
+          saldoTotal: 0
+        };
+      }
+
       grouped[banco].contas.push(account);
       grouped[banco].saldoTotal += account.saldo;
     });
@@ -376,7 +389,7 @@ export default function ImportedAccountsPage() {
                     onClick={() => {
                       if (confirm(`Deseja realmente excluir ${selectedAccounts.length} conta(s) e todos os seus lançamentos?`)) {
                         selectedAccounts.forEach(id => {
-                          deleteImportedAccount(id);
+                          deleteImportedAccount(id, transferStore, updateTransferStore);
                         });
                         setSelectedAccounts([]);
                         loadData();
@@ -472,6 +485,7 @@ export default function ImportedAccountsPage() {
                         </Box>
 
                         {/* Ações */}
+
                         <IconButton
                           size="small"
                           onClick={(e) => {
@@ -778,7 +792,7 @@ export default function ImportedAccountsPage() {
                 <Card sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h5" color="warning.main">
-                      {getPendingAccounts().length}
+                      {pendingAccounts.length}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Pendentes de Exportação
@@ -788,7 +802,7 @@ export default function ImportedAccountsPage() {
                 <Card sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h5" color="success.main">
-                      {getExportedAccounts().length}
+                      {exportedAccounts.length}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Já Exportadas
@@ -798,7 +812,7 @@ export default function ImportedAccountsPage() {
               </Stack>
 
               {/* Contas Pendentes */}
-              {getPendingAccounts().length > 0 && (
+              {pendingAccounts.length > 0 && (
                 <Card>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -821,9 +835,9 @@ export default function ImportedAccountsPage() {
                           <TableRow>
                             <TableCell padding="checkbox">
                               <Checkbox
-                                checked={selectedAccounts.length === getPendingAccounts().length}
-                                indeterminate={selectedAccounts.length > 0 && selectedAccounts.length < getPendingAccounts().length}
-                                onChange={() => handleSelectAll(getPendingAccounts().map(acc => acc.id))}
+                                checked={selectedAccounts.length === pendingAccounts.length}
+                                indeterminate={selectedAccounts.length > 0 && selectedAccounts.length < pendingAccounts.length}
+                                onChange={() => handleSelectAll(pendingAccounts.map(acc => acc.id))}
                               />
                             </TableCell>
                             <TableCell>Número</TableCell>
@@ -836,7 +850,7 @@ export default function ImportedAccountsPage() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {getPendingAccounts().map((account) => (
+                          {pendingAccounts.map((account) => (
                             <TableRow key={account.id} hover>
                               <TableCell padding="checkbox">
                                 <Checkbox
@@ -884,7 +898,7 @@ export default function ImportedAccountsPage() {
               )}
 
               {/* Contas Exportadas */}
-              {getExportedAccounts().length > 0 && (
+              {exportedAccounts.length > 0 && (
                 <Card>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -921,7 +935,7 @@ export default function ImportedAccountsPage() {
                             onClick={() => {
                               if (confirm(`Deseja realmente excluir ${selectedAccounts.length} conta(s) exportada(s) e todos os seus lançamentos?`)) {
                                 selectedAccounts.forEach(id => {
-                                  deleteImportedAccount(id);
+                                  deleteImportedAccount(id, transferStore, updateTransferStore);
                                 });
                                 setSelectedAccounts([]);
                                 loadData();
@@ -940,9 +954,9 @@ export default function ImportedAccountsPage() {
                           <TableRow>
                             <TableCell padding="checkbox">
                               <Checkbox
-                                checked={selectedAccounts.length === getExportedAccounts().length}
-                                indeterminate={selectedAccounts.length > 0 && selectedAccounts.length < getExportedAccounts().length}
-                                onChange={() => handleSelectAll(getExportedAccounts().map(acc => acc.id))}
+                                checked={selectedAccounts.length === exportedAccounts.length}
+                                indeterminate={selectedAccounts.length > 0 && selectedAccounts.length < exportedAccounts.length}
+                                onChange={() => handleSelectAll(exportedAccounts.map(acc => acc.id))}
                               />
                             </TableCell>
                             <TableCell>Número</TableCell>
@@ -956,7 +970,7 @@ export default function ImportedAccountsPage() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {getExportedAccounts().map((account) => (
+                          {exportedAccounts.map((account) => (
                             <TableRow key={account.id} hover>
                               <TableCell padding="checkbox">
                                 <Checkbox

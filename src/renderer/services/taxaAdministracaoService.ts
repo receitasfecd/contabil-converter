@@ -180,7 +180,7 @@ export function addTaxaAdministracao(transfer: Transfer): void {
     const grupoIdentificado = identificarGrupoContabil(transfer);
 
     const novaTaxa: TaxaAdministracao = {
-      id: `taxa-${Date.now()}-${Math.random()}`,
+      id: crypto.randomUUID(),
       status: isOut ? 'PENDING_OUT' : 'PENDING_IN',
       grupoContabil: grupoIdentificado,
     };

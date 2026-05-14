@@ -100,9 +100,14 @@ export default function FinanceiroPage() {
 
   // Aplicar filtros e ordenação
   useEffect(() => {
+    console.log('🔄 useEffect FILTROS executado');
+    console.log('🔄 selectedAccount:', selectedAccount?.contaBancaria.numeroConta);
+    console.log('🔄 combinedEntries.length:', combinedEntries.length);
+
     if (!selectedAccount) return;
 
     let filtered = [...combinedEntries];
+    console.log('🔄 filtered inicial:', filtered.length);
 
     // Filtro por data
     if (filterDateStart) {
@@ -148,8 +153,8 @@ export default function FinanceiroPage() {
       if (sortBy === 'data') {
         comparison = parseDate(a.data).getTime() - parseDate(b.data).getTime();
       } else if (sortBy === 'valor') {
-        const valorA = parseFloat(a.valor.replace(',', '.'));
-        const valorB = parseFloat(b.valor.replace(',', '.'));
+        const valorA = parseFloat(a.valor.replace(/\./g, '').replace(',', '.'));
+        const valorB = parseFloat(b.valor.replace(/\./g, '').replace(',', '.'));
         comparison = valorA - valorB;
       } else if (sortBy === 'tipo') {
         comparison = a.tipo.localeCompare(b.tipo);
@@ -157,6 +162,7 @@ export default function FinanceiroPage() {
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
+    console.log('🔄 filtered FINAL após ordenação:', filtered.length);
     setFilteredEntries(filtered);
   }, [combinedEntries, filterDateStart, filterDateEnd, filterTipo, filterGrupo, filterSearch, sortBy, sortOrder, selectedAccount]);
 
@@ -172,6 +178,12 @@ export default function FinanceiroPage() {
   };
 
   const loadAccountDetails = (account: ImportedAccount) => {
+    console.log('🔍 === INÍCIO loadAccountDetails ===');
+    console.log('📊 Conta:', account.contaBancaria.numeroConta);
+    console.log('📊 account.lancamentos:', account.lancamentos);
+    console.log('📊 account.lancamentos.length:', account.lancamentos?.length);
+    console.log('📊 Saldo da conta:', account.saldo);
+
     setSelectedAccount(account);
 
     // Carregar lançamentos financeiros
@@ -189,7 +201,14 @@ export default function FinanceiroPage() {
       original: lanc
     }));
 
+    console.log('💵 financialEntries criados:', financialEntries.length);
+    console.log('💵 Primeiros 3 financialEntries:', financialEntries.slice(0, 3));
+
     // Carregar transferências
+    console.log('🔄 transferStore do contexto:', transferStore);
+    console.log('🔄 transferStore.pending:', transferStore.pending?.length || 0);
+    console.log('🔄 transferStore.paired:', transferStore.paired?.length || 0);
+
     const accountTransfers = [
       ...(transferStore.pending || []).filter(t => t.accountNumber === account.contaBancaria.numeroConta),
       ...(transferStore.paired || []).flatMap(p => {
@@ -203,6 +222,9 @@ export default function FinanceiroPage() {
         return transfers;
       })
     ];
+
+    console.log('🔄 accountTransfers encontradas:', accountTransfers.length);
+    console.log('🔄 Primeiras 3 accountTransfers:', accountTransfers.slice(0, 3));
 
     const transferEntries: CombinedEntry[] = accountTransfers.map(t => ({
       id: t.id,
@@ -219,8 +241,11 @@ export default function FinanceiroPage() {
     }));
 
     // Carregar taxas de administração
-    const taxas = loadTaxasAdministracao();
-    const accountTaxas = taxas.filter(t => t.accountNumber === account.contaBancaria.numeroConta);
+    const taxasStore = loadTaxasAdministracao();
+    console.log('💰 taxasStore:', taxasStore);
+    console.log('💰 taxasStore.taxas:', taxasStore.taxas?.length || 0);
+    const accountTaxas = (taxasStore.taxas || []).filter(t => t.accountNumber === account.contaBancaria.numeroConta);
+    console.log('💰 accountTaxas desta conta:', accountTaxas.length);
 
     const taxaEntries: CombinedEntry[] = accountTaxas.map(t => ({
       id: t.id,
@@ -239,30 +264,88 @@ export default function FinanceiroPage() {
     // Combinar e ordenar por data
     const allEntries = [...financialEntries, ...transferEntries, ...taxaEntries];
 
+    console.log('📦 allEntries ANTES de ordenar:', allEntries.length);
+    console.log('📦 Composição: financeiros=' + financialEntries.length + ', transferências=' + transferEntries.length + ', taxas=' + taxaEntries.length);
+
     allEntries.sort((a, b) => {
       const dateA = parseDate(a.data);
       const dateB = parseDate(b.data);
       return dateA.getTime() - dateB.getTime();
     });
 
-    // Calcular saldo parcial
-    let saldo = 0;
-    allEntries.forEach(entry => {
-      const valor = parseFloat(entry.valor.replace(',', '.'));
+    // Calcular saldo inicial baseado no primeiro lançamento financeiro
+    // Buscar o primeiro lançamento FINANCEIRO (não transferência) que tem o saldo do Excel
+    const primeiroFinanceiro = allEntries.find(e => e.tipo === 'FINANCEIRO' && e.original?.original?.saldo !== undefined);
 
-      // Se débito = conta bancária, é saída (-)
-      // Se crédito = conta bancária, é entrada (+)
-      if (entry.debito === account.contaBancaria.codigoContabil) {
-        saldo -= valor;
-      } else if (entry.credito === account.contaBancaria.codigoContabil) {
-        saldo += valor;
+    let saldoInicial = 0;
+    if (primeiroFinanceiro && primeiroFinanceiro.original?.original?.saldo !== undefined) {
+      const primeiroValor = parseFloat(primeiroFinanceiro.valor.replace(/\./g, '').replace(',', '.'));
+      const saldoAposPrimeiro = primeiroFinanceiro.original.original.saldo;
+
+      // Calcular saldo inicial: saldo após - efeito do lançamento
+      // Se a conta está no CRÉDITO = SAÍDA, então saldo inicial = saldo após + valor
+      // Se a conta está no DÉBITO = ENTRADA, então saldo inicial = saldo após - valor
+      if (primeiroFinanceiro.credito === account.contaBancaria.codigoContabil) {
+        saldoInicial = saldoAposPrimeiro + primeiroValor;
+      } else if (primeiroFinanceiro.debito === account.contaBancaria.codigoContabil) {
+        saldoInicial = saldoAposPrimeiro - primeiroValor;
+      }
+
+      console.log('💰 Saldo inicial calculado:', saldoInicial);
+      console.log('💰 Primeiro lançamento - Saldo no Excel:', saldoAposPrimeiro, 'Valor:', primeiroValor);
+    } else {
+      console.warn('⚠️ Não foi possível calcular saldo inicial - usando 0');
+    }
+
+    console.log('💰 Saldo final esperado:', account.saldo);
+
+    let saldo = saldoInicial;
+    console.log('💰 Iniciando cálculo de saldo. Código contábil da conta:', account.contaBancaria.codigoContabil);
+    console.log('💰 Saldo inicial:', saldoInicial);
+
+    allEntries.forEach((entry, index) => {
+      const valor = parseFloat(entry.valor.replace(/\./g, '').replace(',', '.'));
+
+      // Transferências não afetam o saldo (são movimentações entre contas)
+      // Apenas lançamentos FINANCEIROS e TAXAS afetam o saldo
+      if (entry.tipo !== 'TRANSFERENCIA') {
+        // Para conta bancária (ATIVO):
+        // Débito na conta = ENTRADA (+)
+        // Crédito na conta = SAÍDA (-)
+        if (entry.debito === account.contaBancaria.codigoContabil) {
+          saldo += valor;
+        } else if (entry.credito === account.contaBancaria.codigoContabil) {
+          saldo -= valor;
+        }
+
+        // Log dos primeiros 100 lançamentos para debug
+        if (index < 100) {
+          console.log(`Lançamento ${index + 1}:`, {
+            data: entry.data,
+            debito: entry.debito,
+            credito: entry.credito,
+            valor: valor,
+            tipo: entry.tipo,
+            saldoCalculado: saldo.toFixed(2),
+            historico: entry.historico.substring(0, 50)
+          });
+        }
       }
 
       entry.saldoParcial = saldo;
     });
 
+    console.log('💰 Saldo final calculado:', saldo);
+    console.log('💰 Saldo esperado da conta:', account.saldo);
+
     setCombinedEntries(allEntries);
     setFilteredEntries(allEntries);
+
+    console.log('✅ Estados atualizados!');
+    console.log('✅ combinedEntries:', allEntries.length);
+    console.log('✅ filteredEntries:', allEntries.length);
+    console.log('✅ Saldo final calculado:', saldo);
+    console.log('🔍 === FIM loadAccountDetails ===');
   };
 
   const determineGrupo = (lanc: ProcessedEntry): string => {
@@ -292,7 +375,7 @@ export default function FinanceiroPage() {
   };
 
   const formatCurrency = (value: string | number) => {
-    const num = typeof value === 'string' ? parseFloat(value.replace(',', '.')) : value;
+    const num = typeof value === 'string' ? parseFloat(value.replace(/\./g, '').replace(',', '.')) : value;
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -776,7 +859,18 @@ export default function FinanceiroPage() {
                       <Chip label={entry.grupo} size="small" />
                     </TableCell>
                     <TableCell sx={{ maxWidth: 300 }}>{entry.historico}</TableCell>
-                    <TableCell align="right">{formatCurrency(entry.valor)}</TableCell>
+                    <TableCell align="right">
+                      <Typography
+                        color={
+                          entry.original?.valorDebito ? 'error.main' : 
+                          entry.original?.valorCredito ? 'info.main' : 
+                          'inherit'
+                        }
+                        fontWeight="medium"
+                      >
+                        {formatCurrency(entry.valor)}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="right">
                       <Typography
                         color={entry.saldoParcial >= 0 ? 'success.main' : 'error.main'}

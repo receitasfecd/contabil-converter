@@ -70,7 +70,7 @@ export default function FinanceiroDetailPage() {
   };
 
   const formatCurrency = (value: string) => {
-    const num = parseFloat(value.replace(',', '.'));
+    const num = parseFloat(value.replace(/\./g, '').replace(',', '.'));
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',

@@ -174,9 +174,9 @@ export default function MappingPage() {
           await hybridMappingService.importMappings(data);
           await loadData();
           alert('Dados importados com sucesso!');
-        } catch (error) {
+        } catch (error: any) {
           console.error('Erro ao importar:', error);
-          alert('Erro ao importar arquivo');
+          alert(`Erro ao importar arquivo: ${error?.message || error}`);
         }
       };
       reader.readAsText(file);

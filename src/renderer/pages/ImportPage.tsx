@@ -165,7 +165,7 @@ export default function ImportPage() {
 
         // Salvar diretamente
         const { loadImportedAccounts, saveImportedAccounts } = await import('../services/importedAccountsService');
-        const store = loadImportedAccounts();
+        const store = await loadImportedAccounts();
 
         // Verificar se conta já existe
         const existingIndex = store.accounts.findIndex(
@@ -185,7 +185,7 @@ export default function ImportPage() {
           store.accounts.push(importedAccount);
         }
 
-        saveImportedAccounts(store);
+        await saveImportedAccounts(store);
         console.log('✅ Lançamentos financeiros salvos com saldo correto');
       }
 

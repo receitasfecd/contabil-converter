@@ -4,6 +4,12 @@ export function matchTransfers(pending: Transfer[]): TransferPair[] {
   const pairs: TransferPair[] = [];
   const matched = new Set<string>();
 
+  console.log('🔍 matchTransfers - Iniciando pareamento:', {
+    totalPending: pending.length,
+    outCount: pending.filter(t => t.direction === 'OUT').length,
+    inCount: pending.filter(t => t.direction === 'IN').length
+  });
+
   // Separar por direção
   const outTransfers = pending.filter(t => t.direction === 'OUT');
   const inTransfers = pending.filter(t => t.direction === 'IN');
@@ -47,6 +53,11 @@ export function matchTransfers(pending: Transfer[]): TransferPair[] {
     }
   }
 
+  console.log('✅ matchTransfers - Pareamento concluído:', {
+    pairsFound: pairs.length,
+    remainingPending: pending.length - (pairs.length * 2)
+  });
+
   return pairs;
 }
 
@@ -60,15 +71,11 @@ function calculateMatchScore(out: Transfer, inTransfer: Transfer): number {
   const crossRef = checkCrossReference(out, inTransfer);
   if (crossRef) {
     score += 50;
-    console.log(`  ✓ Cross-reference bonus: +50 pontos`);
   }
 
   // Similaridade de histórico (+20 pontos)
   const histScore = calculateHistoricoSimilarity(out.historico, inTransfer.historico);
   score += histScore * 20;
-  console.log(`  ✓ Similaridade histórico: +${(histScore * 20).toFixed(1)} pontos`);
-
-  console.log(`  📊 Score final: ${score}`);
 
   return Math.min(score, 100);
 }
@@ -114,13 +121,6 @@ function checkCrossReference(out: Transfer, inTransfer: Transfer): boolean {
   // Extrair conta mencionada no histórico de IN
   const inMentionedAccount = extractAccountFromHistorico(inTransfer.historico);
 
-  console.log(`🔍 Cross-reference check:`, {
-    outAccount: out.accountNumber,
-    outMentions: outMentionedAccount,
-    inAccount: inTransfer.accountNumber,
-    inMentions: inMentionedAccount
-  });
-
   // Verificar se OUT menciona a conta de IN
   const outMentionsIn = outMentionedAccount === inTransfer.accountNumber;
 
@@ -131,11 +131,5 @@ function checkCrossReference(out: Transfer, inTransfer: Transfer): boolean {
   const bothMentionSame = outMentionedAccount && inMentionedAccount &&
                           outMentionedAccount === inMentionedAccount;
 
-  const hasMatch = outMentionsIn || inMentionsOut || bothMentionSame;
-
-  if (hasMatch) {
-    console.log(`✓ Cross-reference MATCH!`);
-  }
-
-  return hasMatch;
+  return outMentionsIn || inMentionsOut || bothMentionSame;
 }

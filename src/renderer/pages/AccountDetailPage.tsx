@@ -51,9 +51,9 @@ export default function AccountDetailPage() {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
 
-  const loadAccount = () => {
+  const loadAccount = async () => {
     if (accountId) {
-      const acc = getImportedAccount(accountId);
+      const acc = await getImportedAccount(accountId);
       setAccount(acc || null);
       if (acc) {
         const bal = generateBalancete(acc.lancamentos);
@@ -71,28 +71,28 @@ export default function AccountDetailPage() {
     setEditDialogOpen(true);
   };
 
-  const handleDelete = (lancamentoId: string) => {
+  const handleDelete = async (lancamentoId: string) => {
     if (confirm('Deseja realmente excluir este lançamento?')) {
       if (accountId) {
-        deleteLancamento(accountId, lancamentoId);
-        loadAccount();
+        await deleteLancamento(accountId, lancamentoId);
+        await loadAccount();
       }
     }
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (selectedLancamento && accountId) {
-      updateLancamento(accountId, selectedLancamento.id, selectedLancamento);
+      await updateLancamento(accountId, selectedLancamento.id, selectedLancamento);
       setEditDialogOpen(false);
       setSelectedLancamento(null);
-      loadAccount();
+      await loadAccount();
     }
   };
 
-  const handleQuickEditHistorico = (lancamentoId: string, novoHistorico: string) => {
+  const handleQuickEditHistorico = async (lancamentoId: string, novoHistorico: string) => {
     if (accountId) {
-      updateLancamentoHistorico(accountId, lancamentoId, novoHistorico);
-      loadAccount();
+      await updateLancamentoHistorico(accountId, lancamentoId, novoHistorico);
+      await loadAccount();
     }
   };
 

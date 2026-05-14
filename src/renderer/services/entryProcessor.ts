@@ -69,7 +69,7 @@ export function processEntriesWithTransferSeparation(
       if (isTransfer) {
         // Criar Transfer ao invés de ProcessedEntry
         const transfer: Transfer = {
-          id: `transfer-${Date.now()}-${Math.random()}`,
+          id: crypto.randomUUID(),
           accountNumber: contaBancaria.numeroConta,
           accountCode: contaBancaria.codigoContabil,
           date: formatDate(entry.data),

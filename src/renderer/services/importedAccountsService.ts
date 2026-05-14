@@ -4,11 +4,25 @@ import { ContaBancariaMapping } from '../types/Mapping';
 import { loadTransferStore, saveTransferStore } from './transferStore';
 import { mappingService } from './mappingService';
 import { clearTaxasByAccount } from './taxaAdministracaoService';
+import {
+  loadImportedAccountsFromSupabase,
+  saveImportedAccountsToSupabase,
+  deleteImportedAccountFromSupabase,
+  updateImportedAccountInSupabase,
+} from './supabaseImportedAccountsService';
 
 const STORAGE_KEY = 'imported-accounts-store';
 
-export function loadImportedAccounts(): ImportedAccountsStore {
+// Carregar contas importadas (prioriza Supabase, fallback para localStorage)
+export async function loadImportedAccounts(): Promise<ImportedAccountsStore> {
   try {
+    // Tentar carregar do Supabase primeiro
+    const supabaseStore = await loadImportedAccountsFromSupabase();
+    if (supabaseStore.accounts.length > 0) {
+      return supabaseStore;
+    }
+
+    // Fallback: carregar do localStorage
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
@@ -27,19 +41,24 @@ export function loadImportedAccounts(): ImportedAccountsStore {
   return { accounts: [] };
 }
 
-export function saveImportedAccounts(store: ImportedAccountsStore): void {
+// Salvar contas importadas (salva em ambos: Supabase e localStorage)
+export async function saveImportedAccounts(store: ImportedAccountsStore): Promise<void> {
   try {
+    // Salvar no localStorage (backup)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+
+    // Salvar no Supabase (compartilhado)
+    await saveImportedAccountsToSupabase(store);
   } catch (error) {
     console.error('Erro ao salvar contas importadas:', error);
   }
 }
 
-export function addOrUpdateImportedAccount(
+export async function addOrUpdateImportedAccount(
   contaBancaria: ContaBancariaMapping,
   lancamentos: ProcessedEntry[]
-): ImportedAccount {
-  const store = loadImportedAccounts();
+): Promise<ImportedAccount> {
+  const store = await loadImportedAccounts();
 
   // Calcular saldo
   const saldo = calculateSaldo(lancamentos);
@@ -62,7 +81,7 @@ export function addOrUpdateImportedAccount(
       exported: false, // Resetar status de exportação ao adicionar novos lançamentos
     };
     store.accounts[existingIndex] = updated;
-    saveImportedAccounts(store);
+    await saveImportedAccounts(store);
     return updated;
   } else {
     // Criar nova conta
@@ -76,17 +95,17 @@ export function addOrUpdateImportedAccount(
       exported: false,
     };
     store.accounts.push(newAccount);
-    saveImportedAccounts(store);
+    await saveImportedAccounts(store);
     return newAccount;
   }
 }
 
-export function updateLancamento(
+export async function updateLancamento(
   accountId: string,
   lancamentoId: string,
   updatedLancamento: ProcessedEntry
-): void {
-  const store = loadImportedAccounts();
+): Promise<void> {
+  const store = await loadImportedAccounts();
   const accountIndex = store.accounts.findIndex((acc) => acc.id === accountId);
 
   if (accountIndex >= 0) {
@@ -99,17 +118,17 @@ export function updateLancamento(
       account.lancamentos[lancamentoIndex] = updatedLancamento;
       account.saldo = calculateSaldo(account.lancamentos);
       account.lastUpdated = new Date();
-      saveImportedAccounts(store);
+      await saveImportedAccounts(store);
     }
   }
 }
 
-export function updateLancamentoHistorico(
+export async function updateLancamentoHistorico(
   accountId: string,
   lancamentoId: string,
   novoHistorico: string
-): void {
-  const store = loadImportedAccounts();
+): Promise<void> {
+  const store = await loadImportedAccounts();
   const accountIndex = store.accounts.findIndex((acc) => acc.id === accountId);
 
   if (accountIndex >= 0) {
@@ -121,13 +140,13 @@ export function updateLancamentoHistorico(
     if (lancamentoIndex >= 0) {
       account.lancamentos[lancamentoIndex].historico = novoHistorico;
       account.lastUpdated = new Date();
-      saveImportedAccounts(store);
+      await saveImportedAccounts(store);
     }
   }
 }
 
-export function deleteLancamento(accountId: string, lancamentoId: string): void {
-  const store = loadImportedAccounts();
+export async function deleteLancamento(accountId: string, lancamentoId: string): Promise<void> {
+  const store = await loadImportedAccounts();
   const accountIndex = store.accounts.findIndex((acc) => acc.id === accountId);
 
   if (accountIndex >= 0) {
@@ -135,50 +154,73 @@ export function deleteLancamento(accountId: string, lancamentoId: string): void 
     account.lancamentos = account.lancamentos.filter((l) => l.id !== lancamentoId);
     account.saldo = calculateSaldo(account.lancamentos);
     account.lastUpdated = new Date();
-    saveImportedAccounts(store);
+    await saveImportedAccounts(store);
   }
 }
 
-export function deleteImportedAccount(accountId: string): void {
-  const store = loadImportedAccounts();
+export async function deleteImportedAccount(accountId: string, transferStore?: any, updateTransferStore?: (store: any) => void): Promise<void> {
+  const store = await loadImportedAccounts();
 
   // Encontrar a conta antes de excluir para pegar o código contábil
   const account = store.accounts.find((acc) => acc.id === accountId);
 
   if (account) {
-    // Remover a conta
-    store.accounts = store.accounts.filter((acc) => acc.id !== accountId);
-    saveImportedAccounts(store);
+    // Remover a conta do Supabase
+    await deleteImportedAccountFromSupabase(accountId);
 
-    // Remover transferências relacionadas a esta conta
-    const transferStore = loadTransferStore();
+    // Remover a conta do localStorage
+    store.accounts = store.accounts.filter((acc) => acc.id !== accountId);
+    await saveImportedAccounts(store);
 
     const accountCode = account.contaBancaria.codigoContabil;
     const accountNumber = account.contaBancaria.numeroConta;
 
-    // Filtrar transferências pendentes
-    const pendingBefore = transferStore.pending.length;
-    transferStore.pending = transferStore.pending.filter(
-      (t) => t.accountCode !== accountCode && t.accountNumber !== accountNumber
-    );
+    // Se transferStore foi passado (do AppContext), usar ele
+    if (transferStore && updateTransferStore) {
+      const updatedStore = { ...transferStore };
 
-    // Filtrar pares que envolvem esta conta
-    const pairedBefore = transferStore.paired.length;
-    transferStore.paired = transferStore.paired.filter(
-      (pair) =>
-        pair.outTransfer.accountCode !== accountCode &&
-        pair.inTransfer.accountCode !== accountCode &&
-        pair.outTransfer.accountNumber !== accountNumber &&
-        pair.inTransfer.accountNumber !== accountNumber
-    );
+      // Filtrar transferências pendentes
+      updatedStore.pending = (updatedStore.pending || []).filter(
+        (t: any) => t.accountCode !== accountCode && t.accountNumber !== accountNumber
+      );
 
-    // Remover IDs exportados relacionados aos pares removidos
-    const exportedBefore = transferStore.exported.length;
-    const removedPairIds = new Set<string>();
-    transferStore.paired.forEach(pair => removedPairIds.add(pair.id));
-    transferStore.exported = transferStore.exported.filter(id => !removedPairIds.has(id));
+      // Filtrar pares que envolvem esta conta
+      updatedStore.paired = (updatedStore.paired || []).filter(
+        (pair: any) =>
+          pair.outTransfer.accountCode !== accountCode &&
+          pair.inTransfer.accountCode !== accountCode &&
+          pair.outTransfer.accountNumber !== accountNumber &&
+          pair.inTransfer.accountNumber !== accountNumber
+      );
 
-    saveTransferStore(transferStore);
+      updateTransferStore(updatedStore);
+      console.log('✅ Transferências removidas do Supabase via AppContext');
+    } else {
+      // Fallback: usar localStorage (legado)
+      const localTransferStore = loadTransferStore();
+
+      // Filtrar transferências pendentes
+      localTransferStore.pending = localTransferStore.pending.filter(
+        (t) => t.accountCode !== accountCode && t.accountNumber !== accountNumber
+      );
+
+      // Filtrar pares que envolvem esta conta
+      localTransferStore.paired = localTransferStore.paired.filter(
+        (pair) =>
+          pair.outTransfer.accountCode !== accountCode &&
+          pair.inTransfer.accountCode !== accountCode &&
+          pair.outTransfer.accountNumber !== accountNumber &&
+          pair.inTransfer.accountNumber !== accountNumber
+      );
+
+      // Remover IDs exportados relacionados aos pares removidos
+      const removedPairIds = new Set<string>();
+      localTransferStore.paired.forEach(pair => removedPairIds.add(pair.id));
+      localTransferStore.exported = localTransferStore.exported.filter(id => !removedPairIds.has(id));
+
+      saveTransferStore(localTransferStore);
+      console.log('✅ Transferências removidas do localStorage (legado)');
+    }
 
     // Remover taxas de administração relacionadas a esta conta
     clearTaxasByAccount(accountNumber);
@@ -186,8 +228,8 @@ export function deleteImportedAccount(accountId: string): void {
 }
 
 // Sincronizar dados das contas importadas com o mapeamento atualizado
-export function syncImportedAccountsWithMapping(): void {
-  const store = loadImportedAccounts();
+export async function syncImportedAccountsWithMapping(): Promise<void> {
+  const store = await loadImportedAccounts();
   const contasBancarias = mappingService.getContasBancarias();
 
   let updated = false;
@@ -215,13 +257,13 @@ export function syncImportedAccountsWithMapping(): void {
   });
 
   if (updated) {
-    saveImportedAccounts(store);
+    await saveImportedAccounts(store);
     console.log('✅ Contas importadas sincronizadas com o mapeamento');
   }
 }
 
-export function getImportedAccount(accountId: string): ImportedAccount | undefined {
-  const store = loadImportedAccounts();
+export async function getImportedAccount(accountId: string): Promise<ImportedAccount | undefined> {
+  const store = await loadImportedAccounts();
   return store.accounts.find((acc) => acc.id === accountId);
 }
 
@@ -269,25 +311,25 @@ function calculateSaldo(lancamentos: ProcessedEntry[]): number {
   }, 0);
 }
 
-export function getImportProgress(totalContas: number): number {
-  const store = loadImportedAccounts();
+export async function getImportProgress(totalContas: number): Promise<number> {
+  const store = await loadImportedAccounts();
   if (totalContas === 0) return 0;
   return (store.accounts.length / totalContas) * 100;
 }
 
-export function markAccountAsExported(accountId: string): void {
-  const store = loadImportedAccounts();
+export async function markAccountAsExported(accountId: string): Promise<void> {
+  const store = await loadImportedAccounts();
   const accountIndex = store.accounts.findIndex((acc) => acc.id === accountId);
 
   if (accountIndex >= 0) {
     store.accounts[accountIndex].exported = true;
     store.accounts[accountIndex].exportedAt = new Date();
-    saveImportedAccounts(store);
+    await saveImportedAccounts(store);
   }
 }
 
-export function markMultipleAccountsAsExported(accountIds: string[]): void {
-  const store = loadImportedAccounts();
+export async function markMultipleAccountsAsExported(accountIds: string[]): Promise<void> {
+  const store = await loadImportedAccounts();
   const now = new Date();
 
   accountIds.forEach(accountId => {
@@ -298,15 +340,21 @@ export function markMultipleAccountsAsExported(accountIds: string[]): void {
     }
   });
 
-  saveImportedAccounts(store);
+  await saveImportedAccounts(store);
 }
 
-export function getPendingAccounts(): ImportedAccount[] {
-  const store = loadImportedAccounts();
+export async function getPendingAccounts(): Promise<ImportedAccount[]> {
+  const store = await loadImportedAccounts();
   return store.accounts.filter(acc => !acc.exported);
 }
 
-export function getExportedAccounts(): ImportedAccount[] {
-  const store = loadImportedAccounts();
+export async function getExportedAccounts(): Promise<ImportedAccount[]> {
+  const store = await loadImportedAccounts();
   return store.accounts.filter(acc => acc.exported);
+}
+
+// Função para corrigir valores que perderam casas decimais nos dados já importados
+export async function fixImportedAccountValues(accountId: string): Promise<void> {
+  console.log('🔧 A re-importação é necessária para corrigir os valores corretamente.');
+  alert('Para aplicar a correção, por favor exclua a conta importada e importe o arquivo Excel novamente.');
 }
