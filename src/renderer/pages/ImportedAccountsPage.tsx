@@ -30,6 +30,7 @@ import {
   Visibility as VisibilityIcon,
   ExpandMore as ExpandMoreIcon,
   Assessment as AssessmentIcon,
+  Download as DownloadIcon,
 } from '@mui/icons-material';
 import {
   loadImportedAccounts,
@@ -81,12 +82,17 @@ export default function ImportedAccountsPage() {
 
     // Contar total de transferências do AppContext
     const transferencias = (transferStore.pending?.length || 0) + (transferStore.paired?.length || 0);
+    console.log('📊 Contagem de transferências:', {
+      pending: transferStore.pending?.length || 0,
+      paired: transferStore.paired?.length || 0,
+      total: transferencias
+    });
     setTotalTransferencias(transferencias);
   }, [transferStore]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   const handleDelete = useCallback(async (accountId: string) => {
     if (confirm('Deseja realmente excluir esta conta e todos os seus lançamentos?')) {
