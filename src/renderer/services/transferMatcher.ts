@@ -64,6 +64,11 @@ export function matchTransfers(pending: Transfer[]): TransferPair[] {
 function calculateMatchScore(out: Transfer, inTransfer: Transfer): number {
   let score = 0;
 
+  console.log('🔍 Tentando parear:', {
+    out: { date: out.date, amount: out.amount, account: out.accountNumber, historico: out.historico.substring(0, 80) },
+    in: { date: inTransfer.date, amount: inTransfer.amount, account: inTransfer.accountNumber, historico: inTransfer.historico.substring(0, 80) }
+  });
+
   // Data e valor já são iguais (pré-filtro), +30 pontos
   score += 30;
 
@@ -71,11 +76,17 @@ function calculateMatchScore(out: Transfer, inTransfer: Transfer): number {
   const crossRef = checkCrossReference(out, inTransfer);
   if (crossRef) {
     score += 50;
+    console.log('  ✅ Cross-reference encontrado! +50 pontos');
+  } else {
+    console.log('  ❌ Cross-reference não encontrado');
   }
 
   // Similaridade de histórico (+20 pontos)
   const histScore = calculateHistoricoSimilarity(out.historico, inTransfer.historico);
   score += histScore * 20;
+  console.log(`  📝 Similaridade de histórico: ${(histScore * 100).toFixed(1)}% (+${(histScore * 20).toFixed(1)} pontos)`);
+
+  console.log(`  📊 Score final: ${score} (mínimo necessário: 70)`);
 
   return Math.min(score, 100);
 }
@@ -121,6 +132,13 @@ function checkCrossReference(out: Transfer, inTransfer: Transfer): boolean {
   // Extrair conta mencionada no histórico de IN
   const inMentionedAccount = extractAccountFromHistorico(inTransfer.historico);
 
+  console.log('    🔎 Cross-reference check:', {
+    outAccount: out.accountNumber,
+    outMentions: outMentionedAccount,
+    inAccount: inTransfer.accountNumber,
+    inMentions: inMentionedAccount
+  });
+
   // Verificar se OUT menciona a conta de IN
   const outMentionsIn = outMentionedAccount === inTransfer.accountNumber;
 
@@ -130,6 +148,10 @@ function checkCrossReference(out: Transfer, inTransfer: Transfer): boolean {
   // Também verificar se ambos mencionam a mesma conta (aplicação)
   const bothMentionSame = outMentionedAccount && inMentionedAccount &&
                           outMentionedAccount === inMentionedAccount;
+
+  if (outMentionsIn) console.log('    ✓ OUT menciona IN');
+  if (inMentionsOut) console.log('    ✓ IN menciona OUT');
+  if (bothMentionSame) console.log('    ✓ Ambos mencionam mesma conta');
 
   return outMentionsIn || inMentionsOut || bothMentionSame;
 }
