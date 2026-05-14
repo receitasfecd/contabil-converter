@@ -31,6 +31,7 @@ import {
   ExpandMore as ExpandMoreIcon,
   Assessment as AssessmentIcon,
   Download as DownloadIcon,
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import {
   loadImportedAccounts,
