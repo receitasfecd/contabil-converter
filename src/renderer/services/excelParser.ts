@@ -138,8 +138,9 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                   if (!currentRow[j] || currentRow[j] === '' || currentRow[j] === 'undefined') {
                     currentRow[j] = row[j];
                   } else if (j === 2) {
-                    // Coluna 2 é o histórico - concatenar se ambos tiverem valor
-                    currentRow[j] = String(currentRow[j]) + ' ' + String(row[j]);
+                    // Coluna 2 é o histórico - concatenar sem adicionar espaço extra
+                    // O arquivo original já costuma ter os espaços necessários ou corta palavras ao meio
+                    currentRow[j] = String(currentRow[j]) + String(row[j]);
                   }
                 }
               }
