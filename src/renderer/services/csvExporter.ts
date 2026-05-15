@@ -111,12 +111,18 @@ export function generateFilename(
   tipoAplicacao?: 'A' | 'A2' | 'A3' | null
 ): string {
   const suffix = tipoAplicacao || '';
-  return `${numeroConta}${suffix}.csv`;
+  const cleanName = (numeroConta + suffix).replace(/[^a-z0-9]/gi, '');
+  return `${cleanName.substring(0, 8).toUpperCase()}.csv`;
 }
 
 export function generateTransferFilename(): string {
-  const date = new Date().toISOString().split('T')[0];
-  return `transferencias-${date}.csv`;
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const sec = String(now.getSeconds()).padStart(2, '0');
+  // Formato: T+DDHHMM (7 caracteres) ou just DDHHMMSS (8 caracteres)
+  return `${day}${hour}${min}${sec}.csv`;
 }
 
 export function generateBatchCSV(accounts: ImportedAccount[]): string {
@@ -146,6 +152,10 @@ export function generateBatchCSV(accounts: ImportedAccount[]): string {
 }
 
 export function generateBatchFilename(accountCount: number): string {
-  const date = new Date().toISOString().split('T')[0];
-  return `lancamentos-lote-${accountCount}-contas-${date}.csv`;
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  // L + DD + HH + MM = 7 caracteres
+  return `L${day}${hour}${min}.csv`;
 }
