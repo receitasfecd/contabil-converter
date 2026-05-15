@@ -31,7 +31,7 @@ export function generateCSV(entries: ProcessedEntry[]): string {
   }
 
   const rows = entries.map((entry) => ({
-    Data: `'${entry.data}`,
+    Data: entry.data,
     Débito: entry.debito,
     Crédito: entry.credito,
     'Centro de Custo': cleanString(entry.centroCusto),
@@ -71,7 +71,7 @@ export function generateTransferCSV(pairs: TransferPair[]): string {
   }
 
   const rows = pairs.map((pair) => ({
-    Data: `'${pair.outTransfer.date}`,
+    Data: pair.outTransfer.date,
     Débito: pair.outTransfer.accountCode,
     Crédito: pair.inTransfer.accountCode,
     'Centro de Custo': cleanString(pair.outTransfer.centroCusto),
@@ -125,7 +125,7 @@ export function generateBatchCSV(accounts: ImportedAccount[]): string {
   accounts.forEach(account => {
     account.lancamentos.forEach(entry => {
       allRows.push({
-        Data: `'${entry.data}`,
+        Data: entry.data,
         Débito: entry.debito,
         Crédito: entry.credito,
         'Centro de Custo': cleanString(entry.centroCusto),
