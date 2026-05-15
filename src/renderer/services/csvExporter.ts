@@ -22,7 +22,7 @@ export function generateCSV(entries: ProcessedEntry[]): string {
   }
 
   const rows = entries.map((entry) => ({
-    Data: entry.data,
+    Data: `'${entry.data}`,
     Débito: entry.debito,
     Crédito: entry.credito,
     'Centro de Custo': entry.centroCusto,
@@ -31,7 +31,7 @@ export function generateCSV(entries: ProcessedEntry[]): string {
   }));
 
   const csv = Papa.unparse(rows, {
-    quotes: [true, false, false, false, false, false],
+    quotes: false,
     delimiter: ';',
     header: false,
     columns: CSV_HEADERS,
@@ -62,7 +62,7 @@ export function generateTransferCSV(pairs: TransferPair[]): string {
   }
 
   const rows = pairs.map((pair) => ({
-    Data: pair.outTransfer.date,
+    Data: `'${pair.outTransfer.date}`,
     Débito: pair.outTransfer.accountCode,
     Crédito: pair.inTransfer.accountCode,
     'Centro de Custo': pair.outTransfer.centroCusto,
@@ -71,7 +71,7 @@ export function generateTransferCSV(pairs: TransferPair[]): string {
   }));
 
   const csv = Papa.unparse(rows, {
-    quotes: [true, false, false, false, false, false],
+    quotes: false,
     delimiter: ';',
     header: false,
     columns: CSV_HEADERS,
@@ -116,7 +116,7 @@ export function generateBatchCSV(accounts: ImportedAccount[]): string {
   accounts.forEach(account => {
     account.lancamentos.forEach(entry => {
       allRows.push({
-        Data: entry.data,
+        Data: `'${entry.data}`,
         Débito: entry.debito,
         Crédito: entry.credito,
         'Centro de Custo': entry.centroCusto,
@@ -127,7 +127,7 @@ export function generateBatchCSV(accounts: ImportedAccount[]): string {
   });
 
   const csv = Papa.unparse(allRows, {
-    quotes: [true, false, false, false, false, false],
+    quotes: false,
     delimiter: ';',
     header: false,
     columns: CSV_HEADERS,
