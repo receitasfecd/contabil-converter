@@ -162,30 +162,47 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
             continue;
           }
 
-          // Verificar se a linha tem data (coluna 0)
-          const hasDate = row[0] && (typeof row[0] === 'number' || typeof row[0] === 'string');
+          // Verificar se a linha parece ter uma data válida
+          const isDate = (val: any) => {
+            if (!val) return false;
+            // Se for número (serial do Excel), verificar se está num range plausível
+            if (typeof val === 'number') return val > 30000 && val < 60000;
+            if (typeof val === 'string') {
+              const str = val.trim();
+              return /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(str);
+            }
+            return false;
+          };
 
-          if (hasDate) {
-            // Linha com data - salvar linha anterior se existir
+          // Verificar se a linha possui algum valor financeiro (colunas 6, 7, 8 ou 9)
+          const hasValue = row[6] || row[7] || row[8] || row[9];
+          const hasDate = isDate(row[0]);
+
+          // Nova lógica de decisão:
+          // 1. Se tem data OU tem valor, é um novo lançamento (ou uma nova perna de um lançamento)
+          if (hasDate || hasValue) {
             if (currentRow) {
               mergedData.push(currentRow);
             }
-            // Iniciar nova linha
             currentRow = [...row];
-          } else {
-            // Linha sem data - é continuação da anterior
-            if (currentRow) {
-              // Mesclar dados da linha quebrada na linha atual
-              for (let j = 0; j < row.length; j++) {
-                if (row[j] !== undefined && row[j] !== null && row[j] !== '') {
-                  // Se a célula atual está vazia, preencher com o valor da linha quebrada
-                  if (!currentRow[j] || currentRow[j] === '' || currentRow[j] === 'undefined') {
-                    currentRow[j] = row[j];
-                  } else if (j === 2) {
-                    // Coluna 2 é o histórico - concatenar sem adicionar espaço extra
-                    // O arquivo original já costuma ter os espaços necessários ou corta palavras ao meio
-                    currentRow[j] = String(currentRow[j]) + String(row[j]);
-                  }
+            
+            // Se não tem data mas tem valor, herda a data da linha anterior
+            if (!hasDate && mergedData.length > 0) {
+              currentRow[0] = mergedData[mergedData.length - 1][0];
+            }
+          } 
+          // 2. Se não tem nada (nem data nem valor) mas temos um lançamento em aberto, mescla as informações
+          else if (currentRow) {
+            // Mesclar dados da linha quebrada na linha atual (apenas o que estiver faltando)
+            // Geralmente é o histórico que cai para a linha de baixo
+            for (let j = 0; j < row.length; j++) {
+              if (row[j] !== undefined && row[j] !== null && row[j] !== '') {
+                // Se a célula atual está vazia, preencher com o valor da linha quebrada
+                if (!currentRow[j] || currentRow[j] === '' || currentRow[j] === 'undefined') {
+                  currentRow[j] = row[j];
+                } else if (j === 2) {
+                  // Coluna 2 é o histórico - concatenar sem adicionar espaço extra
+                  currentRow[j] = String(currentRow[j]) + String(row[j]);
                 }
               }
             }
