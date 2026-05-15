@@ -34,6 +34,50 @@ function parseBrazilianNumber(value: any): number | null {
   return null;
 }
 
+// Função para corrigir históricos que vêm com espaços indevidos do Excel (artefatos de exportação)
+// Ex: "FI NANCEIRA" -> "FINANCEIRA", "LUC HM" -> "LUCHM"
+function healHistorico(text: string): string {
+  if (!text) return '';
+  
+  let healed = text;
+
+  // 1. Corrigir palavras específicas do domínio que são frequentemente cortadas por limites de coluna
+  const commonWords = [
+    'FINANCEIRA', 'APLICACAO', 'APLICAÇÃO', 'PAGAMENTO', 'COBRANCA', 'COBRANÇA', 
+    'TRANSFERENCIA', 'TRANSFERÊNCIA', 'HISTORICO', 'HISTÓRICO', 'REFERENTE', 
+    'VENCIMENTO', 'LIQUIDACAO', 'LIQUIDAÇÃO', 'RENDIMENTO', 'LUCHM', 'PASSAGEM', 
+    'AEREA', 'SERVICOS', 'SERVIÇOS', 'MENSAL', 'SOLICITADO', 'JANEIRO', 'FEVEREIRO',
+    'MARCO', 'MARÇO', 'ABRIL', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO',
+    'NOVEMBRO', 'DEZEMBRO', 'FUNDACAO', 'FUNDAÇÃO', 'CONFORME', 'PROJETOS', 'CIENTIFICO'
+  ];
+
+  commonWords.forEach(word => {
+    // Tenta unir a palavra se ela estiver separada por um espaço
+    // Começamos de i=1 para pegar casos como "F INANCEIRA"
+    for (let i = 1; i < word.length; i++) {
+      const p1 = word.substring(0, i);
+      const p2 = word.substring(i);
+      // Usar a palavra exata com limite de palavra (\b) pode ser perigoso se estiver no meio
+      // Mas aqui queremos pegar exatamente o corte.
+      // O regex procura p1 seguido de um ou mais espaços seguido de p2
+      const regex = new RegExp(`${p1}\\s+${p2}`, 'gi');
+      healed = healed.replace(regex, word);
+    }
+  });
+
+  // 2. Corrigir preposições e artigos cortados (D O -> DO, D A -> DA, D E -> DE)
+  healed = healed.replace(/\b(D)\s+(O|A|E)\b/gi, '$1$2');
+  healed = healed.replace(/\b(N)\s+(O|A)\b/gi, '$1$2');
+
+  // 3. Corrigir datas cortadas (ex: 2 8/08/2024 -> 28/08/2024)
+  healed = healed.replace(/(\d)\s+(\d\/\d\d\/\d\d\d\d)/g, '$1$2');
+
+  // 4. Limpar espaços duplos resultantes
+  healed = healed.replace(/\s\s+/g, ' ');
+
+  return healed.trim();
+}
+
 // Função para sanitizar os dados do Excel validando com o saldo linha a linha
 // Usa o saldo do Excel (que tem casas decimais corretas) como referência
 function sanitizeExcelData(entries: ExcelEntry[]): ExcelEntry[] {
@@ -206,7 +250,7 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
               entry = {
                 data: parseExcelDate(row[0]),
                 documento: documento,
-                historico: historico,
+                historico: healHistorico(historico),
                 status: String(row[3] || ''),
                 classificacaoFinanceira: String(row[4] || '').replace(/\s+/g, ''),
                 codigoCentroCusto: String(row[5] || ''),
@@ -236,7 +280,7 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
               entry = {
                 data: parseExcelDate(row[0]),
                 documento: documento,
-                historico: historico,
+                historico: healHistorico(historico),
                 status: String(row[3] || ''),
                 classificacaoFinanceira: String(row[4] || '').replace(/\s+/g, ''),
                 codigoCentroCusto: String(row[5] || ''),
