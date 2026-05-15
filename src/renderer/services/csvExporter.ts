@@ -4,6 +4,15 @@ import { TransferPair } from '../types/Transfer';
 import { ImportedAccount } from '../types/ImportedAccount';
 import { CSV_HEADERS } from '../../shared/constants';
 
+function cleanString(val: string | undefined | null): string {
+  if (!val) return '';
+  return val
+    .replace(/[\r\n]+/g, ' ') // Remove quebras de linha
+    .replace(/;/g, ' ')      // Remove ponto e vírgula para não quebrar o CSV (substitui por espaço)
+    .replace(/\s\s+/g, ' ')  // Remove espaços duplos resultantes
+    .trim();
+}
+
 export function generateCSV(entries: ProcessedEntry[]): string {
   // Validar lançamentos antes de exportar
   const invalidEntries = entries.filter(entry => {
@@ -25,8 +34,8 @@ export function generateCSV(entries: ProcessedEntry[]): string {
     Data: `'${entry.data}`,
     Débito: entry.debito,
     Crédito: entry.credito,
-    'Centro de Custo': entry.centroCusto,
-    Histórico: entry.historico || 'SEM HISTÓRICO INFORMADO',
+    'Centro de Custo': cleanString(entry.centroCusto),
+    Histórico: cleanString(entry.historico) || 'SEM HISTORICO',
     Valor: entry.valor,
   }));
 
@@ -65,8 +74,8 @@ export function generateTransferCSV(pairs: TransferPair[]): string {
     Data: `'${pair.outTransfer.date}`,
     Débito: pair.outTransfer.accountCode,
     Crédito: pair.inTransfer.accountCode,
-    'Centro de Custo': pair.outTransfer.centroCusto,
-    Histórico: pair.outTransfer.historico || 'SEM HISTÓRICO INFORMADO',
+    'Centro de Custo': cleanString(pair.outTransfer.centroCusto),
+    Histórico: cleanString(pair.outTransfer.historico) || 'SEM HISTORICO',
     Valor: pair.outTransfer.amount,
   }));
 
@@ -119,8 +128,8 @@ export function generateBatchCSV(accounts: ImportedAccount[]): string {
         Data: `'${entry.data}`,
         Débito: entry.debito,
         Crédito: entry.credito,
-        'Centro de Custo': entry.centroCusto,
-        Histórico: entry.historico || 'SEM HISTÓRICO INFORMADO',
+        'Centro de Custo': cleanString(entry.centroCusto),
+        Histórico: cleanString(entry.historico) || 'SEM HISTORICO',
         Valor: entry.valor,
       });
     });
