@@ -31,7 +31,7 @@ export function generateCSV(entries: ProcessedEntry[]): string {
   }));
 
   const csv = Papa.unparse(rows, {
-    quotes: false,
+    quotes: [true, false, false, false, false, false],
     delimiter: ';',
     header: false,
     columns: CSV_HEADERS,
@@ -71,7 +71,7 @@ export function generateTransferCSV(pairs: TransferPair[]): string {
   }));
 
   const csv = Papa.unparse(rows, {
-    quotes: false,
+    quotes: [true, false, false, false, false, false],
     delimiter: ';',
     header: false,
     columns: CSV_HEADERS,
@@ -127,7 +127,7 @@ export function generateBatchCSV(accounts: ImportedAccount[]): string {
   });
 
   const csv = Papa.unparse(allRows, {
-    quotes: false,
+    quotes: [true, false, false, false, false, false],
     delimiter: ';',
     header: false,
     columns: CSV_HEADERS,
