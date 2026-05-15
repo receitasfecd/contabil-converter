@@ -343,6 +343,20 @@ export async function markMultipleAccountsAsExported(accountIds: string[]): Prom
   await saveImportedAccounts(store);
 }
 
+export async function revertMultipleAccountExports(accountIds: string[]): Promise<void> {
+  const store = await loadImportedAccounts();
+
+  accountIds.forEach(accountId => {
+    const accountIndex = store.accounts.findIndex((acc) => acc.id === accountId);
+    if (accountIndex >= 0) {
+      store.accounts[accountIndex].exported = false;
+      store.accounts[accountIndex].exportedAt = undefined;
+    }
+  });
+
+  await saveImportedAccounts(store);
+}
+
 export async function getPendingAccounts(): Promise<ImportedAccount[]> {
   const store = await loadImportedAccounts();
   return store.accounts.filter(acc => !acc.exported);

@@ -39,6 +39,7 @@ import {
   getImportProgress,
   markAccountAsExported,
   markMultipleAccountsAsExported,
+  revertMultipleAccountExports,
   syncImportedAccountsWithMapping,
 } from '../services/importedAccountsService';
 import { mappingService } from '../services/mappingService';
@@ -917,17 +918,9 @@ export default function ImportedAccountsPage() {
                           <Button
                             variant="outlined"
                             color="warning"
-                            onClick={() => {
+                            onClick={async () => {
                               if (confirm(`Deseja reverter a exportação de ${selectedAccounts.length} conta(s)?`)) {
-                                selectedAccounts.forEach(id => {
-                                  const store = loadImportedAccounts();
-                                  const accountIndex = store.accounts.findIndex(acc => acc.id === id);
-                                  if (accountIndex >= 0) {
-                                    store.accounts[accountIndex].exported = false;
-                                    store.accounts[accountIndex].exportedAt = undefined;
-                                  }
-                                  saveImportedAccounts(store);
-                                });
+                                await revertMultipleAccountExports(selectedAccounts);
                                 setSelectedAccounts([]);
                                 loadData();
                               }
