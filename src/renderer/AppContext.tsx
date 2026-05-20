@@ -67,7 +67,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Salvar transferStore (Supabase ou localStorage)
   useEffect(() => {
     if (isAuthenticated) {
-      saveTransfers(transferStore.pending)
+      const allTransfers = [
+        ...transferStore.pending,
+        ...transferStore.paired.flatMap(p => [p.outTransfer, p.inTransfer])
+      ];
+      saveTransfers(allTransfers)
         .catch(err => console.error('❌ Erro ao salvar transferências:', err));
 
       savePairs(transferStore.paired)

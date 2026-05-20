@@ -21,6 +21,9 @@ import {
   ListItem,
   ListItemText,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import {
@@ -29,6 +32,8 @@ import {
   MoreVert as MoreVertIcon,
   DeleteSweep as DeleteSweepIcon,
   Edit as EditIcon,
+  Link as LinkIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 import { useAppContext } from '../AppContext';
 import { generateTransferCSV, downloadCSV, generateTransferFilename } from '../services/csvExporter';
@@ -73,6 +78,19 @@ export default function TransfersPage() {
   });
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
+
+  // Filtros para a aba de Pendentes
+  const [filtroConta, setFiltroConta] = useState('TODAS');
+  const [filtroDirecao, setFiltroDirecao] = useState('TODAS');
+  const [buscaTexto, setBuscaTexto] = useState('');
+
+  // Estados para o diálogo de Pareamento Manual
+  const [pairingDialogOpen, setPairingDialogOpen] = useState(false);
+  const [sourceTransfer, setSourceTransfer] = useState<Transfer | null>(null);
+  const [selectedCounterpartId, setSelectedCounterpartId] = useState<string>('');
+  const [dialogFiltroConta, setDialogFiltroConta] = useState('TODAS');
+  const [dialogBuscaTexto, setDialogBuscaTexto] = useState('');
+  const [dialogFiltroValor, setDialogFiltroValor] = useState('');
 
   console.log('🔍 TransfersPage - Estado atual:', {
     pending: transferStore.pending.length,
@@ -152,6 +170,118 @@ export default function TransfersPage() {
     const classificacoes = mappingService.getClassificacoes();
     const rubrica = classificacoes.find(c => c.codigoContabil === codigo);
     return rubrica?.descricao || '';
+  };
+
+  // Obter lista única de contas apenas com transferências pendentes para o seletor
+  const pendingAccountsList = useMemo(() => {
+    const accounts = new Set<string>();
+    transferStore.pending.forEach(t => accounts.add(t.accountNumber));
+    return Array.from(accounts).sort();
+  }, [transferStore.pending]);
+
+  // Filtrar as transferências pendentes exibidas no DataGrid
+  const filteredPendingTransfers = useMemo(() => {
+    return transferStore.pending.filter(t => {
+      if (filtroConta !== 'TODAS' && t.accountNumber !== filtroConta) return false;
+      if (filtroDirecao !== 'TODAS' && t.direction !== filtroDirecao) return false;
+      if (buscaTexto) {
+        const query = buscaTexto.toLowerCase();
+        const histMatch = t.historico.toLowerCase().includes(query);
+        const codeMatch = t.accountCode.toLowerCase().includes(query);
+        const amountMatch = t.amount.toLowerCase().includes(query);
+        const dateMatch = t.date.toLowerCase().includes(query);
+        if (!histMatch && !codeMatch && !amountMatch && !dateMatch) return false;
+      }
+      return true;
+    });
+  }, [transferStore.pending, filtroConta, filtroDirecao, buscaTexto]);
+
+  // Lista de contrapartidas candidatas para o diálogo de pareamento manual
+  const counterpartCandidates = useMemo(() => {
+    if (!sourceTransfer) return [];
+    const targetDirection = sourceTransfer.direction === 'OUT' ? 'IN' : 'OUT';
+    
+    return transferStore.pending.filter(t => {
+      // Deve ser direção oposta
+      if (t.direction !== targetDirection) return false;
+      // Não pode ser o mesmo registro
+      if (t.id === sourceTransfer.id) return false;
+      
+      // Filtro de conta no diálogo
+      if (dialogFiltroConta !== 'TODAS' && t.accountNumber !== dialogFiltroConta) return false;
+      
+      // Filtro de valor no diálogo (busca textual ou valor exato se for preenchido)
+      if (dialogFiltroValor) {
+        if (!t.amount.includes(dialogFiltroValor)) return false;
+      }
+      
+      // Busca geral no diálogo
+      if (dialogBuscaTexto) {
+        const query = dialogBuscaTexto.toLowerCase();
+        const histMatch = t.historico.toLowerCase().includes(query);
+        const dateMatch = t.date.toLowerCase().includes(query);
+        const codeMatch = t.accountCode.toLowerCase().includes(query);
+        if (!histMatch && !dateMatch && !codeMatch) return false;
+      }
+      
+      return true;
+    });
+  }, [transferStore.pending, sourceTransfer, dialogFiltroConta, dialogFiltroValor, dialogBuscaTexto]);
+
+  // Iniciar o processo de pareamento manual a partir de uma linha
+  const handleStartManualPair = (transfer: Transfer) => {
+    setSourceTransfer(transfer);
+    setSelectedCounterpartId('');
+    setDialogFiltroConta('TODAS');
+    setDialogBuscaTexto('');
+    setDialogFiltroValor('');
+    setPairingDialogOpen(true);
+  };
+
+  // Confirmar o pareamento manual e atualizar o store global
+  const handleManualPairConfirm = () => {
+    if (!sourceTransfer || !selectedCounterpartId) return;
+    const counterpartTransfer = transferStore.pending.find(t => t.id === selectedCounterpartId);
+    if (!counterpartTransfer) return;
+
+    // Determina quem é saída (OUT - origem) e quem é entrada (IN - destino)
+    const outTransfer = sourceTransfer.direction === 'OUT' ? sourceTransfer : counterpartTransfer;
+    const inTransfer = sourceTransfer.direction === 'IN' ? sourceTransfer : counterpartTransfer;
+
+    const newPair: TransferPair = {
+      id: `manual-${outTransfer.id}-${inTransfer.id}-${Date.now()}`,
+      outTransfer: {
+        ...outTransfer,
+        status: 'PAIRED',
+        pairedWith: inTransfer.id,
+        counterpartAccount: inTransfer.accountNumber
+      },
+      inTransfer: {
+        ...inTransfer,
+        status: 'PAIRED',
+        pairedWith: outTransfer.id,
+        counterpartAccount: outTransfer.accountNumber
+      },
+      matchScore: 100, // 100% de match score por ser manual
+      matchedAt: new Date(),
+      exported: false
+    };
+
+    // Remove do array de pendentes
+    const updatedPending = transferStore.pending.filter(
+      t => t.id !== outTransfer.id && t.id !== inTransfer.id
+    );
+
+    const newStore = {
+      ...transferStore,
+      pending: updatedPending,
+      paired: [...transferStore.paired, newPair]
+    };
+
+    updateTransferStore(newStore);
+    setPairingDialogOpen(false);
+    setSourceTransfer(null);
+    setSelectedCounterpartId('');
   };
 
   // Estatísticas
@@ -253,8 +383,14 @@ export default function TransfersPage() {
       field: 'actions',
       type: 'actions',
       headerName: 'Ações',
-      width: 120,
+      width: 160,
       getActions: (params) => [
+        <GridActionsCellItem
+          icon={<LinkIcon />}
+          label="Parear Manualmente"
+          onClick={() => handleStartManualPair(params.row)}
+          color="success"
+        />,
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Editar"
@@ -421,8 +557,73 @@ export default function TransfersPage() {
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Transferências aguardando pareamento com contrapartida
         </Typography>
+
+        {/* Barra de Filtros */}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2, mt: 1 }}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel id="filtro-conta-label">Filtrar por Conta</InputLabel>
+            <Select
+              labelId="filtro-conta-label"
+              id="filtro-conta"
+              value={filtroConta}
+              label="Filtrar por Conta"
+              onChange={(e) => setFiltroConta(e.target.value)}
+            >
+              <MenuItem value="TODAS">Todas as Contas</MenuItem>
+              {pendingAccountsList.map((acc) => (
+                <MenuItem key={acc} value={acc}>
+                  Conta {acc}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="filtro-direcao-label">Direção</InputLabel>
+            <Select
+              labelId="filtro-direcao-label"
+              id="filtro-direcao"
+              value={filtroDirecao}
+              label="Direção"
+              onChange={(e) => setFiltroDirecao(e.target.value)}
+            >
+              <MenuItem value="TODAS">Todas as Direções</MenuItem>
+              <MenuItem value="OUT">Saída (OUT)</MenuItem>
+              <MenuItem value="IN">Entrada (IN)</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField
+            label="Buscar..."
+            placeholder="Histórico, valor, data..."
+            size="small"
+            value={buscaTexto}
+            onChange={(e) => setBuscaTexto(e.target.value)}
+            sx={{ flexGrow: 1 }}
+            InputProps={{
+              startAdornment: (
+                <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
+              ),
+            }}
+          />
+
+          {(filtroConta !== 'TODAS' || filtroDirecao !== 'TODAS' || buscaTexto) && (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => {
+                setFiltroConta('TODAS');
+                setFiltroDirecao('TODAS');
+                setBuscaTexto('');
+              }}
+            >
+              Limpar Filtros
+            </Button>
+          )}
+        </Stack>
+
         <DataGrid
-          rows={transferStore.pending}
+          rows={filteredPendingTransfers}
           columns={pendingColumns}
           autoHeight
           pageSizeOptions={[10, 25, 50]}
@@ -608,6 +809,165 @@ export default function TransfersPage() {
           <Button onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
           <Button onClick={handleSaveEdit} variant="contained">
             Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo de Pareamento Manual */}
+      <Dialog open={pairingDialogOpen} onClose={() => setPairingDialogOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Pareamento Manual de Transferência</DialogTitle>
+        <DialogContent dividers>
+          {sourceTransfer && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Lançamento Selecionado (Origem):
+              </Typography>
+              <Card variant="outlined" sx={{ bgcolor: 'action.hover', borderLeft: 5, borderColor: sourceTransfer.direction === 'OUT' ? 'error.main' : 'success.main' }}>
+                <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
+                      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+                        <Chip
+                          label={sourceTransfer.direction === 'OUT' ? 'Saída' : 'Entrada'}
+                          color={sourceTransfer.direction === 'OUT' ? 'error' : 'success'}
+                          size="small"
+                        />
+                        <Chip label={`Conta: ${sourceTransfer.accountNumber}`} size="small" variant="outlined" />
+                        <Typography variant="body2" color="text.secondary">
+                          {sourceTransfer.date}
+                        </Typography>
+                      </Stack>
+                      <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                        {sourceTransfer.historico}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Cód. Contábil: {sourceTransfer.accountCode} {getRubricaName(sourceTransfer.accountCode) && `(${getRubricaName(sourceTransfer.accountCode)})`}
+                      </Typography>
+                    </Box>
+                    <Typography variant="h6" color={sourceTransfer.direction === 'OUT' ? 'error.main' : 'success.main'} sx={{ fontWeight: 'bold' }}>
+                      R$ {sourceTransfer.amount}
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Box>
+          )}
+
+          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'medium' }}>
+            Localizar e Selecionar Contrapartida Correspondente:
+          </Typography>
+
+          {/* Filtros da Contrapartida */}
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel id="dialog-filtro-conta-label">Filtrar por Conta</InputLabel>
+              <Select
+                labelId="dialog-filtro-conta-label"
+                id="dialog-filtro-conta"
+                value={dialogFiltroConta}
+                label="Filtrar por Conta"
+                onChange={(e) => setDialogFiltroConta(e.target.value)}
+              >
+                <MenuItem value="TODAS">Todas as Contas</MenuItem>
+                {accountsList.map((acc) => (
+                  <MenuItem key={acc} value={acc}>
+                    Conta {acc}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Filtrar por Valor"
+              placeholder="Ex: 650,00"
+              size="small"
+              value={dialogFiltroValor}
+              onChange={(e) => setDialogFiltroValor(e.target.value)}
+              sx={{ width: 150 }}
+            />
+
+            <TextField
+              label="Buscar no Histórico/Código..."
+              size="small"
+              value={dialogBuscaTexto}
+              onChange={(e) => setDialogBuscaTexto(e.target.value)}
+              sx={{ flexGrow: 1 }}
+              InputProps={{
+                startAdornment: (
+                  <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
+                ),
+              }}
+            />
+
+            {(dialogFiltroConta !== 'TODAS' || dialogFiltroValor || dialogBuscaTexto) && (
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  setDialogFiltroConta('TODAS');
+                  setDialogFiltroValor('');
+                  setDialogBuscaTexto('');
+                }}
+              >
+                Limpar
+              </Button>
+            )}
+          </Stack>
+
+          {/* Tabela de Candidatas */}
+          <Box sx={{ height: 350, width: '100%' }}>
+            <DataGrid
+              rows={counterpartCandidates}
+              columns={[
+                { field: 'date', headerName: 'Data', width: 110 },
+                {
+                  field: 'accountNumber',
+                  headerName: 'Conta',
+                  width: 100,
+                  renderCell: (params) => (
+                    <Chip label={params.value} size="small" variant="outlined" color="primary" />
+                  ),
+                },
+                {
+                  field: 'direction',
+                  headerName: 'Direção',
+                  width: 90,
+                  renderCell: (params) => (
+                    <Chip
+                      label={params.value === 'OUT' ? 'Saída' : 'Entrada'}
+                      color={params.value === 'OUT' ? 'error' : 'success'}
+                      size="small"
+                    />
+                  ),
+                },
+                { field: 'amount', headerName: 'Valor', width: 110 },
+                { field: 'historico', headerName: 'Histórico', flex: 1 },
+              ]}
+              pageSizeOptions={[5, 10, 20]}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 5 } },
+              }}
+              rowSelectionModel={selectedCounterpartId ? [selectedCounterpartId] : []}
+              onRowSelectionModelChange={(newSelection) => {
+                if (newSelection.length > 0) {
+                  setSelectedCounterpartId(newSelection[0] as string);
+                } else {
+                  setSelectedCounterpartId('');
+                }
+              }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPairingDialogOpen(false)}>Cancelar</Button>
+          <Button
+            onClick={handleManualPairConfirm}
+            variant="contained"
+            color="success"
+            disabled={!selectedCounterpartId}
+            startIcon={<LinkIcon />}
+          >
+            Confirmar Pareamento Manual
           </Button>
         </DialogActions>
       </Dialog>
