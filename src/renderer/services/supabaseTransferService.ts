@@ -13,6 +13,39 @@ async function getUserId(): Promise<string | null> {
   return user.id;
 }
 
+// Helper para carregar todos os registros paginados
+async function fetchAll(table: string, select: string = '*', orderCol: string = 'id'): Promise<any[]> {
+  const allData: any[] = [];
+  let from = 0;
+  const step = 1000;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from(table)
+      .select(select)
+      .order(orderCol, { ascending: true })
+      .range(from, from + step - 1);
+
+    if (error) {
+      console.error(`Erro ao carregar dados da tabela ${table}:`, error);
+      break;
+    }
+
+    if (data && data.length > 0) {
+      allData.push(...data);
+      from += step;
+      if (data.length < step) {
+        hasMore = false;
+      }
+    } else {
+      hasMore = false;
+    }
+  }
+
+  return allData;
+}
+
 // Carregar todas as transferências da organização
 export async function loadTransferStore(): Promise<TransferStore> {
   const { data: { user } } = await supabase.auth.getUser();
@@ -21,29 +54,14 @@ export async function loadTransferStore(): Promise<TransferStore> {
   }
 
   // Carregar transferências
-  const { data: transfersData, error: transfersError } = await supabase
-    .from('transferencias')
-    .select('*')
-    .order('imported_at', { ascending: true });
-
-  if (transfersError) {
-    console.error('Erro ao carregar transferências:', transfersError);
-    return { pending: [], paired: [], exported: [] };
-  }
+  const transfersData = await fetchAll('transferencias', '*', 'imported_at');
 
   // Carregar pares
-  const { data: pairsData, error: pairsError } = await supabase
-    .from('transfer_pairs')
-    .select(`
-      *,
-      out_transfer:out_transfer_id(*),
-      in_transfer:in_transfer_id(*)
-    `)
-    .order('matched_at', { ascending: true });
-
-  if (pairsError) {
-    console.error('Erro ao carregar pares:', pairsError);
-  }
+  const pairsData = await fetchAll('transfer_pairs', `
+    *,
+    out_transfer:out_transfer_id(*),
+    in_transfer:in_transfer_id(*)
+  `, 'matched_at');
 
   // Converter dados do banco para o formato da aplicação
   const transfers: Transfer[] = transfersData.map(row => ({
