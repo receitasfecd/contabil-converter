@@ -119,12 +119,12 @@ export default function TaxasAdministracaoPage() {
       if (dialogFiltroConta !== 'TODAS' && transfer.accountNumber !== dialogFiltroConta) return false;
 
       // Filtro de valor
-      if (dialogFiltroValor && !transfer.amount.includes(dialogFiltroValor)) return false;
+      if (dialogFiltroValor && !transfer.amount?.includes(dialogFiltroValor)) return false;
 
       // Busca por texto
       if (dialogBuscaTexto) {
         const query = dialogBuscaTexto.toLowerCase();
-        if (!transfer.historico.toLowerCase().includes(query)) return false;
+        if (!transfer.historico?.toLowerCase()?.includes(query)) return false;
       }
 
       return true;
@@ -361,6 +361,33 @@ export default function TaxasAdministracaoPage() {
     return `R$ ${value}`;
   };
 
+  const parseValue = (valStr: string | undefined): number => {
+    if (!valStr) return 0;
+    return parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+  };
+
+  const totalTaxasPagas = useMemo(() => {
+    const allTaxas = [...taxasPendentes, ...taxasPareadas, ...taxasProcessadas];
+    return allTaxas.reduce((sum, taxa) => {
+      // Taxas pagas são saídas (OUT) de qualquer conta que não seja a de ADM
+      if (taxa.transferOut && taxa.transferOut.accountNumber !== CONTA_ADM) {
+        return sum + parseValue(taxa.transferOut.amount);
+      }
+      return sum;
+    }, 0);
+  }, [taxasPendentes, taxasPareadas, taxasProcessadas]);
+
+  const totalTaxasRecebidas = useMemo(() => {
+    const allTaxas = [...taxasPendentes, ...taxasPareadas, ...taxasProcessadas];
+    return allTaxas.reduce((sum, taxa) => {
+      // Taxas recebidas são entradas (IN) na conta de ADM (14300-4)
+      if (taxa.transferIn && taxa.transferIn.accountNumber === CONTA_ADM) {
+        return sum + parseValue(taxa.transferIn.amount);
+      }
+      return sum;
+    }, 0);
+  }, [taxasPendentes, taxasPareadas, taxasProcessadas]);
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -429,6 +456,28 @@ export default function TaxasAdministracaoPage() {
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Processadas
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* Totais de Valor */}
+        <Card sx={{ flex: 1.5, bgcolor: 'primary.main', color: 'white' }}>
+          <CardContent>
+            <Typography variant="h6">
+              R$ {totalTaxasPagas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              Total Taxas Pagas (Saídas Projetos)
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ flex: 1.5, bgcolor: 'success.main', color: 'white' }}>
+          <CardContent>
+            <Typography variant="h6">
+              R$ {totalTaxasRecebidas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              Total Taxas Recebidas (Entrada 14300-4)
             </Typography>
           </CardContent>
         </Card>

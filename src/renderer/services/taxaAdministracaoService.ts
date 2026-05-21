@@ -145,14 +145,17 @@ export function addTaxaAdministracao(transfer: Transfer): void {
   const existingTaxa = store.taxas.find(t => {
     if (!t.status.startsWith('PENDING')) return false;
 
+    const tDate = t.transferIn?.date || t.transferOut?.date;
+    const tAmount = t.transferIn?.amount || t.transferOut?.amount;
+
     // Se a nova transferência é saída (OUT), procurar taxa que está esperando saída (PENDING_IN)
     if (isOut && t.status === 'PENDING_IN' && t.transferIn) {
-      return t.transferIn.date === transfer.date && t.transferIn.amount === transfer.amount;
+      return tDate === transfer.date && tAmount === transfer.amount;
     }
 
     // Se a nova transferência é entrada (IN), procurar taxa que está esperando entrada (PENDING_OUT)
     if (isIn && t.status === 'PENDING_OUT' && t.transferOut) {
-      return t.transferOut.date === transfer.date && t.transferOut.amount === transfer.amount;
+      return tDate === transfer.date && tAmount === transfer.amount;
     }
 
     return false;

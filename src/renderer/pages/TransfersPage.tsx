@@ -201,7 +201,7 @@ export default function TransfersPage() {
 
   // Lista de contrapartidas candidatas para o diálogo de pareamento manual
   const counterpartCandidates = useMemo(() => {
-    if (!sourceTransfer) return [];
+    if (!sourceTransfer || !transferStore?.pending) return [];
     const targetDirection = sourceTransfer.direction === 'OUT' ? 'IN' : 'OUT';
     
     return transferStore.pending.filter(t => {
@@ -218,15 +218,15 @@ export default function TransfersPage() {
       
       // Filtro de valor no diálogo (busca textual ou valor exato se for preenchido)
       if (dialogFiltroValor) {
-        if (!t.amount.includes(dialogFiltroValor)) return false;
+        if (!t.amount?.includes(dialogFiltroValor)) return false;
       }
       
       // Busca geral no diálogo
       if (dialogBuscaTexto) {
         const query = dialogBuscaTexto.toLowerCase();
-        const histMatch = t.historico.toLowerCase().includes(query);
-        const dateMatch = t.date.toLowerCase().includes(query);
-        const codeMatch = t.accountCode.toLowerCase().includes(query);
+        const histMatch = t.historico?.toLowerCase()?.includes(query);
+        const dateMatch = t.date?.toLowerCase()?.includes(query);
+        const codeMatch = t.accountCode?.toLowerCase()?.includes(query);
         if (!histMatch && !dateMatch && !codeMatch) return false;
       }
       
@@ -304,6 +304,38 @@ export default function TransfersPage() {
     setSourceTransfer(null);
     setSelectedCounterpartIds([]);
   };
+
+  // Cálculos de totais
+  const parseValue = (valStr: string): number => {
+    if (!valStr) return 0;
+    return parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+  };
+
+  const totalEnviado = useMemo(() => {
+    // Pendentes OUT
+    const pendingOut = transferStore.pending
+      .filter(t => t.direction === 'OUT')
+      .reduce((sum, t) => sum + parseValue(t.amount), 0);
+
+    // Pares (sempre tem um OUT)
+    const pairedOut = transferStore.paired
+      .reduce((sum, p) => sum + parseValue(p.outTransfer.amount), 0);
+
+    return pendingOut + pairedOut;
+  }, [transferStore]);
+
+  const totalRecebido = useMemo(() => {
+    // Pendentes IN
+    const pendingIn = transferStore.pending
+      .filter(t => t.direction === 'IN')
+      .reduce((sum, t) => sum + parseValue(t.amount), 0);
+
+    // Pares (sempre tem um IN)
+    const pairedIn = transferStore.paired
+      .reduce((sum, p) => sum + parseValue(p.inTransfer.amount), 0);
+
+    return pendingIn + pairedIn;
+  }, [transferStore]);
 
   // Estatísticas
   const pendingCount = transferStore.pending.length;
@@ -574,6 +606,28 @@ export default function TransfersPage() {
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Exportados
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* Totais de Valor */}
+        <Card sx={{ minWidth: 200, bgcolor: 'primary.main', color: 'white' }}>
+          <CardContent>
+            <Typography variant="h6">
+              R$ {totalEnviado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              Total Enviado (Saídas)
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ minWidth: 200, bgcolor: 'success.main', color: 'white' }}>
+          <CardContent>
+            <Typography variant="h6">
+              R$ {totalRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              Total Recebido (Entradas)
             </Typography>
           </CardContent>
         </Card>
