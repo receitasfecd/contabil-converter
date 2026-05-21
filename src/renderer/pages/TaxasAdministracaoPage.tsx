@@ -47,7 +47,7 @@ import {
   saveTaxasAdministracao,
   parearTaxasManualmente,
 } from '../services/taxaAdministracaoService';
-import { GRUPOS_CONTABEIS } from '../types/TaxaAdministracao';
+import { GRUPOS_CONTABEIS, CONTA_ADM } from '../types/TaxaAdministracao';
 import { TaxaAdministracao } from '../types/TaxaAdministracao';
 import { formatAccountNumber } from '../utils/formatters';
 import { mappingService } from '../services/mappingService';
@@ -368,10 +368,14 @@ export default function TaxasAdministracaoPage() {
 
   const totalTaxasPagas = useMemo(() => {
     const allTaxas = [...taxasPendentes, ...taxasPareadas, ...taxasProcessadas];
+    const admNumber = CONTA_ADM.replace('-', '');
     return allTaxas.reduce((sum, taxa) => {
       // Taxas pagas são saídas (OUT) de qualquer conta que não seja a de ADM
-      if (taxa.transferOut && taxa.transferOut.accountNumber !== CONTA_ADM) {
-        return sum + parseValue(taxa.transferOut.amount);
+      if (taxa.transferOut) {
+        const accNumber = taxa.transferOut.accountNumber.replace('-', '');
+        if (accNumber !== admNumber) {
+          return sum + parseValue(taxa.transferOut.amount);
+        }
       }
       return sum;
     }, 0);
@@ -379,10 +383,14 @@ export default function TaxasAdministracaoPage() {
 
   const totalTaxasRecebidas = useMemo(() => {
     const allTaxas = [...taxasPendentes, ...taxasPareadas, ...taxasProcessadas];
+    const admNumber = CONTA_ADM.replace('-', '');
     return allTaxas.reduce((sum, taxa) => {
       // Taxas recebidas são entradas (IN) na conta de ADM (14300-4)
-      if (taxa.transferIn && taxa.transferIn.accountNumber === CONTA_ADM) {
-        return sum + parseValue(taxa.transferIn.amount);
+      if (taxa.transferIn) {
+        const accNumber = taxa.transferIn.accountNumber.replace('-', '');
+        if (accNumber === admNumber) {
+          return sum + parseValue(taxa.transferIn.amount);
+        }
       }
       return sum;
     }, 0);

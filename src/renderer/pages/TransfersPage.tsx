@@ -696,10 +696,12 @@ export default function TransfersPage() {
             value={buscaTexto}
             onChange={(e) => setBuscaTexto(e.target.value)}
             sx={{ flexGrow: 1 }}
-            InputProps={{
-              startAdornment: (
-                <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
+                ),
+              }
             }}
           />
 
@@ -726,6 +728,7 @@ export default function TransfersPage() {
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
           }}
+          getRowId={(row) => row.id}
         />
       </TabPanel>
 
@@ -795,6 +798,7 @@ export default function TransfersPage() {
                 pagination: { paginationModel: { pageSize: 10 } },
               }}
               sx={{ minHeight: 400 }}
+              getRowId={(row) => row.id}
             />
           )}
         </Stack>
@@ -812,6 +816,7 @@ export default function TransfersPage() {
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
           }}
+          getRowId={(row) => row.id}
         />
       </TabPanel>
 
@@ -1000,10 +1005,12 @@ export default function TransfersPage() {
               value={dialogBuscaTexto}
               onChange={(e) => setDialogBuscaTexto(e.target.value)}
               sx={{ flexGrow: 1 }}
-              InputProps={{
-                startAdornment: (
-                  <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
+                  ),
+                }
               }}
             />
 
@@ -1031,46 +1038,80 @@ export default function TransfersPage() {
             </Alert>
           )}
 
-          {/* Tabela de Candidatas */}
-          <Box sx={{ height: 350, width: '100%' }}>
-            <DataGrid
-              rows={counterpartCandidates}
-              columns={[
-                { field: 'date', headerName: 'Data', width: 110 },
-                {
-                  field: 'accountNumber',
-                  headerName: 'Conta',
-                  width: 100,
-                  renderCell: (params) => (
-                    <Chip label={params.value} size="small" variant="outlined" color="primary" />
-                  ),
-                },
-                {
-                  field: 'direction',
-                  headerName: 'Direção',
-                  width: 90,
-                  renderCell: (params) => (
-                    <Chip
-                      label={params.value === 'OUT' ? 'Saída' : 'Entrada'}
-                      color={params.value === 'OUT' ? 'error' : 'success'}
-                      size="small"
+          {/* Tabela de Candidatas (MUI Table para maior estabilidade) */}
+          <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 400 }}>
+            <Table stickyHeader size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={selectedCounterpartIds.length > 0 && selectedCounterpartIds.length < counterpartCandidates.length}
+                      checked={counterpartCandidates.length > 0 && selectedCounterpartIds.length === counterpartCandidates.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedCounterpartIds(counterpartCandidates.map(c => c.id));
+                        } else {
+                          setSelectedCounterpartIds([]);
+                        }
+                      }}
                     />
-                  ),
-                },
-                { field: 'amount', headerName: 'Valor', width: 110 },
-                { field: 'historico', headerName: 'Histórico', flex: 1 },
-              ]}
-              pageSizeOptions={[5, 10, 20]}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 5 } },
-              }}
-              checkboxSelection
-              rowSelectionModel={selectedCounterpartIds}
-              onRowSelectionModelChange={(newSelection) => {
-                setSelectedCounterpartIds(newSelection as string[]);
-              }}
-            />
-          </Box>
+                  </TableCell>
+                  <TableCell>Data</TableCell>
+                  <TableCell>Conta</TableCell>
+                  <TableCell>Direção</TableCell>
+                  <TableCell>Valor</TableCell>
+                  <TableCell>Histórico</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {counterpartCandidates.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                      Nenhuma contrapartida encontrada com os filtros atuais.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  counterpartCandidates.map((row) => {
+                    const isItemSelected = selectedCounterpartIds.includes(row.id);
+                    return (
+                      <TableRow
+                        key={row.id}
+                        hover
+                        onClick={() => {
+                          if (isItemSelected) {
+                            setSelectedCounterpartIds(selectedCounterpartIds.filter(id => id !== row.id));
+                          } else {
+                            setSelectedCounterpartIds([...selectedCounterpartIds, row.id]);
+                          }
+                        }}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        selected={isItemSelected}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={isItemSelected} />
+                        </TableCell>
+                        <TableCell>{row.date}</TableCell>
+                        <TableCell>
+                          <Chip label={row.accountNumber} size="small" variant="outlined" color="primary" />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={row.direction === 'OUT' ? 'Saída' : 'Entrada'}
+                            color={row.direction === 'OUT' ? 'error' : 'success'}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{row.amount}</TableCell>
+                        <TableCell>{row.historico}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setPairingDialogOpen(false)}>Cancelar</Button>

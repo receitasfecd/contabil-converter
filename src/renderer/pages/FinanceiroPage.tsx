@@ -187,7 +187,7 @@ export default function FinanceiroPage() {
     setSelectedAccount(account);
 
     // Carregar lançamentos financeiros
-    const financialEntries: CombinedEntry[] = account.lancamentos.map(lanc => ({
+    const financialEntries: CombinedEntry[] = (account.lancamentos || []).map(lanc => ({
       id: lanc.id || crypto.randomUUID(),
       data: lanc.data,
       debito: lanc.debito || '',
@@ -349,7 +349,7 @@ export default function FinanceiroPage() {
   };
 
   const determineGrupo = (lanc: ProcessedEntry): string => {
-    const hist = lanc.historico.toLowerCase();
+    const hist = (lanc.historico || '').toLowerCase();
     if (hist.includes('projeto')) return 'Projeto';
     if (hist.includes('grant')) return 'Grants';
     if (hist.includes('importação')) return 'Importação';
@@ -359,7 +359,10 @@ export default function FinanceiroPage() {
   };
 
   const parseDate = (dateStr: string): Date => {
-    const [day, month, year] = dateStr.split('/');
+    if (!dateStr || typeof dateStr !== 'string') return new Date();
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return new Date();
+    const [day, month, year] = parts;
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   };
 
@@ -753,8 +756,10 @@ export default function FinanceiroPage() {
                   onChange={(e) => setFilterSearch(e.target.value)}
                   fullWidth
                   size="small"
-                  InputProps={{
-                    startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                  slotProps={{
+                    input: {
+                      startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                    }
                   }}
                 />
               </Grid>
