@@ -51,16 +51,37 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
   const historico = transfer.historico.toLowerCase();
   const config = loadTaxaConfig();
 
+  console.log(`🔍 Verificando se é taxa: "${transfer.historico}" (Conta: ${transfer.accountNumber}, Valor: ${transfer.amount})`);
+
   // Verificar palavras-chave no histórico
   const keywords = [
     'taxa adm',
+    'taxa de adm',
+    'tx. adm',
+    'tx.adm',
+    'tx adm',
+    'txadm',
     'taxa de administração',
     'taxa de administracao',
-    'tx adm',
     'taxa administrativa',
-    'tx administrativa'
+    'tx administrativa',
+    'tx. administrativa',
+    'repasse taxa',
+    'repasse de taxa'
   ];
   const hasTaxaKeyword = keywords.some(keyword => historico.includes(keyword));
+
+  // Se for entrada na conta ADM (14300-4), ser mais inclusivo
+  const isAdmIn = transfer.direction === 'IN' &&
+                  (transfer.accountNumber === CONTA_ADM || transfer.accountNumber === CONTA_ADM.replace('-', ''));
+
+  if (isAdmIn && !hasTaxaKeyword) {
+     // Na conta ADM, entradas que mencionam projetos costumam ser taxas
+     const projectKeywords = ['proj', 'grant', 'tep', 'imp'];
+     if (projectKeywords.some(pk => historico.includes(pk))) {
+        return true;
+     }
+  }
 
   // Verificar classificação financeira (se disponível no transfer)
   const classificacao = (transfer as any).original?.classificacaoFinanceira;
@@ -81,6 +102,14 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
     hasClassificacaoTaxa = allIdentificadoras.some(ident => classifUpper.includes(ident)) ||
       classifUpper.startsWith('FECD001.1.4') ||
       classifUpper.startsWith('FECD001.1.5');
+
+    if (hasClassificacaoTaxa) {
+      console.log(`  ✅ Identificada por classificação financeira: ${classificacao}`);
+    }
+  }
+
+  if (hasTaxaKeyword) {
+    console.log(`  ✅ Identificada por palavra-chave no histórico`);
   }
 
   return hasTaxaKeyword || hasClassificacaoTaxa;

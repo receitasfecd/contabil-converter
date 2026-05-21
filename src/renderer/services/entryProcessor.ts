@@ -66,30 +66,32 @@ export function processEntriesWithTransferSeparation(
     try {
       const isTransfer = isTransferencia(entry);
 
-      if (isTransfer) {
-        // Criar Transfer ao invés de ProcessedEntry
-        const transfer: Transfer = {
-          id: crypto.randomUUID(),
-          accountNumber: contaBancaria.numeroConta,
-          accountCode: contaBancaria.codigoContabil,
-          date: formatDate(entry.data),
-          amount: formatCurrency(entry.valorDebito || entry.valorCredito!),
-          historico: entry.historico,
-          centroCusto: entry.codigoCentroCusto,
-          direction: entry.valorDebito ? 'OUT' : 'IN',
-          status: 'PENDING',
-          original: entry,
-          importedAt: new Date()
-        };
+      // Criar objeto temporário de transferência para verificar se é Taxa de Administração
+      // Mesmo que não tenha sido detectado como transferência padrão (ex: histórico não contém "transferência da conta")
+      const tempTransfer: Transfer = {
+        id: crypto.randomUUID(),
+        accountNumber: contaBancaria.numeroConta,
+        accountCode: contaBancaria.codigoContabil,
+        date: formatDate(entry.data),
+        amount: formatCurrency(entry.valorDebito || entry.valorCredito!),
+        historico: entry.historico,
+        centroCusto: entry.codigoCentroCusto,
+        direction: entry.valorDebito ? 'OUT' : 'IN',
+        status: 'PENDING',
+        original: entry,
+        importedAt: new Date()
+      };
 
-        // Verificar se é taxa de administração
-        if (isTaxaAdministracao(transfer)) {
-          const taxa = addTaxaAdministracao(transfer);
-          // O addTaxaAdministracao já salva no localStorage
-          // Se estivermos logados, o AppContext cuidará da sincronização se atualizarmos o estado
+      const isTaxa = isTaxaAdministracao(tempTransfer);
+
+      if (isTransfer || isTaxa) {
+        // Tratar como transferência
+        // A adição à loja de taxas é feita centralizadamente pelo AppContext.addTransfersPairAndTaxas
+        if (isTaxa) {
+          console.log(`✅ Taxa de Administração detectada: ${tempTransfer.historico}`);
         }
 
-        transfers.push(transfer);
+        transfers.push(tempTransfer);
       } else {
         // Processar como lançamento financeiro normal
         const mapping = classificacoes.find(
