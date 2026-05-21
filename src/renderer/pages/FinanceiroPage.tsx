@@ -210,13 +210,13 @@ export default function FinanceiroPage() {
     console.log('🔄 transferStore.paired:', transferStore.paired?.length || 0);
 
     const accountTransfers = [
-      ...(transferStore.pending || []).filter(t => t.accountNumber === account.contaBancaria.numeroConta),
-      ...(transferStore.paired || []).flatMap(p => {
+      ...(transferStore?.pending || []).filter(t => t && t.accountNumber === account.contaBancaria.numeroConta),
+      ...(transferStore?.paired || []).flatMap(p => {
         const transfers = [];
-        if (p.outTransfer.accountNumber === account.contaBancaria.numeroConta) {
+        if (p?.outTransfer && p.outTransfer.accountNumber === account.contaBancaria.numeroConta) {
           transfers.push(p.outTransfer);
         }
-        if (p.inTransfer.accountNumber === account.contaBancaria.numeroConta) {
+        if (p?.inTransfer && p.inTransfer.accountNumber === account.contaBancaria.numeroConta) {
           transfers.push(p.inTransfer);
         }
         return transfers;
@@ -244,7 +244,11 @@ export default function FinanceiroPage() {
     const taxasStore = loadTaxasAdministracao();
     console.log('💰 taxasStore:', taxasStore);
     console.log('💰 taxasStore.taxas:', taxasStore.taxas?.length || 0);
-    const accountTaxas = (taxasStore.taxas || []).filter(t => t.accountNumber === account.contaBancaria.numeroConta);
+    const accountTaxas = (taxasStore?.taxas || []).filter(t => {
+      const outAcc = t?.transferOut?.accountNumber;
+      const inAcc = t?.transferIn?.accountNumber;
+      return outAcc === account.contaBancaria.numeroConta || inAcc === account.contaBancaria.numeroConta;
+    });
     console.log('💰 accountTaxas desta conta:', accountTaxas.length);
 
     const taxaEntries: CombinedEntry[] = accountTaxas.map(t => ({
