@@ -71,13 +71,16 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
   ];
   const hasTaxaKeyword = keywords.some(keyword => historico.includes(keyword));
 
+  // Normalizar número da conta para comparação
+  const normalizedAcc = transfer.accountNumber.replace(/\D/g, '');
+  const normalizedAdm = CONTA_ADM.replace(/\D/g, '');
+
   // Se for entrada na conta ADM (14300-4), ser mais inclusivo
-  const isAdmIn = transfer.direction === 'IN' &&
-                  (transfer.accountNumber === CONTA_ADM || transfer.accountNumber === CONTA_ADM.replace('-', ''));
+  const isAdmIn = transfer.direction === 'IN' && normalizedAcc === normalizedAdm;
 
   if (isAdmIn && !hasTaxaKeyword) {
      // Na conta ADM, entradas que mencionam projetos costumam ser taxas
-     const projectKeywords = ['proj', 'grant', 'tep', 'imp'];
+     const projectKeywords = ['proj', 'grant', 'tep', 'imp', 'nf'];
      if (projectKeywords.some(pk => historico.includes(pk))) {
         return true;
      }

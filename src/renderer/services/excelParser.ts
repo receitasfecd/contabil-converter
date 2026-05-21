@@ -235,17 +235,16 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
             const numColunas = row.length;
 
             let entry: ExcelEntry;
+            const documento = String(row[1] || '');
+            let historico = String(row[2] || '').trim();
+
+            // Se histórico está undefined/vazio e é o mesmo documento, usar o histórico anterior
+            if ((!historico || historico === 'undefined') && documento === lastDocumento && lastHistorico) {
+              historico = lastHistorico;
+            }
 
             if (numColunas >= 11) {
               // Formato com 11 colunas (coluna 6 vazia)
-              const documento = String(row[1] || '');
-              let historico = String(row[2] || '').trim();
-
-              // Se histórico está undefined/vazio e é o mesmo documento, usar o histórico anterior
-              if ((!historico || historico === 'undefined') && documento === lastDocumento && lastHistorico) {
-                historico = lastHistorico;
-              }
-
               // Log dos valores brutos para debug
               if (i < 10) {
                 console.log(`📋 Linha ${i} - Data: ${row[0]}, Valores brutos:`, {
@@ -255,7 +254,7 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                   valorCreditoType: typeof row[8],
                   saldo: row[9],
                   saldoType: typeof row[9],
-                  historico: String(row[2] || '').substring(0, 50)
+                  historico: historico.substring(0, 50)
                 });
               }
 
@@ -276,24 +275,25 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                 saldo: saldo,
                 simbolo: (row[10] === 'D' || row[10] === 'C') ? row[10] : 'D',
               };
+            } else if (numColunas === 9 || (numColunas < 11 && (String(row[5]).toUpperCase() === 'DESPESA' || String(row[5]).toUpperCase() === 'RECEITA'))) {
+              // Formato com 9 colunas (ADM / CSV)
+              const tipo = String(row[5] || '').toUpperCase();
+              const valor = parseBrazilianNumber(row[6]);
 
-              // Atualizar último histórico e documento válidos
-              if (historico && historico !== 'undefined') {
-                lastHistorico = historico;
-              }
-              if (documento) {
-                lastDocumento = documento;
-              }
+              entry = {
+                data: parseExcelDate(row[0]),
+                documento: documento,
+                historico: healHistorico(historico),
+                status: 'Realizado',
+                classificacaoFinanceira: String(row[3] || '').replace(/\s+/g, ''),
+                codigoCentroCusto: String(row[4] || ''),
+                valorDebito: tipo === 'DESPESA' ? valor : null,
+                valorCredito: tipo === 'RECEITA' ? valor : null,
+                saldo: parseBrazilianNumber(row[7]) || 0,
+                simbolo: (row[8] === 'D' || row[8] === 'C') ? row[8] : 'C',
+              };
             } else {
               // Formato com 10 colunas (formato original)
-              const documento = String(row[1] || '');
-              let historico = String(row[2] || '').trim();
-
-              // Se histórico está undefined/vazio e é o mesmo documento, usar o histórico anterior
-              if ((!historico || historico === 'undefined') && documento === lastDocumento && lastHistorico) {
-                historico = lastHistorico;
-              }
-
               entry = {
                 data: parseExcelDate(row[0]),
                 documento: documento,
@@ -306,14 +306,14 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
                 saldo: parseBrazilianNumber(row[8]) || 0,
                 simbolo: (row[9] === 'D' || row[9] === 'C') ? row[9] : 'D',
               };
+            }
 
-              // Atualizar último histórico e documento válidos
-              if (historico && historico !== 'undefined') {
-                lastHistorico = historico;
-              }
-              if (documento) {
-                lastDocumento = documento;
-              }
+            // Atualizar último histórico e documento válidos
+            if (historico && historico !== 'undefined') {
+              lastHistorico = historico;
+            }
+            if (documento) {
+              lastDocumento = documento;
             }
 
             entries.push(entry);
