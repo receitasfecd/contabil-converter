@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Papa from 'papaparse';
 import {
   Box,
   Card,
@@ -31,6 +32,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete, Upload, Download, ExpandMore, ChevronRight, CloudUpload } from '@mui/icons-material';
 import { hybridMappingService } from '../services/hybridMappingService';
+import { mappingService } from '../services/mappingService';
 import { ClassificacaoMapping, ContaBancariaMapping, PlanoContasItem } from '../types/Mapping';
 import BankIcon from '../components/BankIcon';
 import { formatAccountNumber } from '../utils/formatters';
@@ -242,11 +244,237 @@ export default function MappingPage() {
     setBulkBanco('');
   };
 
+  const handleExportCSV = () => {
+    try {
+      let csvContent = '';
+      let filename = '';
+
+      if (tabValue === 0) {
+        // De-Para (Classificações)
+        const headers = ['Código', 'Descrição', 'Conta Contábil'];
+        const rows = classificacoes.map(item => [
+          item.classificacaoFinanceira,
+          item.descricao || '',
+          item.classificacaoContabil
+        ]);
+        csvContent = Papa.unparse({ fields: headers, data: rows }, { delimiter: ';' });
+        filename = 'mapeamentos-depara.csv';
+      } else if (tabValue === 1) {
+        // Contas Bancárias
+        const headers = ['Banco', 'Número da Conta', 'Código Contábil', 'Tipo Aplicação', 'Categoria', 'Descrição'];
+        const rows = contas.map(item => [
+          item.banco,
+          item.numeroConta,
+          item.codigoContabil,
+          item.tipoAplicacao || '',
+          item.categoria || '',
+          item.descricao || ''
+        ]);
+        csvContent = Papa.unparse({ fields: headers, data: rows }, { delimiter: ';' });
+        filename = 'mapeamentos-contas-bancarias.csv';
+      } else {
+        // Plano de Contas
+        const headers = ['Código', 'Nome da Conta', 'Tipo'];
+        const rows = planoContas.map(item => [
+          item.codigo,
+          item.nome,
+          item.tipo || 'PLANO_CONTAS'
+        ]);
+        csvContent = Papa.unparse({ fields: headers, data: rows }, { delimiter: ';' });
+        filename = 'mapeamentos-plano-contas.csv';
+      }
+
+      // Adicionar BOM UTF-8 para garantir acentos corretos no Excel brasileiro
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Erro ao exportar CSV:', error);
+      alert('Erro ao exportar arquivo CSV');
+    }
+  };
+
+  const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        
+        Papa.parse(text, {
+          header: true,
+          skipEmptyLines: true,
+          complete: async (results) => {
+            const data = results.data;
+            if (data.length === 0) {
+              alert('Nenhum dado encontrado no arquivo CSV.');
+              return;
+            }
+
+            if (tabValue === 0) {
+              // De-Para (Classificações)
+              const novas = data.map((row: any, idx: number) => {
+                const financial = row['Código'] || row['Cdigo'] || row['Classificação Financeira'] || row['classificacaoFinanceira'] || row['codigo'] || row['Código Financeiro'] || '';
+                const accounting = row['Conta Contábil'] || row['Conta Contbil'] || row['Classificação Contábil'] || row['classificacaoContabil'] || row['conta'] || row['Conta Contabil'] || '';
+                const desc = row['Descrição'] || row['Descrio'] || row['descricao'] || row['Descrição da Classificação'] || '';
+
+                if (financial && accounting) {
+                  return {
+                    id: `import-csv-${idx}-${Date.now()}`,
+                    tipo: 'CLASSIFICACAO',
+                    classificacaoFinanceira: String(financial).trim(),
+                    classificacaoContabil: String(accounting).trim(),
+                    descricao: String(desc).trim()
+                  };
+                }
+                return null;
+              }).filter(Boolean) as ClassificacaoMapping[];
+
+              if (novas.length === 0) {
+                alert('Nenhuma classificação De-Para válida foi encontrada no CSV. Verifique se as colunas estão corretas (Código, Descrição, Conta Contábil).');
+                return;
+              }
+
+              const replaceOption = window.confirm(
+                `Foram encontradas ${novas.length} classificações no CSV.\n\nDeseja SUBSTITUIR todas as classificações atuais por estas novas do CSV?\n\n- OK: Substituir tudo\n- Cancelar: Mesclar com as existentes (preservando o que já tem e adicionando/atualizando novos)`
+              );
+
+              let listaFinal: ClassificacaoMapping[] = [];
+
+              if (replaceOption) {
+                listaFinal = novas;
+              } else {
+                // Mesclar inteligente (remover duplicados pelo código financeiro)
+                const mapFinanceiro = new Map<string, ClassificacaoMapping>();
+                
+                // Primeiro adiciona as existentes
+                classificacoes.forEach(c => mapFinanceiro.set(c.classificacaoFinanceira, c));
+                // Depois adiciona/sobrescreve com as novas
+                novas.forEach(c => mapFinanceiro.set(c.classificacaoFinanceira, c));
+                
+                listaFinal = Array.from(mapFinanceiro.values());
+              }
+
+              // Salvar no banco/localStorage
+              await hybridMappingService.importMappings(JSON.stringify({ classificacoes: listaFinal }));
+              await loadData();
+              alert(`Importação concluída! Total de classificações ativas: ${listaFinal.length}`);
+
+            } else if (tabValue === 1) {
+              // Contas Bancárias
+              const novas = data.map((row: any, idx: number) => {
+                const banco = row['Banco'] || row['banco'] || row['Instituição'] || '';
+                const numero = row['Número da Conta'] || row['Numero da Conta'] || row['Conta'] || row['numeroConta'] || '';
+                const codigo = row['Código Contábil'] || row['Codigo Contabil'] || row['codigoContabil'] || row['codigo_contabil'] || '';
+                const tipo = row['Tipo Aplicação'] || row['Tipo Aplicacao'] || row['tipoAplicacao'] || '';
+                const cat = row['Categoria'] || row['categoria'] || '';
+                const desc = row['Descrição'] || row['Descrio'] || row['descricao'] || '';
+
+                if (numero && codigo) {
+                  return {
+                    id: `import-csv-${idx}-${Date.now()}`,
+                    banco: String(banco).trim() as 'BB' | 'ITAU',
+                    numeroConta: String(numero).trim(),
+                    codigoContabil: String(codigo).trim(),
+                    tipoAplicacao: tipo ? String(tipo).trim() : undefined,
+                    categoria: cat ? String(cat).trim() as any : undefined,
+                    descricao: String(desc).trim()
+                  };
+                }
+                return null;
+              }).filter(Boolean) as ContaBancariaMapping[];
+
+              if (novas.length === 0) {
+                alert('Nenhuma conta bancária válida foi encontrada no CSV. Verifique se as colunas estão corretas (Banco, Número da Conta, Código Contábil).');
+                return;
+              }
+
+              const replaceOption = window.confirm(
+                `Foram encontradas ${novas.length} contas bancárias no CSV.\n\nDeseja SUBSTITUIR todas as contas atuais por estas novas do CSV?\n\n- OK: Substituir tudo\n- Cancelar: Mesclar com as existentes`
+              );
+
+              let listaFinal: ContaBancariaMapping[] = [];
+
+              if (replaceOption) {
+                listaFinal = novas;
+              } else {
+                const mapContas = new Map<string, ContaBancariaMapping>();
+                contas.forEach(c => mapContas.set(`${c.numeroConta}-${c.tipoAplicacao || 'C/C'}`, c));
+                novas.forEach(c => mapContas.set(`${c.numeroConta}-${c.tipoAplicacao || 'C/C'}`, c));
+                listaFinal = Array.from(mapContas.values());
+              }
+
+              await hybridMappingService.importMappings(JSON.stringify({ contasBancarias: listaFinal }));
+              await loadData();
+              alert(`Importação concluída! Total de contas bancárias ativas: ${listaFinal.length}`);
+
+            } else {
+              // Plano de Contas
+              const novas = data.map((row: any, idx: number) => {
+                const codigo = row['Código'] || row['Codigo'] || row['codigo'] || '';
+                const nome = row['Nome da Conta'] || row['Nome'] || row['Descrição'] || row['Descrio'] || row['descricao'] || '';
+                const tipo = row['Tipo'] || row['tipo'] || 'PLANO_CONTAS';
+
+                if (codigo && nome) {
+                  return {
+                    id: `import-csv-${idx}-${Date.now()}`,
+                    codigo: String(codigo).trim(),
+                    nome: String(nome).trim(),
+                    tipo: String(tipo).trim()
+                  };
+                }
+                return null;
+              }).filter(Boolean) as PlanoContasItem[];
+
+              if (novas.length === 0) {
+                alert('Nenhuma conta do plano de contas válida foi encontrada no CSV. Verifique se as colunas estão corretas (Código, Nome da Conta).');
+                return;
+              }
+
+              const replaceOption = window.confirm(
+                `Foram encontradas ${novas.length} contas do plano no CSV.\n\nDeseja SUBSTITUIR todo o plano de contas atual por este novo do CSV?\n\n- OK: Substituir tudo\n- Cancelar: Mesclar com as existentes`
+              );
+
+              let listaFinal: PlanoContasItem[] = [];
+
+              if (replaceOption) {
+                listaFinal = novas;
+              } else {
+                const mapPlano = new Map<string, PlanoContasItem>();
+                planoContas.forEach(p => mapPlano.set(p.codigo, p));
+                novas.forEach(p => mapPlano.set(p.codigo, p));
+                listaFinal = Array.from(mapPlano.values());
+              }
+
+              await hybridMappingService.importMappings(JSON.stringify({ planoContas: listaFinal }));
+              await loadData();
+              alert(`Importação concluída! Total de contas no plano: ${listaFinal.length}`);
+            }
+          },
+          error: (err) => {
+            console.error('Erro no parser do CSV:', err);
+            alert('Falha ao processar arquivo CSV.');
+          }
+        });
+      } catch (err: any) {
+        console.error('Erro na leitura do CSV:', err);
+        alert(`Erro de leitura: ${err?.message || err}`);
+      }
+    };
+    reader.readAsText(file, 'latin1');
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4">Mapeamento</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1.5}>
           <Button
             variant="outlined"
             startIcon={<CloudUpload />}
@@ -258,16 +486,38 @@ export default function MappingPage() {
             variant="outlined"
             startIcon={<Upload />}
             component="label"
+            title="Importar mapeamentos completos em formato JSON"
           >
-            Importar
+            Importar JSON
             <input type="file" hidden accept=".json" onChange={handleImport} />
           </Button>
           <Button
             variant="outlined"
             startIcon={<Download />}
             onClick={handleExport}
+            title="Exportar mapeamentos completos em formato JSON"
           >
-            Exportar
+            Exportar JSON
+          </Button>
+          
+          <Button
+            variant="outlined"
+            color="success"
+            startIcon={<Upload />}
+            component="label"
+            title={`Importar CSV para a aba ativa (${tabValue === 0 ? 'De-Para' : tabValue === 1 ? 'Contas Bancárias' : 'Plano de Contas'})`}
+          >
+            Importar CSV
+            <input type="file" hidden accept=".csv" onChange={handleImportCSV} />
+          </Button>
+          <Button
+            variant="outlined"
+            color="success"
+            startIcon={<Download />}
+            onClick={handleExportCSV}
+            title="Exportar dados da aba ativa em formato CSV"
+          >
+            Exportar CSV
           </Button>
         </Stack>
       </Box>
