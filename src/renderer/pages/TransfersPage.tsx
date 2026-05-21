@@ -24,6 +24,8 @@ import {
   FormControl,
   InputLabel,
   Select,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import {
@@ -62,7 +64,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function TransfersPage() {
-  const { transferStore, markPairAsExported, deleteTransfer, deletePair, deleteTransfersByAccount, updateTransfer } = useAppContext();
+  const { transferStore, markPairAsExported, deleteTransfer, deletePair, deleteTransfersByAccount, updateTransfer, updateTransferStore } = useAppContext();
   const [tabIndex, setTabIndex] = useState(0);
   const [exportError, setExportError] = useState('');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -87,7 +89,8 @@ export default function TransfersPage() {
   // Estados para o diálogo de Pareamento Manual
   const [pairingDialogOpen, setPairingDialogOpen] = useState(false);
   const [sourceTransfer, setSourceTransfer] = useState<Transfer | null>(null);
-  const [selectedCounterpartId, setSelectedCounterpartId] = useState<string>('');
+  const [selectedCounterpartIds, setSelectedCounterpartIds] = useState<string[]>([]);
+  const [dialogFiltroMesmaData, setDialogFiltroMesmaData] = useState(true);
   const [dialogFiltroConta, setDialogFiltroConta] = useState('TODAS');
   const [dialogBuscaTexto, setDialogBuscaTexto] = useState('');
   const [dialogFiltroValor, setDialogFiltroValor] = useState('');
@@ -207,6 +210,9 @@ export default function TransfersPage() {
       // Não pode ser o mesmo registro
       if (t.id === sourceTransfer.id) return false;
       
+      // Filtro de mesma data por padrão
+      if (dialogFiltroMesmaData && t.date !== sourceTransfer.date) return false;
+
       // Filtro de conta no diálogo
       if (dialogFiltroConta !== 'TODAS' && t.accountNumber !== dialogFiltroConta) return false;
       
@@ -226,12 +232,13 @@ export default function TransfersPage() {
       
       return true;
     });
-  }, [transferStore.pending, sourceTransfer, dialogFiltroConta, dialogFiltroValor, dialogBuscaTexto]);
+  }, [transferStore.pending, sourceTransfer, dialogFiltroMesmaData, dialogFiltroConta, dialogFiltroValor, dialogBuscaTexto]);
 
   // Iniciar o processo de pareamento manual a partir de uma linha
   const handleStartManualPair = (transfer: Transfer) => {
     setSourceTransfer(transfer);
-    setSelectedCounterpartId('');
+    setSelectedCounterpartIds([]);
+    setDialogFiltroMesmaData(true);
     setDialogFiltroConta('TODAS');
     setDialogBuscaTexto('');
     setDialogFiltroValor('');
@@ -240,48 +247,62 @@ export default function TransfersPage() {
 
   // Confirmar o pareamento manual e atualizar o store global
   const handleManualPairConfirm = () => {
-    if (!sourceTransfer || !selectedCounterpartId) return;
-    const counterpartTransfer = transferStore.pending.find(t => t.id === selectedCounterpartId);
-    if (!counterpartTransfer) return;
+    if (!sourceTransfer || selectedCounterpartIds.length === 0) return;
 
-    // Determina quem é saída (OUT - origem) e quem é entrada (IN - destino)
-    const outTransfer = sourceTransfer.direction === 'OUT' ? sourceTransfer : counterpartTransfer;
-    const inTransfer = sourceTransfer.direction === 'IN' ? sourceTransfer : counterpartTransfer;
+    const newPairs: TransferPair[] = [];
+    const counterpartTransfers: Transfer[] = [];
 
-    const newPair: TransferPair = {
-      id: `manual-${outTransfer.id}-${inTransfer.id}-${Date.now()}`,
-      outTransfer: {
-        ...outTransfer,
-        status: 'PAIRED',
-        pairedWith: inTransfer.id,
-        counterpartAccount: inTransfer.accountNumber
-      },
-      inTransfer: {
-        ...inTransfer,
-        status: 'PAIRED',
-        pairedWith: outTransfer.id,
-        counterpartAccount: outTransfer.accountNumber
-      },
-      matchScore: 100, // 100% de match score por ser manual
-      matchedAt: new Date(),
-      exported: false
-    };
+    selectedCounterpartIds.forEach(id => {
+      const counterpart = transferStore.pending.find(t => t.id === id);
+      if (counterpart) {
+        counterpartTransfers.push(counterpart);
+      }
+    });
+
+    if (counterpartTransfers.length === 0) return;
+
+    counterpartTransfers.forEach(counterpartTransfer => {
+      const outTransfer = sourceTransfer.direction === 'OUT' ? sourceTransfer : counterpartTransfer;
+      const inTransfer = sourceTransfer.direction === 'IN' ? sourceTransfer : counterpartTransfer;
+
+      const newPair: TransferPair = {
+        id: `manual-${outTransfer.id}-${inTransfer.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        outTransfer: {
+          ...outTransfer,
+          status: 'PAIRED',
+          pairedWith: inTransfer.id,
+          counterpartAccount: inTransfer.accountNumber
+        },
+        inTransfer: {
+          ...inTransfer,
+          status: 'PAIRED',
+          pairedWith: outTransfer.id,
+          counterpartAccount: outTransfer.accountNumber
+        },
+        matchScore: 100, // 100% de match score por ser manual
+        matchedAt: new Date(),
+        exported: false
+      };
+
+      newPairs.push(newPair);
+    });
 
     // Remove do array de pendentes
+    const involvedIds = new Set([sourceTransfer.id, ...selectedCounterpartIds]);
     const updatedPending = transferStore.pending.filter(
-      t => t.id !== outTransfer.id && t.id !== inTransfer.id
+      t => !involvedIds.has(t.id)
     );
 
     const newStore = {
       ...transferStore,
       pending: updatedPending,
-      paired: [...transferStore.paired, newPair]
+      paired: [...transferStore.paired, ...newPairs]
     };
 
     updateTransferStore(newStore);
     setPairingDialogOpen(false);
     setSourceTransfer(null);
-    setSelectedCounterpartId('');
+    setSelectedCounterpartIds([]);
   };
 
   // Estatísticas
@@ -457,7 +478,13 @@ export default function TransfersPage() {
       field: 'amount',
       headerName: 'Valor',
       width: 120,
-      valueGetter: (value, row) => row?.outTransfer?.amount || '',
+      valueGetter: (value, row) => {
+        if (!row?.outTransfer?.amount || !row?.inTransfer?.amount) return '';
+        const outVal = parseFloat(row.outTransfer.amount.replace(/\./g, '').replace(',', '.'));
+        const inVal = parseFloat(row.inTransfer.amount.replace(/\./g, '').replace(',', '.'));
+        const minVal = Math.min(outVal, inVal);
+        return minVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      },
     },
     {
       field: 'matchScore',
@@ -858,7 +885,19 @@ export default function TransfersPage() {
           </Typography>
 
           {/* Filtros da Contrapartida */}
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={dialogFiltroMesmaData}
+                  onChange={(e) => setDialogFiltroMesmaData(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Mesmo dia"
+              sx={{ minWidth: 120 }}
+            />
+
             <FormControl size="small" sx={{ minWidth: 180 }}>
               <InputLabel id="dialog-filtro-conta-label">Filtrar por Conta</InputLabel>
               <Select
@@ -914,6 +953,15 @@ export default function TransfersPage() {
             )}
           </Stack>
 
+          {/* Resumo do Pareamento Múltiplo */}
+          {selectedCounterpartIds.length > 0 && sourceTransfer && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              <Typography variant="body2">
+                Conciliando <strong>1 Lançamento</strong> (R$ {sourceTransfer.amount}) com <strong>{selectedCounterpartIds.length} contrapartida(s)</strong> selecionada(s).
+              </Typography>
+            </Alert>
+          )}
+
           {/* Tabela de Candidatas */}
           <Box sx={{ height: 350, width: '100%' }}>
             <DataGrid
@@ -947,13 +995,10 @@ export default function TransfersPage() {
               initialState={{
                 pagination: { paginationModel: { pageSize: 5 } },
               }}
-              rowSelectionModel={selectedCounterpartId ? [selectedCounterpartId] : []}
+              checkboxSelection
+              rowSelectionModel={selectedCounterpartIds}
               onRowSelectionModelChange={(newSelection) => {
-                if (newSelection.length > 0) {
-                  setSelectedCounterpartId(newSelection[0] as string);
-                } else {
-                  setSelectedCounterpartId('');
-                }
+                setSelectedCounterpartIds(newSelection as string[]);
               }}
             />
           </Box>
@@ -964,7 +1009,7 @@ export default function TransfersPage() {
             onClick={handleManualPairConfirm}
             variant="contained"
             color="success"
-            disabled={!selectedCounterpartId}
+            disabled={selectedCounterpartIds.length === 0}
             startIcon={<LinkIcon />}
           >
             Confirmar Pareamento Manual

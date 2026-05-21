@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -27,8 +27,10 @@ import {
   Tabs,
   Tab,
   IconButton,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
-import { Download, Edit, Delete, CheckCircle } from '@mui/icons-material';
+import { Download, Edit, Delete, CheckCircle, Link as LinkIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import {
   loadTaxasAdministracao,
@@ -43,6 +45,7 @@ import {
   exportTaxasProcessadas,
   getTaxasProcessadasNaoExportadas,
   saveTaxasAdministracao,
+  parearTaxasManualmente,
 } from '../services/taxaAdministracaoService';
 import { GRUPOS_CONTABEIS } from '../types/TaxaAdministracao';
 import { TaxaAdministracao } from '../types/TaxaAdministracao';
@@ -77,11 +80,76 @@ export default function TaxasAdministracaoPage() {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
 
+  // Estados para Pareamento Manual de Taxas
+  const [pairingDialogOpen, setPairingDialogOpen] = useState(false);
+  const [sourceTaxa, setSourceTaxa] = useState<TaxaAdministracao | null>(null);
+  const [selectedCounterpartIds, setSelectedCounterpartIds] = useState<string[]>([]);
+  const [dialogFiltroMesmaData, setDialogFiltroMesmaData] = useState(true);
+  const [dialogFiltroConta, setDialogFiltroConta] = useState('TODAS');
+  const [dialogFiltroValor, setDialogFiltroValor] = useState('');
+  const [dialogBuscaTexto, setDialogBuscaTexto] = useState('');
+
   const loadData = useCallback(() => {
     setTaxasPendentes(getTaxasPendentes());
     setTaxasPareadas(getTaxasPareadas());
     setTaxasProcessadas(getTaxasProcessadas());
   }, []);
+
+  const counterpartCandidates = useMemo(() => {
+    if (!sourceTaxa) return [];
+    
+    // Direção oposta
+    const targetStatus = sourceTaxa.status === 'PENDING_OUT' ? 'PENDING_IN' : 'PENDING_OUT';
+    const sourceTransfer = sourceTaxa.transferOut || sourceTaxa.transferIn;
+    if (!sourceTransfer) return [];
+
+    return taxasPendentes.filter(t => {
+      // Deve ser a direção oposta
+      if (t.status !== targetStatus) return false;
+      // Não pode ser a mesma taxa
+      if (t.id === sourceTaxa.id) return false;
+
+      const transfer = t.transferOut || t.transferIn;
+      if (!transfer) return false;
+
+      // Filtro de mesma data por padrão
+      if (dialogFiltroMesmaData && transfer.date !== sourceTransfer.date) return false;
+
+      // Filtro de conta
+      if (dialogFiltroConta !== 'TODAS' && transfer.accountNumber !== dialogFiltroConta) return false;
+
+      // Filtro de valor
+      if (dialogFiltroValor && !transfer.amount.includes(dialogFiltroValor)) return false;
+
+      // Busca por texto
+      if (dialogBuscaTexto) {
+        const query = dialogBuscaTexto.toLowerCase();
+        if (!transfer.historico.toLowerCase().includes(query)) return false;
+      }
+
+      return true;
+    });
+  }, [taxasPendentes, sourceTaxa, dialogFiltroMesmaData, dialogFiltroConta, dialogFiltroValor, dialogBuscaTexto]);
+
+  const handleStartManualPair = (taxa: TaxaAdministracao) => {
+    setSourceTaxa(taxa);
+    setSelectedCounterpartIds([]);
+    setDialogFiltroMesmaData(true);
+    setDialogFiltroConta('TODAS');
+    setDialogFiltroValor('');
+    setDialogBuscaTexto('');
+    setPairingDialogOpen(true);
+  };
+
+  const handleManualPairConfirm = () => {
+    if (!sourceTaxa || selectedCounterpartIds.length === 0) return;
+
+    parearTaxasManualmente(sourceTaxa.id, selectedCounterpartIds);
+    setPairingDialogOpen(false);
+    setSourceTaxa(null);
+    setSelectedCounterpartIds([]);
+    loadData();
+  };
 
   useEffect(() => {
     loadData();
@@ -423,8 +491,17 @@ export default function TaxasAdministracaoPage() {
                             <Stack direction="row" spacing={1} justifyContent="center">
                               <IconButton
                                 size="small"
+                                color="success"
+                                onClick={() => handleStartManualPair(taxa)}
+                                title="Parear Manualmente"
+                              >
+                                <LinkIcon fontSize="small" />
+                              </IconButton>
+                              <IconButton
+                                size="small"
                                 color="primary"
                                 onClick={() => handleEditTransfer(taxa, taxa.status === 'PENDING_OUT' ? 'OUT' : 'IN')}
+                                title="Editar"
                               >
                                 <Edit fontSize="small" />
                               </IconButton>
@@ -432,6 +509,7 @@ export default function TaxasAdministracaoPage() {
                                 size="small"
                                 color="error"
                                 onClick={() => handleDelete(taxa.id)}
+                                title="Excluir"
                               >
                                 <Delete fontSize="small" />
                               </IconButton>
@@ -875,6 +953,218 @@ export default function TaxasAdministracaoPage() {
           <Button onClick={() => setEditTransferDialog(false)}>Cancelar</Button>
           <Button onClick={handleSaveTransferEdit} variant="contained">
             Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo de Pareamento Manual de Taxas */}
+      <Dialog open={pairingDialogOpen} onClose={() => setPairingDialogOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Pareamento Manual de Taxa de Administração</DialogTitle>
+        <DialogContent dividers>
+          {sourceTaxa && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Lançamento Selecionado (Origem):
+              </Typography>
+              {(() => {
+                const transfer = sourceTaxa.transferOut || sourceTaxa.transferIn;
+                if (!transfer) return null;
+                return (
+                  <Card variant="outlined" sx={{ bgcolor: 'action.hover', borderLeft: 5, borderColor: sourceTaxa.status === 'PENDING_OUT' ? 'error.main' : 'success.main' }}>
+                    <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+                            <Chip
+                              label={sourceTaxa.status === 'PENDING_OUT' ? 'Saída' : 'Entrada'}
+                              color={sourceTaxa.status === 'PENDING_OUT' ? 'error' : 'success'}
+                              size="small"
+                            />
+                            <Chip label={`Conta: ${formatAccountNumber(transfer.accountNumber)}`} size="small" variant="outlined" />
+                            <Typography variant="body2" color="text.secondary">
+                              {transfer.date}
+                            </Typography>
+                          </Stack>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {transfer.historico}
+                          </Typography>
+                        </Box>
+                        <Typography variant="h6" color={sourceTaxa.status === 'PENDING_OUT' ? 'error.main' : 'success.main'} sx={{ fontWeight: 'bold' }}>
+                          {formatCurrency(transfer.amount)}
+                        </Typography>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                );
+              })()}
+            </Box>
+          )}
+
+          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'medium' }}>
+            Localizar e Selecionar Contrapartida Correspondente:
+          </Typography>
+
+          {/* Filtros da Contrapartida */}
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={dialogFiltroMesmaData}
+                  onChange={(e) => setDialogFiltroMesmaData(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Mesmo dia"
+              sx={{ minWidth: 120 }}
+            />
+
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel id="dialog-filtro-conta-label">Filtrar por Conta</InputLabel>
+              <Select
+                labelId="dialog-filtro-conta-label"
+                id="dialog-filtro-conta"
+                value={dialogFiltroConta}
+                label="Filtrar por Conta"
+                onChange={(e) => setDialogFiltroConta(e.target.value)}
+              >
+                <MenuItem value="TODAS">Todas as Contas</MenuItem>
+                {Array.from(new Set([
+                  ...taxasPendentes.map(t => t.transferOut?.accountNumber || t.transferIn?.accountNumber).filter(Boolean)
+                ])).sort().map((acc) => (
+                  <MenuItem key={acc} value={acc}>
+                    Conta {formatAccountNumber(acc as string)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Filtrar por Valor"
+              placeholder="Ex: 650,00"
+              size="small"
+              value={dialogFiltroValor}
+              onChange={(e) => setDialogFiltroValor(e.target.value)}
+              sx={{ width: 150 }}
+            />
+
+            <TextField
+              label="Buscar no Histórico..."
+              size="small"
+              value={dialogBuscaTexto}
+              onChange={(e) => setDialogBuscaTexto(e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+
+            {(dialogFiltroConta !== 'TODAS' || dialogFiltroValor || dialogBuscaTexto) && (
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  setDialogFiltroConta('TODAS');
+                  setDialogFiltroValor('');
+                  setDialogBuscaTexto('');
+                }}
+              >
+                Limpar
+              </Button>
+            )}
+          </Stack>
+
+          {/* Resumo do Pareamento Múltiplo */}
+          {selectedCounterpartIds.length > 0 && sourceTaxa && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              <Typography variant="body2">
+                Conciliando <strong>1 Lançamento</strong> com <strong>{selectedCounterpartIds.length} contrapartida(s)</strong> selecionada(s).
+              </Typography>
+            </Alert>
+          )}
+
+          {/* Tabela de Candidatas */}
+          <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={selectedCounterpartIds.length > 0 && selectedCounterpartIds.length < counterpartCandidates.length}
+                      checked={counterpartCandidates.length > 0 && selectedCounterpartIds.length === counterpartCandidates.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedCounterpartIds(counterpartCandidates.map(c => c.id));
+                        } else {
+                          setSelectedCounterpartIds([]);
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>Data</TableCell>
+                  <TableCell>Conta</TableCell>
+                  <TableCell>Direção</TableCell>
+                  <TableCell>Valor</TableCell>
+                  <TableCell>Histórico</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {counterpartCandidates.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Nenhuma contrapartida pendente encontrada com os filtros atuais.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  counterpartCandidates.map((taxa) => {
+                    const transfer = taxa.transferOut || taxa.transferIn;
+                    if (!transfer) return null;
+                    const isSelected = selectedCounterpartIds.includes(taxa.id);
+
+                    return (
+                      <TableRow
+                        key={taxa.id}
+                        hover
+                        onClick={() => {
+                          if (isSelected) {
+                            setSelectedCounterpartIds(selectedCounterpartIds.filter(id => id !== taxa.id));
+                          } else {
+                            setSelectedCounterpartIds([...selectedCounterpartIds, taxa.id]);
+                          }
+                        }}
+                        role="checkbox"
+                        aria-checked={isSelected}
+                        selected={isSelected}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={isSelected} />
+                        </TableCell>
+                        <TableCell>{transfer.date}</TableCell>
+                        <TableCell>{formatAccountNumber(transfer.accountNumber)}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={taxa.status === 'PENDING_OUT' ? 'Saída' : 'Entrada'}
+                            color={taxa.status === 'PENDING_OUT' ? 'error' : 'success'}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{formatCurrency(transfer.amount)}</TableCell>
+                        <TableCell>{transfer.historico}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPairingDialogOpen(false)}>Cancelar</Button>
+          <Button
+            onClick={handleManualPairConfirm}
+            variant="contained"
+            color="success"
+            disabled={selectedCounterpartIds.length === 0}
+            startIcon={<LinkIcon />}
+          >
+            Confirmar Pareamento Manual
           </Button>
         </DialogActions>
       </Dialog>

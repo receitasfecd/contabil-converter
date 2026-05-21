@@ -2,6 +2,7 @@ import { TaxaAdministracao, TaxaAdministracaoStore, CONTA_ADM, GRUPOS_CONTABEIS 
 import { Transfer } from '../types/Transfer';
 import { mappingService } from './mappingService';
 import { loadTaxaConfig } from './taxaConfigService';
+import { loadTransferStore } from './transferStore';
 
 const STORAGE_KEY = 'taxas-administracao-store';
 
@@ -373,6 +374,17 @@ export function processarTaxa(taxaId: string): {
     creditoDespesa = config.despesa.IMPORTACAO.credito;
   }
 
+  // Calcular valor efetivo (menor valor entre as pernas)
+  const parseBrazilianValue = (valStr: string): number => {
+    if (!valStr) return 0;
+    return parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+  };
+
+  const valOut = parseBrazilianValue(taxa.transferOut.amount);
+  const valIn = parseBrazilianValue(taxa.transferIn.amount);
+  const minVal = Math.min(valOut, valIn);
+  const valorEfetivoStr = minVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   // Lançamento de Despesa: Débito Despesa, Crédito Banco (saída)
   const lancamentoDespesa = {
     data: taxa.transferOut.date,
@@ -380,7 +392,7 @@ export function processarTaxa(taxaId: string): {
     credito: creditoDespesa,
     centroCusto: '',
     historico: `Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil!].descricao}`,
-    valor: taxa.transferOut.amount,
+    valor: valorEfetivoStr,
     tipo: 'FINANCEIRO',
   };
 
@@ -391,7 +403,7 @@ export function processarTaxa(taxaId: string): {
     credito: taxa.contaReceita || (taxa.grupoContabil === 'IMPORTACOES' ? config.receita.categorias.IMPORTACAO.credito : config.receita.categorias[taxa.grupoContabil].credito),
     centroCusto: '',
     historico: `Receita Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil!].descricao}`,
-    valor: taxa.transferIn.amount,
+    valor: valorEfetivoStr,
     tipo: 'FINANCEIRO',
   };
 
@@ -455,6 +467,11 @@ export function exportTaxasProcessadas(): { csv: string; taxasExportadas: TaxaAd
   const linhas: string[] = [];
   const erros: string[] = [];
 
+  const parseBrazilianValue = (valStr: string): number => {
+    if (!valStr) return 0;
+    return parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+  };
+
   taxasParaExportar.forEach(taxa => {
     if (!taxa.transferOut || !taxa.transferIn || !taxa.grupoContabil) {
       erros.push(`Taxa ${taxa.id}: dados incompletos`);
@@ -480,13 +497,18 @@ export function exportTaxasProcessadas(): { csv: string; taxasExportadas: TaxaAd
       return;
     }
 
+    const valOut = parseBrazilianValue(taxa.transferOut.amount);
+    const valIn = parseBrazilianValue(taxa.transferIn.amount);
+    const minVal = Math.min(valOut, valIn);
+    const valorEfetivoStr = minVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
     linhas.push([
       taxa.transferOut.date,
       debitoDespesa,
       creditoDespesa,
       '',
       `Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil].descricao}`,
-      taxa.transferOut.amount,
+      valorEfetivoStr,
       'FINANCEIRO'
     ].join(';'));
 
@@ -510,7 +532,7 @@ export function exportTaxasProcessadas(): { csv: string; taxasExportadas: TaxaAd
       creditoReceita,
       '',
       `Receita Taxa de Administração - ${GRUPOS_CONTABEIS[taxa.grupoContabil].descricao}`,
-      taxa.transferIn.amount,
+      valorEfetivoStr,
       'FINANCEIRO'
     ].join(';'));
   });
@@ -541,3 +563,71 @@ export function getTaxasProcessadasNaoExportadas(): TaxaAdministracao[] {
   const store = loadTaxasAdministracao();
   return store.taxas.filter(t => t.status === 'PROCESSED' && !t.exported);
 }
+
+// Parear taxas manualmente
+export function parearTaxasManualmente(principalId: string, candidatasIds: string[]): void {
+  const store = loadTaxasAdministracao();
+  const principal = store.taxas.find(t => t.id === principalId);
+  if (!principal) return;
+
+  const candidatas = store.taxas.filter(t => candidatasIds.includes(t.id));
+  if (candidatas.length === 0) return;
+
+  const transferStore = loadTransferStore();
+
+  const findOriginalTransfer = (transferId: string): Transfer | undefined => {
+    return transferStore.pending.find(t => t.id === transferId) ||
+           transferStore.paired.flatMap(p => [p.outTransfer, p.inTransfer]).find(t => t.id === transferId);
+  };
+
+  const isOut = principal.status === 'PENDING_OUT';
+  const newPairedTaxas: TaxaAdministracao[] = [];
+
+  candidatas.forEach(candidata => {
+    const outData = isOut ? principal.transferOut : candidata.transferOut;
+    const inData = isOut ? candidata.transferIn : principal.transferIn;
+
+    if (!outData || !inData) return;
+
+    // Buscar transferências originais
+    const transferOut = findOriginalTransfer(outData.transferId);
+    const transferIn = findOriginalTransfer(inData.transferId);
+
+    // Identificar grupo contábil usando as transferências
+    let grupo: 'PROJETOS' | 'GRANTS' | 'TERMOS_PARCERIAS' | 'IMPORTACOES' | undefined;
+    if (transferOut) {
+      grupo = identificarGrupoContabil(transferOut);
+    }
+    if (!grupo && transferIn) {
+      grupo = identificarGrupoContabil(transferIn);
+    }
+
+    const novaTaxa: TaxaAdministracao = {
+      id: crypto.randomUUID(),
+      status: 'PAIRED',
+      transferOut: outData,
+      transferIn: inData,
+      grupoContabil: grupo,
+      pairedAt: new Date()
+    };
+
+    // Vincular contas automaticamente
+    if (transferOut) {
+      vincularContasAutomaticamenteDirect(novaTaxa, transferOut);
+    } else if (transferIn) {
+      vincularContasAutomaticamenteDirect(novaTaxa, transferIn);
+    }
+
+    newPairedTaxas.push(novaTaxa);
+  });
+
+  // Remover a principal e as candidatas
+  const idsToRemove = new Set([principalId, ...candidatasIds]);
+  store.taxas = [
+    ...store.taxas.filter(t => !idsToRemove.has(t.id)),
+    ...newPairedTaxas
+  ];
+
+  saveTaxasAdministracao(store);
+}
+

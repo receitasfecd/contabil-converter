@@ -29,8 +29,9 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  InputAdornment,
 } from '@mui/material';
-import { Add, Edit, Delete, Upload, Download, ExpandMore, ChevronRight, CloudUpload } from '@mui/icons-material';
+import { Add, Edit, Delete, Upload, Download, ExpandMore, ChevronRight, CloudUpload, Search, Clear } from '@mui/icons-material';
 import { hybridMappingService } from '../services/hybridMappingService';
 import { mappingService } from '../services/mappingService';
 import { ClassificacaoMapping, ContaBancariaMapping, PlanoContasItem } from '../types/Mapping';
@@ -45,6 +46,8 @@ export default function MappingPage() {
   const [contas, setContas] = useState<ContaBancariaMapping[]>([]);
   const [planoContas, setPlanoContas] = useState<PlanoContasItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchClassificacao, setSearchClassificacao] = useState('');
+  const [searchConta, setSearchConta] = useState('');
 
   // Carregar dados ao montar o componente
   React.useEffect(() => {
@@ -187,7 +190,7 @@ export default function MappingPage() {
 
   const handleSelectAllContas = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedContas(contas.map(c => c.id));
+      setSelectedContas(filteredContas.map(c => c.id));
     } else {
       setSelectedContas([]);
     }
@@ -470,6 +473,26 @@ export default function MappingPage() {
     reader.readAsText(file, 'latin1');
   };
 
+  const filteredClassificacoes = classificacoes.filter(item => {
+    const term = searchClassificacao.toLowerCase();
+    return (
+      item.classificacaoFinanceira.toLowerCase().includes(term) ||
+      item.classificacaoContabil.toLowerCase().includes(term) ||
+      (item.descricao && item.descricao.toLowerCase().includes(term))
+    );
+  });
+
+  const filteredContas = contas.filter(item => {
+    const term = searchConta.toLowerCase();
+    return (
+      item.numeroConta.toLowerCase().includes(term) ||
+      item.codigoContabil.toLowerCase().includes(term) ||
+      (item.descricao && item.descricao.toLowerCase().includes(term)) ||
+      (item.banco && item.banco.toLowerCase().includes(term)) ||
+      (item.tipoAplicacao && item.tipoAplicacao.toLowerCase().includes(term))
+    );
+  });
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -532,19 +555,47 @@ export default function MappingPage() {
 
           {tabValue === 0 && (
             <Box sx={{ mt: 3 }}>
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                onClick={handleAddClassificacao}
-                sx={{ mb: 2 }}
-              >
-                Adicionar Classificação
-              </Button>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ mb: 2 }}>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  onClick={handleAddClassificacao}
+                  sx={{ whiteSpace: 'nowrap' }}
+                >
+                  Adicionar Classificação
+                </Button>
+                <TextField
+                  placeholder="Pesquisar por financeiro, contábil ou descrição..."
+                  variant="outlined"
+                  size="small"
+                  value={searchClassificacao}
+                  onChange={(e) => setSearchClassificacao(e.target.value)}
+                  sx={{ width: { xs: '100%', sm: 380 } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search color="action" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: searchClassificacao && (
+                      <InputAdornment position="end">
+                        <IconButton size="small" onClick={() => setSearchClassificacao('')}>
+                          <Clear fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Stack>
 
               {classificacoes.length === 0 ? (
                 <Alert severity="info">
                   Nenhuma classificação cadastrada. Adicione classificações para mapear
                   os lançamentos financeiros.
+                </Alert>
+              ) : filteredClassificacoes.length === 0 ? (
+                <Alert severity="warning">
+                  Nenhum resultado encontrado para a busca "{searchClassificacao}".
                 </Alert>
               ) : (
                 <TableContainer component={Paper}>
@@ -558,7 +609,7 @@ export default function MappingPage() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {classificacoes.map((item) => (
+                      {filteredClassificacoes.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>{item.classificacaoFinanceira}</TableCell>
                           <TableCell>{item.classificacaoContabil}</TableCell>
@@ -588,28 +639,57 @@ export default function MappingPage() {
 
           {tabValue === 1 && (
             <Box sx={{ mt: 3 }}>
-              <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-                <Button
-                  variant="contained"
-                  startIcon={<Add />}
-                  onClick={handleAddConta}
-                >
-                  Adicionar Conta Bancária
-                </Button>
-                {selectedContas.length > 0 && (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ mb: 2 }}>
+                <Stack direction="row" spacing={2}>
                   <Button
-                    variant="outlined"
-                    onClick={handleOpenBulkEdit}
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={handleAddConta}
+                    sx={{ whiteSpace: 'nowrap' }}
                   >
-                    Editar em Massa ({selectedContas.length})
+                    Adicionar Conta Bancária
                   </Button>
-                )}
+                  {selectedContas.length > 0 && (
+                    <Button
+                      variant="outlined"
+                      onClick={handleOpenBulkEdit}
+                    >
+                      Editar em Massa ({selectedContas.length})
+                    </Button>
+                  )}
+                </Stack>
+                <TextField
+                  placeholder="Pesquisar por número, código, banco, aplicação..."
+                  variant="outlined"
+                  size="small"
+                  value={searchConta}
+                  onChange={(e) => setSearchConta(e.target.value)}
+                  sx={{ width: { xs: '100%', sm: 380 } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search color="action" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: searchConta && (
+                      <InputAdornment position="end">
+                        <IconButton size="small" onClick={() => setSearchConta('')}>
+                          <Clear fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
               </Stack>
 
               {contas.length === 0 ? (
                 <Alert severity="info">
                   Nenhuma conta bancária cadastrada. Adicione contas para processar
                   os lançamentos.
+                </Alert>
+              ) : filteredContas.length === 0 ? (
+                <Alert severity="warning">
+                  Nenhum resultado encontrado para a busca "{searchConta}".
                 </Alert>
               ) : (
                 <TableContainer component={Paper}>
@@ -618,8 +698,8 @@ export default function MappingPage() {
                       <TableRow>
                         <TableCell padding="checkbox">
                           <Checkbox
-                            checked={selectedContas.length === contas.length && contas.length > 0}
-                            indeterminate={selectedContas.length > 0 && selectedContas.length < contas.length}
+                            checked={selectedContas.length === filteredContas.length && filteredContas.length > 0}
+                            indeterminate={selectedContas.length > 0 && selectedContas.length < filteredContas.length}
                             onChange={handleSelectAllContas}
                           />
                         </TableCell>
@@ -633,7 +713,7 @@ export default function MappingPage() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {contas.map((item) => (
+                      {filteredContas.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell padding="checkbox">
                             <Checkbox
@@ -751,6 +831,7 @@ function PlanoContasView({
   onDelete: (id: string) => void;
 }) {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleNode = (codigo: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -764,7 +845,32 @@ function PlanoContasView({
 
   // Organizar em hierarquia
   const buildHierarchy = () => {
-    const sorted = [...planoContas].sort((a, b) => a.codigo.localeCompare(b.codigo));
+    let list = [...planoContas];
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      
+      // Encontrar todas as contas que correspondem diretamente à busca
+      const matchingItems = list.filter(
+        item => item.codigo.toLowerCase().includes(term) || item.nome.toLowerCase().includes(term)
+      );
+      
+      // Coletar todos os códigos correspondentes e seus ancestrais (pais)
+      const codesToShow = new Set<string>();
+      matchingItems.forEach(item => {
+        codesToShow.add(item.codigo);
+        
+        // Obter os pais/ancestrais.
+        list.forEach(p => {
+          if (item.codigo.startsWith(p.codigo) && p.codigo !== item.codigo) {
+            codesToShow.add(p.codigo);
+          }
+        });
+      });
+      
+      list = list.filter(item => codesToShow.has(item.codigo));
+    }
+
+    const sorted = list.sort((a, b) => a.codigo.localeCompare(b.codigo));
     return sorted;
   };
 
@@ -772,18 +878,46 @@ function PlanoContasView({
 
   return (
     <Box sx={{ mt: 3 }}>
-      <Button
-        variant="contained"
-        startIcon={<Add />}
-        onClick={onAdd}
-        sx={{ mb: 2 }}
-      >
-        Adicionar Conta
-      </Button>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ mb: 2 }}>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={onAdd}
+          sx={{ whiteSpace: 'nowrap' }}
+        >
+          Adicionar Conta
+        </Button>
+        <TextField
+          placeholder="Pesquisar por código ou nome da conta..."
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ width: { xs: '100%', sm: 380 } }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search color="action" />
+              </InputAdornment>
+            ),
+            endAdornment: searchTerm && (
+              <InputAdornment position="end">
+                <IconButton size="small" onClick={() => setSearchTerm('')}>
+                  <Clear fontSize="small" />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+      </Stack>
 
       {planoContas.length === 0 ? (
         <Alert severity="info">
           Nenhuma conta no plano de contas. Importe o plano de contas ou adicione manualmente.
+        </Alert>
+      ) : hierarchy.length === 0 ? (
+        <Alert severity="warning">
+          Nenhum resultado encontrado para a busca "{searchTerm}".
         </Alert>
       ) : (
         <TableContainer component={Paper} sx={{ maxHeight: 600 }}>

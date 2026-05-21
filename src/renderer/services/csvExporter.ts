@@ -70,14 +70,26 @@ export function generateTransferCSV(pairs: TransferPair[]): string {
     );
   }
 
-  const rows = pairs.map((pair) => ({
-    Data: pair.outTransfer.date,
-    Débito: pair.outTransfer.accountCode,
-    Crédito: pair.inTransfer.accountCode,
-    'Centro de Custo': cleanString(pair.outTransfer.centroCusto),
-    Histórico: cleanString(pair.outTransfer.historico) || 'SEM HISTORICO',
-    Valor: pair.outTransfer.amount,
-  }));
+  const rows = pairs.map((pair) => {
+    const parseBrazilianValue = (valStr: string): number => {
+      if (!valStr) return 0;
+      return parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+    };
+
+    const valOut = parseBrazilianValue(pair.outTransfer.amount);
+    const valIn = parseBrazilianValue(pair.inTransfer.amount);
+    const minVal = Math.min(valOut, valIn);
+    const valorEfetivoStr = minVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    return {
+      Data: pair.outTransfer.date,
+      Débito: pair.outTransfer.accountCode,
+      Crédito: pair.inTransfer.accountCode,
+      'Centro de Custo': cleanString(pair.outTransfer.centroCusto),
+      Histórico: cleanString(pair.outTransfer.historico) || 'SEM HISTORICO',
+      Valor: valorEfetivoStr,
+    };
+  });
 
   const csv = Papa.unparse(rows, {
     quotes: false,
