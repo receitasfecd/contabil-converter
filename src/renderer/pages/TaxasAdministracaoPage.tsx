@@ -447,6 +447,12 @@ export default function TaxasAdministracaoPage() {
       {tabIndex === 0 && (
         <Card>
           <CardContent>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              <Typography variant="body2">
+                💡 <strong>Dica de Conciliação Manual:</strong> Se uma taxa de administração não foi pareada automaticamente, localize a linha correspondente na tabela abaixo e clique no botão verde <strong>"Conciliar"</strong> na coluna <strong>Ações</strong>. O sistema abrirá um diálogo contendo as taxas candidatas que ocorreram no mesmo dia para você selecionar e parear.
+              </Typography>
+            </Alert>
+
             <Typography variant="h6" gutterBottom>
               Taxas Pendentes de Pareamento
             </Typography>
@@ -488,15 +494,17 @@ export default function TaxasAdministracaoPage() {
                             <Chip label="Aguardando Par" color="warning" size="small" />
                           </TableCell>
                           <TableCell align="center">
-                            <Stack direction="row" spacing={1} justifyContent="center">
-                              <IconButton
+                            <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                              <Button
                                 size="small"
+                                variant="contained"
                                 color="success"
+                                startIcon={<LinkIcon fontSize="small" />}
                                 onClick={() => handleStartManualPair(taxa)}
-                                title="Parear Manualmente"
+                                sx={{ textTransform: 'none', py: 0.5 }}
                               >
-                                <LinkIcon fontSize="small" />
-                              </IconButton>
+                                Conciliar
+                              </Button>
                               <IconButton
                                 size="small"
                                 color="primary"

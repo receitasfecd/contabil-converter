@@ -402,29 +402,38 @@ export default function TransfersPage() {
     { field: 'historico', headerName: 'Histórico', flex: 1 },
     {
       field: 'actions',
-      type: 'actions',
       headerName: 'Ações',
-      width: 160,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<LinkIcon />}
-          label="Parear Manualmente"
-          onClick={() => handleStartManualPair(params.row)}
-          color="success"
-        />,
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Editar"
-          onClick={() => handleEditTransfer(params.row)}
-          color="primary"
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Excluir"
-          onClick={() => handleDeleteTransfer(params.row.id)}
-          color="error"
-        />,
-      ],
+      width: 220,
+      renderCell: (params) => (
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ height: '100%' }}>
+          <Button
+            size="small"
+            variant="contained"
+            color="success"
+            startIcon={<LinkIcon fontSize="small" />}
+            onClick={() => handleStartManualPair(params.row)}
+            sx={{ textTransform: 'none', py: 0.5 }}
+          >
+            Conciliar
+          </Button>
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={() => handleEditTransfer(params.row)}
+            title="Editar"
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => handleDeleteTransfer(params.row.id)}
+            title="Excluir"
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      ),
     },
   ];
 
@@ -581,6 +590,12 @@ export default function TransfersPage() {
 
       {/* Conteúdo das Tabs */}
       <TabPanel value={tabIndex} index={0}>
+        <Alert severity="info" sx={{ mb: 2, mt: 1 }}>
+          <Typography variant="body2">
+            💡 <strong>Dica de Conciliação Manual:</strong> Se uma transferência não foi pareada automaticamente, localize o lançamento desejado na tabela abaixo e clique no botão verde <strong>"Conciliar"</strong> na coluna <strong>Ações</strong>. O sistema abrirá uma janela contendo as contrapartidas candidatas que ocorreram no mesmo dia para você selecionar e parear.
+          </Typography>
+        </Alert>
+
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Transferências aguardando pareamento com contrapartida
         </Typography>
