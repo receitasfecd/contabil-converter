@@ -3,10 +3,16 @@ import { Transfer } from '../types/Transfer';
 import { mappingService } from './mappingService';
 import { loadTaxaConfig } from './taxaConfigService';
 import { loadTransferStore } from './transferStore';
+import { saveTaxaToSupabase } from './supabaseTaxaService';
 
 const STORAGE_KEY = 'taxas-administracao-store';
 
+let currentStore: TaxaAdministracaoStore = { taxas: [] };
+
 export function loadTaxasAdministracao(): TaxaAdministracaoStore {
+  // Se já temos em memória, retornar. Útil para chamadas síncronas após o AppContext carregar.
+  if (currentStore.taxas.length > 0) return currentStore;
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -26,7 +32,13 @@ export function loadTaxasAdministracao(): TaxaAdministracaoStore {
   return { taxas: [] };
 }
 
+// Para ser usado pelo AppContext para injetar os dados do Supabase
+export function setTaxasStore(store: TaxaAdministracaoStore): void {
+  currentStore = store;
+}
+
 export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
+  currentStore = store;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch (error) {
@@ -37,6 +49,7 @@ export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
 // Identificar se uma transferência é taxa de administração
 export function isTaxaAdministracao(transfer: Transfer): boolean {
   const historico = transfer.historico.toLowerCase();
+  const config = loadTaxaConfig();
 
   // Verificar palavras-chave no histórico
   const keywords = [
@@ -56,11 +69,16 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
   if (classificacao) {
     // Normalizar: remover espaços e converter para maiúsculas
     const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
-    hasClassificacaoTaxa =
-      classifUpper.includes('PROJ002.1.4.01.99') ||
-      classifUpper.includes('GRANT002.1.4.01.99') ||
-      classifUpper.includes('TEP002.1.4.01.99') ||
-      classifUpper.includes('IMP004.19') ||
+
+    // Todas as classificações identificadoras configuradas
+    const allIdentificadoras = [
+      ...config.classificacoesIdentificadoras.PROJETOS,
+      ...config.classificacoesIdentificadoras.GRANTS,
+      ...config.classificacoesIdentificadoras.TERMOS_PARCERIAS,
+      ...config.classificacoesIdentificadoras.IMPORTACAO
+    ].map(c => c.toUpperCase().replace(/\s+/g, ''));
+
+    hasClassificacaoTaxa = allIdentificadoras.some(ident => classifUpper.includes(ident)) ||
       classifUpper.startsWith('FECD001.1.4') ||
       classifUpper.startsWith('FECD001.1.5');
   }
@@ -125,7 +143,7 @@ function vincularContasAutomaticamente(taxa: TaxaAdministracao): void {
 }
 
 // Adicionar transferência como taxa de administração
-export function addTaxaAdministracao(transfer: Transfer): void {
+export function addTaxaAdministracao(transfer: Transfer): TaxaAdministracao {
   const store = loadTaxasAdministracao();
 
   const taxaData = {
@@ -136,6 +154,8 @@ export function addTaxaAdministracao(transfer: Transfer): void {
     amount: transfer.amount,
     historico: transfer.historico,
   };
+
+  let resultTaxa: TaxaAdministracao;
 
   // Verificar se é saída (débito) ou entrada (crédito)
   const isOut = transfer.direction === 'OUT';
@@ -179,6 +199,7 @@ export function addTaxaAdministracao(transfer: Transfer): void {
 
     // Vincular contas automaticamente usando a transferência atual
     vincularContasAutomaticamenteDirect(existingTaxa, transfer);
+    resultTaxa = existingTaxa;
   } else {
     // Criar nova taxa pendente
     const grupoIdentificado = identificarGrupoContabil(transfer);
@@ -199,9 +220,11 @@ export function addTaxaAdministracao(transfer: Transfer): void {
     vincularContasAutomaticamenteDirect(novaTaxa, transfer);
 
     store.taxas.push(novaTaxa);
+    resultTaxa = novaTaxa;
   }
 
   saveTaxasAdministracao(store);
+  return resultTaxa;
 }
 
 // Vincular contas usando diretamente a transferência (que tem o original com classificação)
@@ -266,21 +289,22 @@ function vincularContasAutomaticamenteDirect(taxa: TaxaAdministracao, transfer: 
 // Identificar grupo contábil baseado na classificação financeira
 function identificarGrupoContabil(transfer: Transfer): 'PROJETOS' | 'GRANTS' | 'TERMOS_PARCERIAS' | 'IMPORTACOES' | undefined {
   const classificacao = (transfer as any).original?.classificacaoFinanceira;
+  const config = loadTaxaConfig();
 
   if (classificacao) {
     const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
 
-    // Identificar por classificação financeira de despesa
-    if (classifUpper.includes('PROJ002.1.4.01.99')) {
+    // Identificar por classificação financeira de despesa usando a configuração
+    if (config.classificacoesIdentificadoras.PROJETOS.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'PROJETOS';
     }
-    if (classifUpper.includes('GRANT002.1.4.01.99')) {
+    if (config.classificacoesIdentificadoras.GRANTS.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'GRANTS';
     }
-    if (classifUpper.includes('TEP002.1.4.01.99')) {
+    if (config.classificacoesIdentificadoras.TERMOS_PARCERIAS.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'TERMOS_PARCERIAS';
     }
-    if (classifUpper.includes('IMP004.19')) {
+    if (config.classificacoesIdentificadoras.IMPORTACAO.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'IMPORTACOES';
     }
 

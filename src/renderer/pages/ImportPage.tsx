@@ -31,7 +31,7 @@ const formatAccountNumber = (numeroConta: string) => {
 
 export default function ImportPage() {
   const navigate = useNavigate();
-  const { addTransfersAndPair } = useAppContext();
+  const { addTransfersPairAndTaxas } = useAppContext();
   const [file, setFile] = useState<File | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -191,7 +191,7 @@ export default function ImportPage() {
 
       // Adicionar transferências ao store e parear automaticamente
       if (transfers.length > 0) {
-        addTransfersAndPair(transfers);
+        addTransfersPairAndTaxas(transfers);
         console.log('✅ Transferências adicionadas e pareamento executado');
       }
 

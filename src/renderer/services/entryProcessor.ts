@@ -84,7 +84,9 @@ export function processEntriesWithTransferSeparation(
 
         // Verificar se é taxa de administração
         if (isTaxaAdministracao(transfer)) {
-          addTaxaAdministracao(transfer);
+          const taxa = addTaxaAdministracao(transfer);
+          // O addTaxaAdministracao já salva no localStorage
+          // Se estivermos logados, o AppContext cuidará da sincronização se atualizarmos o estado
         }
 
         transfers.push(transfer);

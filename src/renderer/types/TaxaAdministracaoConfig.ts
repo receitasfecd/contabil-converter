@@ -51,10 +51,24 @@ export interface TaxaAdministracaoConfig {
       };
     };
   };
+
+  // Classificações Financeiras que identificam Taxas de Administração
+  classificacoesIdentificadoras: {
+    PROJETOS: string[];
+    GRANTS: string[];
+    TERMOS_PARCERIAS: string[];
+    IMPORTACAO: string[];
+  };
 }
 
 // Configuração padrão
 export const DEFAULT_TAXA_CONFIG: TaxaAdministracaoConfig = {
+  classificacoesIdentificadoras: {
+    PROJETOS: ['PROJ002.1.4.01.99'],
+    GRANTS: ['GRANT002.1.4.01.99'],
+    TERMOS_PARCERIAS: ['TEP002.1.4.01.99'],
+    IMPORTACAO: ['IMP004.19']
+  },
   despesa: {
     PROJETOS: {
       debito: '21504020',
