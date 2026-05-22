@@ -49,38 +49,47 @@ export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
 // Identificar se uma transferência é taxa de administração
 export function isTaxaAdministracao(transfer: Transfer): boolean {
   const historico = transfer.historico.toLowerCase();
+  const historicoNorm = historico.replace(/\s+/g, ' ').trim();
   const config = loadTaxaConfig();
 
-  console.log(`🔍 Verificando se é taxa: "${transfer.historico}" (Conta: ${transfer.accountNumber}, Valor: ${transfer.amount})`);
+  console.log(`🔍 Verificando taxa: "${transfer.historico}"`);
+  console.log(`   Conta: ${transfer.accountNumber}, Direção: ${transfer.direction}, Valor: ${transfer.amount}`);
 
-  // Verificar palavras-chave no histórico
+  // Verificar palavras-chave no histórico (normalizado)
   const keywords = [
-    'taxa adm',
-    'taxa de adm',
+    'tx adm',
     'tx. adm',
     'tx.adm',
-    'tx adm',
     'txadm',
-    'taxa de administração',
-    'taxa de administracao',
+    'taxa adm',
+    'taxa de adm',
     'taxa administrativa',
     'tx administrativa',
     'tx. administrativa',
     'repasse taxa',
     'repasse de taxa'
   ];
-  const hasTaxaKeyword = keywords.some(keyword => historico.includes(keyword));
+  const hasTaxaKeyword = keywords.some(keyword => historicoNorm.includes(keyword));
+
+  if (hasTaxaKeyword) {
+    console.log(`   ✅ TAXA DETECTADA por palavra-chave!`);
+  }
 
   // Se for entrada na conta ADM (14300-4), ser mais inclusivo
   const isAdmIn = transfer.direction === 'IN' &&
                   (transfer.accountNumber === CONTA_ADM || transfer.accountNumber === CONTA_ADM.replace('-', ''));
 
-  if (isAdmIn && !hasTaxaKeyword) {
-     // Na conta ADM, entradas que mencionam projetos costumam ser taxas
-     const projectKeywords = ['proj', 'grant', 'tep', 'imp'];
-     if (projectKeywords.some(pk => historico.includes(pk))) {
+  if (isAdmIn) {
+    console.log(`   📥 Entrada na conta ADM (${CONTA_ADM})`);
+
+    if (!hasTaxaKeyword) {
+      // Na conta ADM, entradas que mencionam projetos/taxas costumam ser taxas
+      const projectKeywords = ['proj', 'grant', 'tep', 'imp', 'tx', 'taxa', 'adm'];
+      if (projectKeywords.some(pk => historico.includes(pk))) {
+        console.log(`   ✅ TAXA DETECTADA - entrada na conta ADM com palavra-chave de projeto`);
         return true;
-     }
+      }
+    }
   }
 
   // Verificar classificação financeira (se disponível no transfer)
@@ -88,8 +97,9 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
   let hasClassificacaoTaxa = false;
 
   if (classificacao) {
-    // Normalizar: remover espaços e converter para maiúsculas
-    const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
+    // Normalizar: remover TODOS os espaços e converter para maiúsculas
+    const classifNorm = classificacao.toUpperCase().replace(/\s+/g, '');
+    console.log(`   Classificação normalizada: ${classifNorm}`);
 
     // Todas as classificações identificadoras configuradas
     const allIdentificadoras = [
@@ -99,20 +109,22 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
       ...config.classificacoesIdentificadoras.IMPORTACAO
     ].map(c => c.toUpperCase().replace(/\s+/g, ''));
 
-    hasClassificacaoTaxa = allIdentificadoras.some(ident => classifUpper.includes(ident)) ||
-      classifUpper.startsWith('FECD001.1.4') ||
-      classifUpper.startsWith('FECD001.1.5');
+    hasClassificacaoTaxa = allIdentificadoras.some(ident => classifNorm.includes(ident)) ||
+      classifNorm.startsWith('FECD001.1.4') ||
+      classifNorm.startsWith('FECD001.1.5') ||
+      classifNorm.includes('PROJ002.1.4') ||
+      classifNorm.includes('GRANT002.1.4') ||
+      classifNorm.includes('TEP002.1.4');
 
     if (hasClassificacaoTaxa) {
-      console.log(`  ✅ Identificada por classificação financeira: ${classificacao}`);
+      console.log(`   ✅ TAXA DETECTADA por classificação!`);
     }
   }
 
-  if (hasTaxaKeyword) {
-    console.log(`  ✅ Identificada por palavra-chave no histórico`);
-  }
+  const resultado = hasTaxaKeyword || hasClassificacaoTaxa;
+  console.log(`   Resultado final: ${resultado ? '✅ É TAXA' : '❌ NÃO é taxa'}`);
 
-  return hasTaxaKeyword || hasClassificacaoTaxa;
+  return resultado;
 }
 
 // Vincular automaticamente contas de despesa e receita baseado na classificação financeira

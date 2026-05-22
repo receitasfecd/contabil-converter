@@ -130,24 +130,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addTransfersPairAndTaxas = (transfers: Transfer[]) => {
+    console.log(`📦 addTransfersPairAndTaxas: Processando ${transfers.length} transferências`);
+
     // 1. Identificar taxas e atualizar taxaStore
     const newTaxas: TaxaAdministracao[] = [];
     transfers.forEach(t => {
       if (isTaxaAdministracao(t)) {
+        console.log(`💰 Adicionando taxa à store: ${t.historico}`);
         const taxa = addTaxaAdministracao(t);
         newTaxas.push(taxa);
       }
     });
 
+    console.log(`📊 Total de taxas detectadas: ${newTaxas.length}`);
+
     if (newTaxas.length > 0) {
       const updatedTaxaStore = loadTaxasAdministracao();
+      console.log(`📚 Taxa store atualizada. Total de taxas na store: ${updatedTaxaStore.taxas.length}`);
       setTaxaStore(updatedTaxaStore);
 
       if (isAuthenticated) {
+        console.log(`☁️ Salvando ${newTaxas.length} taxas no Supabase...`);
         newTaxas.forEach(taxa => {
-           saveTaxaToSupabase(taxa).catch(err => console.error('Erro ao salvar taxa no Supabase:', err));
+           saveTaxaToSupabase(taxa).catch(err => console.error('❌ Erro ao salvar taxa no Supabase:', err));
         });
+      } else {
+        console.log(`⚠️ Usuário não autenticado - taxas não serão salvas no Supabase`);
       }
+    } else {
+      console.log(`⚠️ Nenhuma taxa detectada neste lote de transferências`);
     }
 
     // 2. Proceder com o pareamento normal de transferências
