@@ -38,16 +38,19 @@ export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
 export function isTaxaAdministracao(transfer: Transfer): boolean {
   const historico = transfer.historico.toLowerCase();
 
-  // Verificar palavras-chave no histórico
-  const keywords = [
-    'taxa adm',
-    'taxa de administração',
-    'taxa de administracao',
-    'tx adm',
-    'taxa administrativa',
-    'tx administrativa'
+  // Verificar palavras-chave no histórico usando regex
+  const keywordPatterns = [
+    /taxa\s+adm/i,
+    /tx\s+adm/i,
+    /taxa\s+de\s+administra[çc][aã]o/i,
+    /taxa\s+administrativa/i,
+    /tx\s+administrativa/i
   ];
-  const hasTaxaKeyword = keywords.some(keyword => historico.includes(keyword));
+  const hasTaxaKeyword = keywordPatterns.some(pattern => pattern.test(historico));
+  
+  if (hasTaxaKeyword) {
+    console.log('🔍 Taxa detectada por palavra-chave:', transfer.historico);
+  }
 
   // Verificar classificação financeira (se disponível no transfer)
   const classificacao = (transfer as any).original?.classificacaoFinanceira;
@@ -57,12 +60,16 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
     // Normalizar: remover espaços e converter para maiúsculas
     const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
     hasClassificacaoTaxa =
-      classifUpper.includes('PROJ002.1.4.01.99') ||
-      classifUpper.includes('GRANT002.1.4.01.99') ||
-      classifUpper.includes('TEP002.1.4.01.99') ||
-      classifUpper.includes('IMP004.19') ||
       classifUpper.startsWith('FECD001.1.4') ||
-      classifUpper.startsWith('FECD001.1.5');
+      classifUpper.startsWith('FECD001.1.5') ||
+      classifUpper.includes('PROJ002.1.4') ||
+      classifUpper.includes('GRANT002.1.4') ||
+      classifUpper.includes('TEP002.1.4') ||
+      classifUpper.includes('IMP004.19');
+      
+    if (hasClassificacaoTaxa) {
+      console.log('🔍 Taxa detectada por classificação:', classificacao);
+    }
   }
 
   return hasTaxaKeyword || hasClassificacaoTaxa;
