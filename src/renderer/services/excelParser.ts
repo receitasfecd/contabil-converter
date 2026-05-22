@@ -236,7 +236,51 @@ export async function parseExcelFile(file: File): Promise<ExcelEntry[]> {
 
             let entry: ExcelEntry;
 
-            if (numColunas >= 11) {
+            if (numColunas >= 12) {
+              // Formato com 12 colunas (com coluna TIPO)
+              const documento = String(row[1] || '');
+              let historico = String(row[2] || '').trim();
+
+              if ((!historico || historico === 'undefined') && documento === lastDocumento && lastHistorico) {
+                historico = lastHistorico;
+              }
+
+              // Ler coluna TIPO (coluna 6)
+              const tipoRaw = String(row[6] || '').toUpperCase().trim();
+              let tipo: 'TAXA' | 'TRANSFERENCIA' | 'FINANCEIRO' | undefined;
+              if (tipoRaw === 'TAXA' || tipoRaw === 'TRANSFERENCIA' || tipoRaw === 'FINANCEIRO') {
+                tipo = tipoRaw;
+              }
+
+              if (i < 10) {
+                console.log(`📋 Linha ${i} - Data: ${row[0]}, TIPO: ${tipo}, Histórico: ${String(row[2] || '').substring(0, 50)}`);
+              }
+
+              let valorDebito = parseBrazilianNumber(row[7]);
+              let valorCredito = parseBrazilianNumber(row[8]);
+              let saldo = parseBrazilianNumber(row[9]) || 0;
+
+              entry = {
+                data: parseExcelDate(row[0]),
+                documento: documento,
+                historico: healHistorico(historico),
+                status: String(row[3] || ''),
+                classificacaoFinanceira: String(row[4] || '').replace(/\s+/g, ''),
+                codigoCentroCusto: String(row[5] || ''),
+                tipo: tipo,
+                valorDebito: valorDebito,
+                valorCredito: valorCredito,
+                saldo: saldo,
+                simbolo: (row[10] === 'D' || row[10] === 'C') ? row[10] : 'D',
+              };
+
+              if (historico && historico !== 'undefined') {
+                lastHistorico = historico;
+              }
+              if (documento) {
+                lastDocumento = documento;
+              }
+            } else if (numColunas >= 11) {
               // Formato com 11 colunas (coluna 6 vazia)
               const documento = String(row[1] || '');
               let historico = String(row[2] || '').trim();

@@ -14,6 +14,80 @@ export function processEntries(
 
   for (const entry of entries) {
     try {
+      // PRIORIDADE 1: Se tem campo TIPO explícito no Excel, usar ele
+      if (entry.tipo === 'TAXA') {
+        console.log(`🏷️ TIPO EXPLÍCITO: TAXA detectada - ${entry.historico}`);
+
+        const taxa: Transfer = {
+          id: crypto.randomUUID(),
+          accountNumber: contaBancaria.numeroConta,
+          accountCode: contaBancaria.codigoContabil,
+          date: formatDate(entry.data),
+          amount: formatCurrency(entry.valorDebito || entry.valorCredito!),
+          historico: entry.historico,
+          centroCusto: entry.codigoCentroCusto,
+          direction: entry.valorDebito ? 'OUT' : 'IN',
+          status: 'PENDING',
+          original: entry,
+          importedAt: new Date()
+        };
+
+        try {
+          const taxaAdicionada = addTaxaAdministracao(taxa);
+          console.log(`💾 Taxa adicionada à store com ID: ${taxaAdicionada.id}, Status: ${taxaAdicionada.status}`);
+        } catch (error) {
+          console.error(`❌ Erro ao adicionar taxa à store:`, error);
+        }
+
+        transfers.push(taxa);
+        continue;
+      }
+
+      if (entry.tipo === 'TRANSFERENCIA') {
+        console.log(`🏷️ TIPO EXPLÍCITO: TRANSFERENCIA detectada - ${entry.historico}`);
+
+        const transfer: Transfer = {
+          id: crypto.randomUUID(),
+          accountNumber: contaBancaria.numeroConta,
+          accountCode: contaBancaria.codigoContabil,
+          date: formatDate(entry.data),
+          amount: formatCurrency(entry.valorDebito || entry.valorCredito!),
+          historico: entry.historico,
+          centroCusto: entry.codigoCentroCusto,
+          direction: entry.valorDebito ? 'OUT' : 'IN',
+          status: 'PENDING',
+          original: entry,
+          importedAt: new Date()
+        };
+
+        transfers.push(transfer);
+        continue;
+      }
+
+      if (entry.tipo === 'FINANCEIRO') {
+        console.log(`🏷️ TIPO EXPLÍCITO: FINANCEIRO detectado - ${entry.historico}`);
+
+        const mapping = classificacoes.find(
+          (m) => m.classificacaoFinanceira === entry.classificacaoFinanceira
+        );
+
+        if (mapping) {
+          const processed = processFinanceiro(entry, mapping, contaBancaria.codigoContabil);
+          const validation = validateEntry(entry, mapping);
+          processed.warnings = validation.warnings;
+          processed.errors = validation.errors;
+
+          if (processed.debito && processed.credito && processed.debito === processed.credito) {
+            if (!processed.errors) processed.errors = [];
+            processed.errors.push('Débito e Crédito são iguais - lançamento inválido');
+          }
+
+          financialEntries.push(processed);
+        }
+        continue;
+      }
+
+      // PRIORIDADE 2: Se não tem tipo explícito, usar detecção automática
       let processed: ProcessedEntry;
 
       if (isTransferencia(entry)) {
@@ -86,16 +160,9 @@ export function processEntriesWithTransferSeparation(
 
       if (isTransfer || isTaxa) {
         // Tratar como transferência
+        // A adição à loja de taxas é feita centralizadamente pelo AppContext.addTransfersPairAndTaxas
         if (isTaxa) {
           console.log(`✅ Taxa de Administração detectada: ${tempTransfer.historico}`);
-
-          // ADICIONAR DIRETAMENTE À STORE DE TAXAS
-          try {
-            const taxaAdicionada = addTaxaAdministracao(tempTransfer);
-            console.log(`💾 Taxa adicionada à store com ID: ${taxaAdicionada.id}, Status: ${taxaAdicionada.status}`);
-          } catch (error) {
-            console.error(`❌ Erro ao adicionar taxa à store:`, error);
-          }
         }
 
         transfers.push(tempTransfer);
