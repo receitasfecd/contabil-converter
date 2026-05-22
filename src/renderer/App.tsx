@@ -213,6 +213,7 @@ function App() {
                 p: 3,
                 backgroundColor: 'background.default',
                 minHeight: '100vh',
+                position: 'relative',
               }}
             >
               <Toolbar />
@@ -241,12 +242,8 @@ function App() {
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>
-            </Box>
-          </Box>
-        </Router>
-      </AppProvider>
-    </ThemeProvider>
-  );
-}
 
-export default App;
+              <Box
+                sx={{
+                  position: 'fixed',
+           
