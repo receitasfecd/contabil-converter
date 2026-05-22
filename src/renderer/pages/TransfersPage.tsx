@@ -26,6 +26,13 @@ import {
   Select,
   FormControlLabel,
   Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import {
@@ -201,7 +208,7 @@ export default function TransfersPage() {
 
   // Lista de contrapartidas candidatas para o diálogo de pareamento manual
   const counterpartCandidates = useMemo(() => {
-    if (!sourceTransfer) return [];
+    if (!sourceTransfer || !transferStore?.pending) return [];
     const targetDirection = sourceTransfer.direction === 'OUT' ? 'IN' : 'OUT';
     
     return transferStore.pending.filter(t => {
@@ -218,15 +225,15 @@ export default function TransfersPage() {
       
       // Filtro de valor no diálogo (busca textual ou valor exato se for preenchido)
       if (dialogFiltroValor) {
-        if (!t.amount.includes(dialogFiltroValor)) return false;
+        if (!t.amount?.includes(dialogFiltroValor)) return false;
       }
       
       // Busca geral no diálogo
       if (dialogBuscaTexto) {
         const query = dialogBuscaTexto.toLowerCase();
-        const histMatch = t.historico.toLowerCase().includes(query);
-        const dateMatch = t.date.toLowerCase().includes(query);
-        const codeMatch = t.accountCode.toLowerCase().includes(query);
+        const histMatch = t.historico?.toLowerCase()?.includes(query);
+        const dateMatch = t.date?.toLowerCase()?.includes(query);
+        const codeMatch = t.accountCode?.toLowerCase()?.includes(query);
         if (!histMatch && !dateMatch && !codeMatch) return false;
       }
       
@@ -304,6 +311,38 @@ export default function TransfersPage() {
     setSourceTransfer(null);
     setSelectedCounterpartIds([]);
   };
+
+  // Cálculos de totais
+  const parseValue = (valStr: string): number => {
+    if (!valStr) return 0;
+    return parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+  };
+
+  const totalEnviado = useMemo(() => {
+    // Pendentes OUT
+    const pendingOut = transferStore.pending
+      .filter(t => t.direction === 'OUT')
+      .reduce((sum, t) => sum + parseValue(t.amount), 0);
+
+    // Pares (sempre tem um OUT)
+    const pairedOut = transferStore.paired
+      .reduce((sum, p) => sum + parseValue(p.outTransfer.amount), 0);
+
+    return pendingOut + pairedOut;
+  }, [transferStore]);
+
+  const totalRecebido = useMemo(() => {
+    // Pendentes IN
+    const pendingIn = transferStore.pending
+      .filter(t => t.direction === 'IN')
+      .reduce((sum, t) => sum + parseValue(t.amount), 0);
+
+    // Pares (sempre tem um IN)
+    const pairedIn = transferStore.paired
+      .reduce((sum, p) => sum + parseValue(p.inTransfer.amount), 0);
+
+    return pendingIn + pairedIn;
+  }, [transferStore]);
 
   // Estatísticas
   const pendingCount = transferStore.pending.length;
@@ -577,6 +616,28 @@ export default function TransfersPage() {
             </Typography>
           </CardContent>
         </Card>
+
+        {/* Totais de Valor */}
+        <Card sx={{ minWidth: 200, bgcolor: 'primary.main', color: 'white' }}>
+          <CardContent>
+            <Typography variant="h6">
+              R$ {totalEnviado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              Total Enviado (Saídas)
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ minWidth: 200, bgcolor: 'success.main', color: 'white' }}>
+          <CardContent>
+            <Typography variant="h6">
+              R$ {totalRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              Total Recebido (Entradas)
+            </Typography>
+          </CardContent>
+        </Card>
       </Stack>
 
       {/* Tabs */}
@@ -642,10 +703,12 @@ export default function TransfersPage() {
             value={buscaTexto}
             onChange={(e) => setBuscaTexto(e.target.value)}
             sx={{ flexGrow: 1 }}
-            InputProps={{
-              startAdornment: (
-                <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
+                ),
+              }
             }}
           />
 
@@ -672,6 +735,7 @@ export default function TransfersPage() {
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
           }}
+          getRowId={(row) => row.id}
         />
       </TabPanel>
 
@@ -741,6 +805,7 @@ export default function TransfersPage() {
                 pagination: { paginationModel: { pageSize: 10 } },
               }}
               sx={{ minHeight: 400 }}
+              getRowId={(row) => row.id}
             />
           )}
         </Stack>
@@ -758,6 +823,7 @@ export default function TransfersPage() {
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
           }}
+          getRowId={(row) => row.id}
         />
       </TabPanel>
 
@@ -946,10 +1012,12 @@ export default function TransfersPage() {
               value={dialogBuscaTexto}
               onChange={(e) => setDialogBuscaTexto(e.target.value)}
               sx={{ flexGrow: 1 }}
-              InputProps={{
-                startAdornment: (
-                  <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <SearchIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
+                  ),
+                }
               }}
             />
 
@@ -977,46 +1045,80 @@ export default function TransfersPage() {
             </Alert>
           )}
 
-          {/* Tabela de Candidatas */}
-          <Box sx={{ height: 350, width: '100%' }}>
-            <DataGrid
-              rows={counterpartCandidates}
-              columns={[
-                { field: 'date', headerName: 'Data', width: 110 },
-                {
-                  field: 'accountNumber',
-                  headerName: 'Conta',
-                  width: 100,
-                  renderCell: (params) => (
-                    <Chip label={params.value} size="small" variant="outlined" color="primary" />
-                  ),
-                },
-                {
-                  field: 'direction',
-                  headerName: 'Direção',
-                  width: 90,
-                  renderCell: (params) => (
-                    <Chip
-                      label={params.value === 'OUT' ? 'Saída' : 'Entrada'}
-                      color={params.value === 'OUT' ? 'error' : 'success'}
-                      size="small"
+          {/* Tabela de Candidatas (MUI Table para maior estabilidade) */}
+          <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 400 }}>
+            <Table stickyHeader size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={selectedCounterpartIds.length > 0 && selectedCounterpartIds.length < counterpartCandidates.length}
+                      checked={counterpartCandidates.length > 0 && selectedCounterpartIds.length === counterpartCandidates.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedCounterpartIds(counterpartCandidates.map(c => c.id));
+                        } else {
+                          setSelectedCounterpartIds([]);
+                        }
+                      }}
                     />
-                  ),
-                },
-                { field: 'amount', headerName: 'Valor', width: 110 },
-                { field: 'historico', headerName: 'Histórico', flex: 1 },
-              ]}
-              pageSizeOptions={[5, 10, 20]}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 5 } },
-              }}
-              checkboxSelection
-              rowSelectionModel={selectedCounterpartIds}
-              onRowSelectionModelChange={(newSelection) => {
-                setSelectedCounterpartIds(newSelection as string[]);
-              }}
-            />
-          </Box>
+                  </TableCell>
+                  <TableCell>Data</TableCell>
+                  <TableCell>Conta</TableCell>
+                  <TableCell>Direção</TableCell>
+                  <TableCell>Valor</TableCell>
+                  <TableCell>Histórico</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {counterpartCandidates.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                      Nenhuma contrapartida encontrada com os filtros atuais.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  counterpartCandidates.map((row) => {
+                    const isItemSelected = selectedCounterpartIds.includes(row.id);
+                    return (
+                      <TableRow
+                        key={row.id}
+                        hover
+                        onClick={() => {
+                          if (isItemSelected) {
+                            setSelectedCounterpartIds(selectedCounterpartIds.filter(id => id !== row.id));
+                          } else {
+                            setSelectedCounterpartIds([...selectedCounterpartIds, row.id]);
+                          }
+                        }}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        selected={isItemSelected}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={isItemSelected} />
+                        </TableCell>
+                        <TableCell>{row.date}</TableCell>
+                        <TableCell>
+                          <Chip label={row.accountNumber} size="small" variant="outlined" color="primary" />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={row.direction === 'OUT' ? 'Saída' : 'Entrada'}
+                            color={row.direction === 'OUT' ? 'error' : 'success'}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{row.amount}</TableCell>
+                        <TableCell>{row.historico}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setPairingDialogOpen(false)}>Cancelar</Button>

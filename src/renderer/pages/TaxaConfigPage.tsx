@@ -64,6 +64,84 @@ export default function TaxaConfigPage() {
         </Alert>
       )}
 
+      {/* Identificação de Taxas */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Identificação de Taxas de Administração
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Defina quais classificações financeiras identificam cada tipo de taxa de administração.
+            Separe múltiplos códigos por vírgula.
+          </Typography>
+
+          <Stack spacing={3}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Classificações Projetos"
+                  fullWidth
+                  value={config.classificacoesIdentificadoras.PROJETOS.join(', ')}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    classificacoesIdentificadoras: {
+                      ...config.classificacoesIdentificadoras,
+                      PROJETOS: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                    }
+                  })}
+                  helperText="Ex: PROJ002.1.4.01.99"
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Classificações Grants"
+                  fullWidth
+                  value={config.classificacoesIdentificadoras.GRANTS.join(', ')}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    classificacoesIdentificadoras: {
+                      ...config.classificacoesIdentificadoras,
+                      GRANTS: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                    }
+                  })}
+                  helperText="Ex: GRANT002.1.4.01.99"
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Classificações Termos e Parcerias"
+                  fullWidth
+                  value={config.classificacoesIdentificadoras.TERMOS_PARCERIAS.join(', ')}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    classificacoesIdentificadoras: {
+                      ...config.classificacoesIdentificadoras,
+                      TERMOS_PARCERIAS: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                    }
+                  })}
+                  helperText="Ex: TEP002.1.4.01.99"
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Classificações Importação"
+                  fullWidth
+                  value={config.classificacoesIdentificadoras.IMPORTACAO.join(', ')}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    classificacoesIdentificadoras: {
+                      ...config.classificacoesIdentificadoras,
+                      IMPORTACAO: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                    }
+                  })}
+                  helperText="Ex: IMP004.19"
+                />
+              </Grid>
+            </Grid>
+          </Stack>
+        </CardContent>
+      </Card>
+
       {/* Configurações de Despesa */}
       <Card sx={{ mb: 3 }}>
         <CardContent>

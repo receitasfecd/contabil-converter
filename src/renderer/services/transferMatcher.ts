@@ -140,18 +140,24 @@ function checkCrossReference(out: Transfer, inTransfer: Transfer): boolean {
   });
 
   // Verificar se OUT menciona a conta de IN
-  const outMentionsIn = outMentionedAccount === inTransfer.accountNumber;
+  const outMentionsIn = outMentionedAccount && (outMentionedAccount === inTransfer.accountNumber || outMentionedAccount === inTransfer.accountNumber.replace('-', ''));
 
   // Verificar se IN menciona a conta de OUT
-  const inMentionsOut = inMentionedAccount === out.accountNumber;
+  const inMentionsOut = inMentionedAccount && (inMentionedAccount === out.accountNumber || inMentionedAccount === out.accountNumber.replace('-', ''));
 
   // Também verificar se ambos mencionam a mesma conta (aplicação)
   const bothMentionSame = outMentionedAccount && inMentionedAccount &&
                           outMentionedAccount === inMentionedAccount;
 
+  // Caso especial: Taxa de Administração (sempre vai para a conta 14300-4)
+  const isTaxaOut = out.historico.toLowerCase().includes('taxa adm') || out.historico.toLowerCase().includes('tx adm');
+  const isAccountAdm = inTransfer.accountNumber === '143004' || inTransfer.accountNumber === '14300-4';
+  const isTaxaMatch = isTaxaOut && isAccountAdm;
+
   if (outMentionsIn) console.log('    ✓ OUT menciona IN');
   if (inMentionsOut) console.log('    ✓ IN menciona OUT');
   if (bothMentionSame) console.log('    ✓ Ambos mencionam mesma conta');
+  if (isTaxaMatch) console.log('    ✓ Match de Taxa de Administração (OUT -> 14300-4)');
 
-  return outMentionsIn || inMentionsOut || bothMentionSame;
+  return outMentionsIn || inMentionsOut || bothMentionSame || isTaxaMatch;
 }

@@ -4,8 +4,11 @@ import { ContaBancariaMapping } from './types/Mapping';
 import { Transfer, TransferStore } from './types/Transfer';
 import { loadTransferStore as loadTransferStoreLocal, saveTransferStore as saveTransferStoreLocal } from './services/transferStore';
 import { loadTransferStore as loadTransferStoreSupabase, saveTransfers, savePairs, deleteTransferFromDB, deletePairFromDB, deleteTransfersByAccountFromDB } from './services/supabaseTransferService';
+import { loadTaxasFromSupabase, saveTaxaToSupabase, deleteTaxaFromSupabase, clearAllTaxasFromSupabase } from './services/supabaseTaxaService';
 import { matchTransfers } from './services/transferMatcher';
 import { updateLancamentoHistorico } from './services/importedAccountsService';
+import { setTaxasStore, isTaxaAdministracao, addTaxaAdministracao, loadTaxasAdministracao } from './services/taxaAdministracaoService';
+import { TaxaAdministracao, TaxaAdministracaoStore } from './types/TaxaAdministracao';
 import { supabase } from './services/supabaseClient';
 
 interface AppContextType {
@@ -16,6 +19,7 @@ interface AppContextType {
   transferStore: TransferStore;
   addTransfers: (transfers: Transfer[]) => void;
   addTransfersAndPair: (transfers: Transfer[]) => void;
+  addTransfersPairAndTaxas: (transfers: Transfer[]) => void;
   updateTransferStore: (store: TransferStore) => void;
   pairTransfers: () => void;
   markPairAsExported: (pairId: string) => void;
@@ -24,6 +28,8 @@ interface AppContextType {
   deleteTransfersByAccount: (accountNumber: string) => void;
   updateTransfer: (transfer: Transfer) => void;
   updateLancamentoHistorico: (accountId: string, lancamentoId: string, novoHistorico: string) => void;
+  taxaStore: TaxaAdministracaoStore;
+  setTaxaStore: (store: TaxaAdministracaoStore) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -32,6 +38,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [processedEntries, setProcessedEntries] = useState<ProcessedEntry[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<ContaBancariaMapping | null>(null);
   const [transferStore, setTransferStore] = useState<TransferStore>({ pending: [], paired: [], exported: [] });
+  const [taxaStore, setTaxaStoreInternal] = useState<TaxaAdministracaoStore>({ taxas: [] });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Verificar autenticação e carregar dados
@@ -59,9 +66,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       const store = await loadTransferStoreSupabase();
       setTransferStore(store);
+
+      const taxas = await loadTaxasFromSupabase();
+      setTaxaStoreInternal(taxas);
+      setTaxasStore(taxas);
     } catch (error) {
       console.error('❌ Erro ao carregar dados do Supabase:', error);
     }
+  };
+
+  const setTaxaStore = (store: TaxaAdministracaoStore) => {
+    setTaxaStoreInternal(store);
+    setTaxasStore(store);
   };
 
   // Salvar transferStore (Supabase ou localStorage)
@@ -111,6 +127,31 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         paired: [...prev.paired, ...newPairs]
       };
     });
+  };
+
+  const addTransfersPairAndTaxas = (transfers: Transfer[]) => {
+    // 1. Identificar taxas e atualizar taxaStore
+    const newTaxas: TaxaAdministracao[] = [];
+    transfers.forEach(t => {
+      if (isTaxaAdministracao(t)) {
+        const taxa = addTaxaAdministracao(t);
+        newTaxas.push(taxa);
+      }
+    });
+
+    if (newTaxas.length > 0) {
+      const updatedTaxaStore = loadTaxasAdministracao();
+      setTaxaStore(updatedTaxaStore);
+
+      if (isAuthenticated) {
+        newTaxas.forEach(taxa => {
+           saveTaxaToSupabase(taxa).catch(err => console.error('Erro ao salvar taxa no Supabase:', err));
+        });
+      }
+    }
+
+    // 2. Proceder com o pareamento normal de transferências
+    addTransfersAndPair(transfers);
   };
 
   const updateTransferStore = (store: TransferStore) => {
@@ -250,6 +291,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         transferStore,
         addTransfers,
         addTransfersAndPair,
+        addTransfersPairAndTaxas,
         updateTransferStore,
         pairTransfers,
         markPairAsExported,
@@ -258,6 +300,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         deleteTransfersByAccount,
         updateTransfer,
         updateLancamentoHistorico: handleUpdateLancamentoHistorico,
+        taxaStore,
+        setTaxaStore,
       }}
     >
       {children}

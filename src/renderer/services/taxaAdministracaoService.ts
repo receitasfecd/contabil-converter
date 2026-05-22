@@ -3,10 +3,16 @@ import { Transfer } from '../types/Transfer';
 import { mappingService } from './mappingService';
 import { loadTaxaConfig } from './taxaConfigService';
 import { loadTransferStore } from './transferStore';
+import { saveTaxaToSupabase } from './supabaseTaxaService';
 
 const STORAGE_KEY = 'taxas-administracao-store';
 
+let currentStore: TaxaAdministracaoStore = { taxas: [] };
+
 export function loadTaxasAdministracao(): TaxaAdministracaoStore {
+  // Se já temos em memória, retornar. Útil para chamadas síncronas após o AppContext carregar.
+  if (currentStore.taxas.length > 0) return currentStore;
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -26,7 +32,13 @@ export function loadTaxasAdministracao(): TaxaAdministracaoStore {
   return { taxas: [] };
 }
 
+// Para ser usado pelo AppContext para injetar os dados do Supabase
+export function setTaxasStore(store: TaxaAdministracaoStore): void {
+  currentStore = store;
+}
+
 export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
+  currentStore = store;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch (error) {
@@ -37,19 +49,38 @@ export function saveTaxasAdministracao(store: TaxaAdministracaoStore): void {
 // Identificar se uma transferência é taxa de administração
 export function isTaxaAdministracao(transfer: Transfer): boolean {
   const historico = transfer.historico.toLowerCase();
+  const config = loadTaxaConfig();
 
-  // Verificar palavras-chave no histórico usando regex
-  const keywordPatterns = [
-    /taxa\s+adm/i,
-    /tx\s+adm/i,
-    /taxa\s+de\s+administra[çc][aã]o/i,
-    /taxa\s+administrativa/i,
-    /tx\s+administrativa/i
+  console.log(`🔍 Verificando se é taxa: "${transfer.historico}" (Conta: ${transfer.accountNumber}, Valor: ${transfer.amount})`);
+
+  // Verificar palavras-chave no histórico
+  const keywords = [
+    'taxa adm',
+    'taxa de adm',
+    'tx. adm',
+    'tx.adm',
+    'tx adm',
+    'txadm',
+    'taxa de administração',
+    'taxa de administracao',
+    'taxa administrativa',
+    'tx administrativa',
+    'tx. administrativa',
+    'repasse taxa',
+    'repasse de taxa'
   ];
-  const hasTaxaKeyword = keywordPatterns.some(pattern => pattern.test(historico));
-  
-  if (hasTaxaKeyword) {
-    console.log('🔍 Taxa detectada por palavra-chave:', transfer.historico);
+  const hasTaxaKeyword = keywords.some(keyword => historico.includes(keyword));
+
+  // Se for entrada na conta ADM (14300-4), ser mais inclusivo
+  const isAdmIn = transfer.direction === 'IN' &&
+                  (transfer.accountNumber === CONTA_ADM || transfer.accountNumber === CONTA_ADM.replace('-', ''));
+
+  if (isAdmIn && !hasTaxaKeyword) {
+     // Na conta ADM, entradas que mencionam projetos costumam ser taxas
+     const projectKeywords = ['proj', 'grant', 'tep', 'imp'];
+     if (projectKeywords.some(pk => historico.includes(pk))) {
+        return true;
+     }
   }
 
   // Verificar classificação financeira (se disponível no transfer)
@@ -59,17 +90,26 @@ export function isTaxaAdministracao(transfer: Transfer): boolean {
   if (classificacao) {
     // Normalizar: remover espaços e converter para maiúsculas
     const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
-    hasClassificacaoTaxa =
+
+    // Todas as classificações identificadoras configuradas
+    const allIdentificadoras = [
+      ...config.classificacoesIdentificadoras.PROJETOS,
+      ...config.classificacoesIdentificadoras.GRANTS,
+      ...config.classificacoesIdentificadoras.TERMOS_PARCERIAS,
+      ...config.classificacoesIdentificadoras.IMPORTACAO
+    ].map(c => c.toUpperCase().replace(/\s+/g, ''));
+
+    hasClassificacaoTaxa = allIdentificadoras.some(ident => classifUpper.includes(ident)) ||
       classifUpper.startsWith('FECD001.1.4') ||
-      classifUpper.startsWith('FECD001.1.5') ||
-      classifUpper.includes('PROJ002.1.4') ||
-      classifUpper.includes('GRANT002.1.4') ||
-      classifUpper.includes('TEP002.1.4') ||
-      classifUpper.includes('IMP004.19');
-      
+      classifUpper.startsWith('FECD001.1.5');
+
     if (hasClassificacaoTaxa) {
-      console.log('🔍 Taxa detectada por classificação:', classificacao);
+      console.log(`  ✅ Identificada por classificação financeira: ${classificacao}`);
     }
+  }
+
+  if (hasTaxaKeyword) {
+    console.log(`  ✅ Identificada por palavra-chave no histórico`);
   }
 
   return hasTaxaKeyword || hasClassificacaoTaxa;
@@ -132,7 +172,7 @@ function vincularContasAutomaticamente(taxa: TaxaAdministracao): void {
 }
 
 // Adicionar transferência como taxa de administração
-export function addTaxaAdministracao(transfer: Transfer): void {
+export function addTaxaAdministracao(transfer: Transfer): TaxaAdministracao {
   const store = loadTaxasAdministracao();
 
   const taxaData = {
@@ -144,6 +184,8 @@ export function addTaxaAdministracao(transfer: Transfer): void {
     historico: transfer.historico,
   };
 
+  let resultTaxa: TaxaAdministracao;
+
   // Verificar se é saída (débito) ou entrada (crédito)
   const isOut = transfer.direction === 'OUT';
   const isIn = transfer.direction === 'IN';
@@ -152,14 +194,17 @@ export function addTaxaAdministracao(transfer: Transfer): void {
   const existingTaxa = store.taxas.find(t => {
     if (!t.status.startsWith('PENDING')) return false;
 
+    const tDate = t.transferIn?.date || t.transferOut?.date;
+    const tAmount = t.transferIn?.amount || t.transferOut?.amount;
+
     // Se a nova transferência é saída (OUT), procurar taxa que está esperando saída (PENDING_IN)
     if (isOut && t.status === 'PENDING_IN' && t.transferIn) {
-      return t.transferIn.date === transfer.date && t.transferIn.amount === transfer.amount;
+      return tDate === transfer.date && tAmount === transfer.amount;
     }
 
     // Se a nova transferência é entrada (IN), procurar taxa que está esperando entrada (PENDING_OUT)
     if (isIn && t.status === 'PENDING_OUT' && t.transferOut) {
-      return t.transferOut.date === transfer.date && t.transferOut.amount === transfer.amount;
+      return tDate === transfer.date && tAmount === transfer.amount;
     }
 
     return false;
@@ -183,6 +228,7 @@ export function addTaxaAdministracao(transfer: Transfer): void {
 
     // Vincular contas automaticamente usando a transferência atual
     vincularContasAutomaticamenteDirect(existingTaxa, transfer);
+    resultTaxa = existingTaxa;
   } else {
     // Criar nova taxa pendente
     const grupoIdentificado = identificarGrupoContabil(transfer);
@@ -203,9 +249,11 @@ export function addTaxaAdministracao(transfer: Transfer): void {
     vincularContasAutomaticamenteDirect(novaTaxa, transfer);
 
     store.taxas.push(novaTaxa);
+    resultTaxa = novaTaxa;
   }
 
   saveTaxasAdministracao(store);
+  return resultTaxa;
 }
 
 // Vincular contas usando diretamente a transferência (que tem o original com classificação)
@@ -270,21 +318,22 @@ function vincularContasAutomaticamenteDirect(taxa: TaxaAdministracao, transfer: 
 // Identificar grupo contábil baseado na classificação financeira
 function identificarGrupoContabil(transfer: Transfer): 'PROJETOS' | 'GRANTS' | 'TERMOS_PARCERIAS' | 'IMPORTACOES' | undefined {
   const classificacao = (transfer as any).original?.classificacaoFinanceira;
+  const config = loadTaxaConfig();
 
   if (classificacao) {
     const classifUpper = classificacao.toUpperCase().replace(/\s+/g, '');
 
-    // Identificar por classificação financeira de despesa
-    if (classifUpper.includes('PROJ002.1.4.01.99')) {
+    // Identificar por classificação financeira de despesa usando a configuração
+    if (config.classificacoesIdentificadoras.PROJETOS.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'PROJETOS';
     }
-    if (classifUpper.includes('GRANT002.1.4.01.99')) {
+    if (config.classificacoesIdentificadoras.GRANTS.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'GRANTS';
     }
-    if (classifUpper.includes('TEP002.1.4.01.99')) {
+    if (config.classificacoesIdentificadoras.TERMOS_PARCERIAS.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'TERMOS_PARCERIAS';
     }
-    if (classifUpper.includes('IMP004.19')) {
+    if (config.classificacoesIdentificadoras.IMPORTACAO.some(c => classifUpper.includes(c.toUpperCase().replace(/\s+/g, '')))) {
       return 'IMPORTACOES';
     }
 
