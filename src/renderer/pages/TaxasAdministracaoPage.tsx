@@ -44,8 +44,6 @@ import {
   getTaxasProcessadasNaoExportadas,
   saveTaxasAdministracao,
   parearTaxasManualmente,
-  isTaxaAdministracao,
-  addTaxaAdministracao,
 } from '../services/taxaAdministracaoService';
 import { saveTaxaToSupabase, deleteTaxaFromSupabase, clearAllTaxasFromSupabase } from '../services/supabaseTaxaService';
 import { GRUPOS_CONTABEIS, CONTA_ADM } from '../types/TaxaAdministracao';
@@ -335,33 +333,6 @@ export default function TaxasAdministracaoPage() {
     }
   };
 
-  const handleForcarDeteccao = () => {
-    console.log('🔧 Forçando detecção de taxas...');
-    const { transferStore } = useAppContext();
-    const allTransfers = [
-      ...transferStore.pending,
-      ...transferStore.paired.flatMap(p => [p.transferOut, p.transferIn])
-    ];
-
-    let taxasAdicionadas = 0;
-    allTransfers.forEach(t => {
-      if (isTaxaAdministracao(t)) {
-        try {
-          addTaxaAdministracao(t);
-          taxasAdicionadas++;
-          console.log(`✅ Taxa adicionada: ${t.historico}`);
-        } catch (error) {
-          console.error(`❌ Erro ao adicionar taxa:`, error);
-        }
-      }
-    });
-
-    console.log(`📊 Total de taxas adicionadas: ${taxasAdicionadas}`);
-    const updatedStore = loadTaxasAdministracao();
-    setTaxaStore(updatedStore);
-    alert(`${taxasAdicionadas} taxas detectadas e adicionadas! Total na store: ${updatedStore.taxas.length}`);
-  };
-
   const handleEditTransfer = (taxa: TaxaAdministracao, type: 'OUT' | 'IN') => {
     setEditingTaxa(taxa);
 
@@ -464,13 +435,6 @@ export default function TaxasAdministracaoPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4">Taxas de Administração</Typography>
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleForcarDeteccao}
-          >
-            🔧 Forçar Detecção
-          </Button>
           <Button
             variant="outlined"
             color="warning"
@@ -1273,4 +1237,36 @@ export default function TaxasAdministracaoPage() {
                         </TableCell>
                         <TableCell>{transfer.date}</TableCell>
                         <TableCell>{formatAccountNumber(transfer.accountNumber)}</TableCell>
-   
+                        <TableCell>
+                          <Chip
+                            label={taxa.status === 'PENDING_OUT' ? 'Saída' : 'Entrada'}
+                            color={taxa.status === 'PENDING_OUT' ? 'error' : 'success'}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{formatCurrency(transfer.amount)}</TableCell>
+                        <TableCell>{transfer.historico}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPairingDialogOpen(false)}>Cancelar</Button>
+          <Button
+            onClick={handleManualPairConfirm}
+            variant="contained"
+            color="success"
+            disabled={selectedCounterpartIds.length === 0}
+            startIcon={<LinkIcon />}
+          >
+            Confirmar Pareamento Manual
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+}
