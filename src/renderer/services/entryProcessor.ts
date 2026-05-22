@@ -86,9 +86,16 @@ export function processEntriesWithTransferSeparation(
 
       if (isTransfer || isTaxa) {
         // Tratar como transferência
-        // A adição à loja de taxas é feita centralizadamente pelo AppContext.addTransfersPairAndTaxas
         if (isTaxa) {
           console.log(`✅ Taxa de Administração detectada: ${tempTransfer.historico}`);
+
+          // ADICIONAR DIRETAMENTE À STORE DE TAXAS
+          try {
+            const taxaAdicionada = addTaxaAdministracao(tempTransfer);
+            console.log(`💾 Taxa adicionada à store com ID: ${taxaAdicionada.id}, Status: ${taxaAdicionada.status}`);
+          } catch (error) {
+            console.error(`❌ Erro ao adicionar taxa à store:`, error);
+          }
         }
 
         transfers.push(tempTransfer);
